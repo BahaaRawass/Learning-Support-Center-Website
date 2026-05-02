@@ -1,17 +1,23 @@
 import { Link } from "react-router-dom";
 import accountImage from "../assets/Images/account_circle_30.png";
 import logoutImage from "../assets/Images/logout_24.png";
-import { getName } from "../helper/functions";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Header() {
-  // Getting the name from the current Session
   const { Session, SignOut, Loading } = useAuth();
-  const name = getName(Session);
 
   async function LogOut() {
     await SignOut();
   }
+
+  const email = Session?.user.email;
+
+  const DisplayName: string =
+    Session?.user.user_metadata?.display_name?.trim() ||
+    email?.slice(0, email.indexOf("@"));
+
+  console.log(Session?.user);
+
   return (
     <header className="bg-dark text-white d-flex flex-wrap justify-content-between align-items-center p-3">
       <div className="d-flex align-items-center">
@@ -21,22 +27,20 @@ export default function Header() {
           className="rounded-circle me-2"
           style={{ width: "40px", height: "40px" }}
         />
-        <p className="mb-0">{name}</p>
+        <p className="mb-0">{DisplayName}</p>
       </div>
 
-      {name == "Laraabouorm" && (
-        <nav className="d-flex justify-content-between align-items-between w-25">
-          <Link to="/" className="text-white text-decoration-none">
-            Home
-          </Link>
-          <Link
-            to="/workstudy"
-            className="text-white text-white text-decoration-none"
-          >
-            Edit Workstudy
-          </Link>
-        </nav>
-      )}
+      <nav className="d-flex justify-content-between align-items-between w-25">
+        <Link to="/" className="text-white text-decoration-none">
+          Home
+        </Link>
+        <Link
+          to="/workstudy"
+          className="text-white text-white text-decoration-none"
+        >
+          Edit Workstudy
+        </Link>
+      </nav>
 
       <div>
         {Session && (

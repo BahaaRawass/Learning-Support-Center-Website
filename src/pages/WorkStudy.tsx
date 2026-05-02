@@ -4,7 +4,6 @@ import { supabaseClient } from "../supabase-client";
 import { Navigate } from "react-router-dom";
 import deleteImage from "../assets/Images/delete_24dppng.png";
 import { titleCase } from "title-case";
-import { getName } from "../helper/functions";
 import Spinner from "../components/Spinner";
 import SmallSpinnerButton from "../components/SmallSpinnerButton";
 import SpinnerButton from "../components/SpinnerButton";
@@ -19,8 +18,6 @@ export default function WorkStudy() {
 
   const [Input, setInput] = useState<LoginInput>(InitialValue);
   const { Session, Loading: AuthLoading, Error: AuthError, SignUp } = useAuth();
-
-  const name = getName(Session);
 
   const {
     Users,
@@ -38,10 +35,6 @@ export default function WorkStudy() {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isAdding) return;
-    if (name !== "Laraabouorm") {
-      alert("You cannot insert any user");
-      return;
-    }
 
     const prevSession = Session;
 
@@ -64,10 +57,6 @@ export default function WorkStudy() {
 
   async function handleClick(userId: string) {
     if (isDeleting === userId) return;
-    if (name !== "Laraabouorm") {
-      alert("You cannot delete any user");
-      return;
-    }
 
     await deleteUser(userId);
   }

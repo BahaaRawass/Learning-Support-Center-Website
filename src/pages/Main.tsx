@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import InputForm from "../components/InputForm";
 import Table from "../components/Table";
-import { checkDupes, formatDate, getName } from "../helper/functions";
+import { checkDupes, formatDate } from "../helper/functions";
 import Spinner from "../components/Spinner";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
@@ -17,8 +17,6 @@ export default function Main() {
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
 
-  const name = getName(Session);
-
   const {
     Students,
     Loading: DataLoading,
@@ -27,7 +25,7 @@ export default function Main() {
     incrementStudentVisits,
     isAdding,
     isUpdating,
-  } = useStudents(name);
+  } = useStudents("Laraabouorm");
 
   const InitialValue: Input = { name: "", id: NaN };
 
@@ -51,7 +49,7 @@ export default function Main() {
       studentName: titleCase(Input.name),
       studentId: Input.id,
       added_at: formatDate(),
-      added_by: name,
+      added_by: "Testing",
       nb_visits: 1,
     };
 
@@ -112,17 +110,15 @@ export default function Main() {
       />
       <div className="d-flex justify-content-end mb-3">
         {/* Button to extract the table to a csv file */}
-        {name === "Laraabouorm" && (
-          <CSVLink
-            data={Students}
-            headers={headers}
-            filename="Learning Support Center Student Visits.csv"
-            className="btn btn-success"
-          >
-            <img src={exportImage} alt="" />
-            Export CSV
-          </CSVLink>
-        )}
+        <CSVLink
+          data={Students}
+          headers={headers}
+          filename="Learning Support Center Student Visits.csv"
+          className="btn btn-success"
+        >
+          <img src={exportImage} alt="" />
+          Export CSV
+        </CSVLink>
       </div>
       <Table
         Students={Students}
