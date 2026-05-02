@@ -1,4 +1,4 @@
-import type { Student } from "../types/types";
+import type { Student, StudentInput } from "../types/students";
 
 // Formatting the Date to this format: Day, Month, Year at HH:MM AM/PM
 export function formatDate() {
@@ -15,11 +15,17 @@ export function formatDate() {
 }
 
 // Preventing duplication in the Table
-export function checkDupes(students: Student[], id: number): boolean {
-  for (const student of students) {
-    if (student.studentId === id) {
+export function checkDupes(
+  students: Student[],
+  studentInput: StudentInput,
+): boolean {
+  students.forEach((student) => {
+    if (
+      student.studentId === studentInput.studentId ||
+      student.email === studentInput.email
+    ) {
       return true;
     }
-  }
+  });
   return false;
 }

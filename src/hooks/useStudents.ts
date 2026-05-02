@@ -1,23 +1,54 @@
 import { useEffect, useState } from "react";
-import { useFetchFromTable } from "./useFetchFromTable";
-import type { Student } from "../types/types";
 import { supabaseClient } from "../supabase-client";
+import type { NewStudent, Student } from "../types/students";
+import { PostgrestError, type User } from "@supabase/supabase-js";
+import type { Data } from "../types/types";
 
-export function useStudents(added_by: string) {
-  const { Data, Loading, Error } = useFetchFromTable("Students", added_by);
-
+export function useStudents(added_by?: User) {
   const [Students, setStudents] = useState<Student[]>([]);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [isUpdating, setIsUpdating] = useState<number | null>(null);
+  const [Loading, setLoading] = useState<boolean>(false);
+  const [Error, setError] = useState<string>("");
+  const [isUpdating, setIsUpdating] = useState<Student["studentId"] | null>(
+    null,
+  );
 
-  // Sync fetched data to local state
-  useEffect(() => {
-    setStudents(Data);
-  }, [Data]);
+  function ResetStates() {
+    setLoading(false);
+    setError("");
+  }
 
-  // Realtime updates mutate the SAME state
+  function SetError(error: PostgrestError) {
+    const msg = `An Error Occurred: Error Code: ${error.code}\nError Message: ${error.message}`;
+    setError(msg);
+    setLoading(false);
+  }
+
   useEffect(() => {
-    const channel = supabaseClient.channel("Students-Channel");
+    async function fetchData() {
+      if (!added_by) return;
+
+      setLoading(true);
+      setError("");
+
+      let query = supabaseClient.from("Students").select("*");
+
+      if (added_by.role !== "admin") query = query.eq("added_by", added_by.id);
+
+      const { data, error: FetchError } = (await query) as Data<Student[]>;
+
+      if (FetchError) {
+        SetError(FetchError);
+        return;
+      }
+
+      setStudents(data || []);
+
+      setLoading(false);
+    }
+
+    fetchData();
+
+    const channel = supabaseClient.channel("Students Channel");
 
     channel
       .on(
@@ -64,40 +95,69 @@ export function useStudents(added_by: string) {
     return () => {
       supabaseClient.removeChannel(channel);
     };
-  }, []);
+  }, [added_by]);
 
-  async function addStudent(student: Student) {
-    setIsAdding(true);
+  async function addStudent(student: NewStudent) {
+    ResetStates();
 
-    const { error } = await supabaseClient
+    const { error: AddError } = await supabaseClient
       .from("Students")
       .insert(student)
       .single();
 
-    if (error) {
-      const msg = `An Error Occurred: ${error.message}`;
-      console.error(msg);
-      setIsAdding(false);
+    if (AddError) {
+      SetError(AddError);
       return false;
     }
-    setIsAdding(false);
+    setLoading(false);
     return true;
   }
 
   async function incrementStudentVisits(studentId: number) {
     setIsUpdating(studentId);
+    setError("");
 
-    const { error } = await supabaseClient.rpc("increment_student_visits", {
-      student_id_input: studentId,
-    });
+    const { error: IncrementError } = await supabaseClient.rpc(
+      "increment_student_visits",
+      {
+        student_id_input: studentId,
+      },
+    );
 
-    if (error) {
-      const msg = `An Error Occurred: ${error.message}`;
-      console.error(msg);
+    if (IncrementError) {
+      SetError(IncrementError);
       setIsUpdating(null);
       return false;
     }
     setIsUpdating(null);
+    return true;
+  }
+
+  async function ClearStudents() {
+    ResetStates();
+
+    if (!added_by || added_by.role !== "admin") {
+      const ClearError = new PostgrestError({
+        message: "Only admins can clear all students.",
+        details: "",
+        hint: "",
+        code: "403",
+      });
+      SetError(ClearError);
+      return false;
+    }
+
+    const { error: ClearError } = await supabaseClient
+      .from("Students")
+      .delete();
+
+    if (ClearError) {
+      SetError(ClearError);
+      return false;
+    }
+
+    setLoading(false);
+
     return true;
   }
 
@@ -107,7 +167,7 @@ export function useStudents(added_by: string) {
     Error,
     addStudent,
     incrementStudentVisits,
-    isAdding,
     isUpdating,
+    ClearStudents,
   };
 }

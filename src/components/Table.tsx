@@ -1,6 +1,12 @@
 import SmallSpinnerButton from "./SmallSpinnerButton";
-import type { TableProps } from "../types/types";
 import "../assets/CSS/table.css";
+import type { Student } from "../types/students";
+
+export type TableProps = {
+  Students: Student[];
+  handleUpdate: (studentId: number) => Promise<void>;
+  isUpdating: number | null;
+};
 
 export default function Table({
   Students,

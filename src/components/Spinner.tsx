@@ -1,4 +1,4 @@
-import type { SpinnerProps } from "../types/types";
+export type SpinnerProps = { text: string };
 
 export default function Spinner({ text }: SpinnerProps) {
   return (

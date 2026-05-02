@@ -15,7 +15,7 @@ export function useAuth() {
 
   // Helper function to set the error
   function SetError(error: PostgrestError | AuthError) {
-    const msg = `Failed to fetch Session. Error message: ${error.message}`;
+    const msg = `Failed to fetch Session. Error Code: ${error.code}\nError message: ${error.message}`;
     console.error(msg);
     setError(msg);
     setLoading(false);
@@ -50,10 +50,8 @@ export function useAuth() {
     };
   }, []);
 
-  async function SignInWithPassword(username: string, password: string) {
-    setLoading(true);
-
-    const email = `${username}@learningcenter.com`;
+  async function SignInWithPassword(email: string, password: string) {
+    resetSates();
 
     const { error: SignInError } = await supabaseClient.auth.signInWithPassword(
       {
@@ -71,23 +69,27 @@ export function useAuth() {
     return true;
   }
 
-  async function SignUp(username: string, password: string) {
+  async function SignUp(email: string, password: string, displayname: string) {
     resetSates();
 
-    const email = `${username}@learningcenter.com`;
-
-    const { error: SignUpError, data } = await supabaseClient.auth.signUp(
-      {
-        email,
-        password,
+    const { error: SignUpError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: displayname,
+          role: "workstudy",
+        },
       },
-    );
+    });
 
     if (SignUpError) {
       SetError(SignUpError);
+      return false;
     }
-    
-    return data;
+
+    setLoading(false);
+    return true;
   }
 
   async function SignOut() {
@@ -99,6 +101,7 @@ export function useAuth() {
       SetError(SignOutError);
       return false;
     }
+    setLoading(false);
     return true;
   }
 

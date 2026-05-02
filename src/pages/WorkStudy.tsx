@@ -1,64 +1,33 @@
 import { useState, type SubmitEvent } from "react";
-import type { LoginInput, User } from "../types/types";
-import { supabaseClient } from "../supabase-client";
 import { Navigate } from "react-router-dom";
-import deleteImage from "../assets/Images/delete_24dppng.png";
-import { titleCase } from "title-case";
 import Spinner from "../components/Spinner";
-import SmallSpinnerButton from "../components/SmallSpinnerButton";
-import SpinnerButton from "../components/SpinnerButton";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import { UseUsers } from "../hooks/useUsers";
+import InputForm from "../components/InputForm";
+import type { UserInput } from "../types/users";
+import { useUsers } from "../hooks/useUsers";
 
 export default function WorkStudy() {
   useDocumentTitle("Workstudy");
 
-  const InitialValue: LoginInput = { username: "", password: "" };
+  const InitialValue: UserInput = { displayname: "", email: "", password: "" };
 
-  const [Input, setInput] = useState<LoginInput>(InitialValue);
   const { Session, Loading: AuthLoading, Error: AuthError, SignUp } = useAuth();
 
-  const {
-    Users,
-    Loading: UsersLoading,
-    Error: UsersError,
-    addUser,
-    deleteUser,
-    isAdding,
-    isDeleting,
-  } = UseUsers();
+  const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
 
   const loading = AuthLoading || UsersLoading;
   const error = AuthError || UsersError;
 
+  const [Input, setInput] = useState<UserInput>(InitialValue);
+
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isAdding) return;
+    if (loading) return;
 
-    const prevSession = Session;
+    const ok = await SignUp(Input.email, Input.password, Input.displayname);
 
-    const { user } = await SignUp(Input.username, Input.password);
-
-    if (user) {
-      const newUser: User = {
-        id: user.id,
-        username: titleCase(Input.username),
-        password: Input.password,
-      };
-      // console.log(newUser);
-      await addUser(newUser);
-    }
-
-    if (prevSession) await supabaseClient.auth.setSession(prevSession);
-
-    setInput(InitialValue);
-  }
-
-  async function handleClick(userId: string) {
-    if (isDeleting === userId) return;
-
-    await deleteUser(userId);
+    if (ok) return setInput(InitialValue);
   }
 
   if (error) {
@@ -89,54 +58,19 @@ export default function WorkStudy() {
     return <Navigate to="/login" replace />;
   }
 
+  function updateFields(fields: Partial<UserInput>) {
+    setInput((prev) => ({ ...prev, ...fields }));
+  }
+
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="d-flex flex-wrap flex-column flex-wrap gap-3 justify-content-center align-items-center"
-        style={{ height: "50vh" }}
-      >
-        <div className="form-group">
-          <label htmlFor="name">WorkStudy Name:</label>
-          <input
-            required
-            type="text"
-            className="form-control border-2 border-secondary"
-            id="name"
-            value={Input.username}
-            onChange={(event) => {
-              setInput((prev) => ({
-                ...prev,
-                username: event.target.value,
-              }));
-            }}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="id">WorkStudy ID:</label>
-          <input
-            required
-            type="text"
-            id="id"
-            className="form-control border-2 border-secondary"
-            value={Input.password}
-            onChange={(event) => {
-              setInput((prev) => ({
-                ...prev,
-                password: event.target.value.trim(),
-              }));
-            }}
-          />
-        </div>
-        {isAdding ? (
-          <SpinnerButton />
-        ) : (
-          <button type="submit" className="btn btn-dark" disabled={isAdding}>
-            Submit
-          </button>
-        )}
-      </form>
-
+      <InputForm
+        mode="user"
+        loading={loading}
+        updateFields={updateFields}
+        handleUserSubmit={handleSubmit}
+        userInput={Input}
+      />
       <div
         className="table-responsive"
         style={{ maxHeight: "50vh", overflowY: "auto" }}
@@ -150,26 +84,14 @@ export default function WorkStudy() {
           </thead>
           <tbody>
             {Users.map((user) => {
-              if (user.username === "Lara Abou Orm") return;
               return (
                 <tr key={user.id} className="text-center">
-                  <th scope="row">{user.password}</th>
+                  <th scope="row">{user.email}</th>
                   <td className="hover-cell">
                     <div className="d-flex flex-wrap align-items-center">
                       <span className="flex-grow-1 text-center">
-                        {user.username}
+                        {user.role}
                       </span>
-                      {isDeleting === user.id ? (
-                        <SmallSpinnerButton />
-                      ) : (
-                        <button
-                          className="btn btn-sm btn-danger hover-btn"
-                          onClick={() => handleClick(user.id)}
-                          disabled={isDeleting === user.id}
-                        >
-                          <img src={deleteImage} alt="delete user" />
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>

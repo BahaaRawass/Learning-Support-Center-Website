@@ -16,8 +16,6 @@ export default function Header() {
     Session?.user.user_metadata?.display_name?.trim() ||
     email?.slice(0, email.indexOf("@"));
 
-  console.log(Session?.user);
-
   return (
     <header className="bg-dark text-white d-flex flex-wrap justify-content-between align-items-center p-3">
       <div className="d-flex align-items-center">

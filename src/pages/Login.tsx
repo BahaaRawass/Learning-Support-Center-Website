@@ -1,15 +1,15 @@
 import { useState, type SubmitEvent } from "react";
-import type { LoginInput } from "../types/types";
 import { Navigate, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
+import type { LoginInput } from "../types/auth";
 
 export default function Login() {
   useDocumentTitle("Login");
 
   const InitialValue: LoginInput = {
-    username: "",
+    email: "",
     password: "",
   };
 
@@ -25,7 +25,7 @@ export default function Login() {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const ok = await SignInWithPassword(Login.username, Login.password);
+    const ok = await SignInWithPassword(Login.email, Login.password);
 
     if (ok) navigate("/");
   }
@@ -58,17 +58,17 @@ export default function Login() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="username" className="form-label">
-              Username
+            <label htmlFor="email" className="form-label">
+              Email
             </label>
             <input
               required
-              type="text"
-              id="username"
+              type="email"
+              id="email"
               className="form-control"
-              placeholder="Enter your username"
+              placeholder="Enter your RHU email"
               onChange={(event) =>
-                setLogin({ ...Login, username: event.target.value })
+                setLogin({ ...Login, email: event.target.value })
               }
             />
           </div>

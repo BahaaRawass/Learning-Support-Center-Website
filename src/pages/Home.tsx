@@ -7,55 +7,63 @@ import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
 import { useStudents } from "../hooks/useStudents";
 import { useState, type SubmitEvent } from "react";
-import type { Input, Student } from "../types/types";
 import { titleCase } from "title-case";
 import { CSVLink } from "react-csv";
 import exportImage from "../assets/Images/file-export_24.png";
+import type { NewStudent, StudentInput } from "../types/students";
 
-export default function Main() {
+export default function Home() {
   useDocumentTitle("Home");
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
 
   const {
     Students,
-    Loading: DataLoading,
-    Error: DataError,
+    Loading: StudentsLoading,
+    Error: StudentsError,
     addStudent,
     incrementStudentVisits,
-    isAdding,
     isUpdating,
-  } = useStudents("Laraabouorm");
+  } = useStudents(Session?.user);
 
-  const InitialValue: Input = { name: "", id: NaN };
+  const InitialValue: StudentInput = {
+    studentName: "",
+    studentId: NaN,
+    email: "",
+  };
 
-  const [Input, setInput] = useState<Input>(InitialValue);
+  const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
 
-  const loading = AuthLoading || DataLoading;
-  const error = AuthError || DataError;
+  function updateFields(fields: Partial<StudentInput>) {
+    setStudentInput((prev) => ({ ...prev, ...fields }));
+  }
+
+  const loading = AuthLoading || StudentsLoading;
+  const error = AuthError || StudentsError;
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isAdding) return;
+    if (!Session || loading) return;
 
-    if (checkDupes(Students, Input.id)) {
-      alert("the ID already exists!!");
+    if (checkDupes(Students, StudentInput)) {
+      alert("the ID  or email already exists!!");
       return;
     }
 
-    const newStudent: Student = {
+    const newStudent: NewStudent = {
       id: crypto.randomUUID(),
-      studentName: titleCase(Input.name),
-      studentId: Input.id,
+      studentId: StudentInput.studentId,
+      studentName: titleCase(StudentInput.studentName),
+      email: StudentInput.email,
       added_at: formatDate(),
-      added_by: "Testing",
+      added_by: Session.user.id,
       nb_visits: 1,
     };
 
     const ok = await addStudent(newStudent);
 
-    if (ok) setInput(InitialValue);
+    if (ok) setStudentInput(InitialValue);
   }
 
   async function handleUpdate(studentId: number) {
@@ -95,7 +103,8 @@ export default function Main() {
   const headers = [
     { label: "Student ID", key: "studentId" },
     { label: "Student Name", key: "studentName" },
-    { label: "Added AT", key: "added_at" },
+    { label: "Student Email", key: "email" },
+    { label: "Added At", key: "added_at" },
     { label: "Added By", key: "added_by" },
     { label: "Visits", key: "nb_visits" },
   ];
@@ -103,23 +112,26 @@ export default function Main() {
   return (
     <>
       <InputForm
-        Input={Input}
-        setInput={setInput}
+        mode="student"
+        studentInput={StudentInput}
+        updateFields={updateFields}
         loading={loading}
-        handleSubmit={handleSubmit}
+        handleStudentSubmit={handleSubmit}
       />
-      <div className="d-flex justify-content-end mb-3">
-        {/* Button to extract the table to a csv file */}
-        <CSVLink
-          data={Students}
-          headers={headers}
-          filename="Learning Support Center Student Visits.csv"
-          className="btn btn-success"
-        >
-          <img src={exportImage} alt="" />
-          Export CSV
-        </CSVLink>
-      </div>
+      {Session.user.role === "admin" && (
+        <div className="d-flex justify-content-end mb-3">
+          {/* Button to extract the table to a csv file */}
+          <CSVLink
+            data={Students}
+            headers={headers}
+            filename="Learning Support Center Student Visits.csv"
+            className="btn btn-success"
+          >
+            <img src={exportImage} alt="" />
+            Export CSV
+          </CSVLink>
+        </div>
+      )}
       <Table
         Students={Students}
         handleUpdate={handleUpdate}

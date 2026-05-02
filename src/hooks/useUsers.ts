@@ -1,22 +1,46 @@
 import { useEffect, useState } from "react";
-import { useFetchFromTable } from "./useFetchFromTable";
-import type { User } from "../types/types";
 import { supabaseClient } from "../supabase-client";
+import { PostgrestError } from "@supabase/supabase-js";
+import type { Data } from "../types/types";
+import type { User } from "../types/users";
 
-export function UseUsers() {
-  const { Data, Loading, Error } = useFetchFromTable("Users", "Laraabouorm");
-
+export function useUsers() {
   const [Users, setUsers] = useState<User[]>([]);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [Loading, setLoading] = useState<boolean>(false);
+  const [Error, setError] = useState<string>("");
 
-  // Sync fetched data to the local State
-  useEffect(() => {
-    setUsers(Data);
-  }, [Data]);
+  function SetError(error: PostgrestError) {
+    const msg = `An Error Occurred: Error Code: ${error.code}\nError Message: ${error.message}`;
+    setError(msg);
+    setLoading(false);
+  }
+
+  // console.log(Users);
 
   useEffect(() => {
-    const channel = supabaseClient.channel("Users-Channel");
+    async function fetchData() {
+      setLoading(true);
+      setError("");
+
+      const { data, error: FetchError } = (await supabaseClient
+        .from("Users")
+        .select("*")) as Data<User[]>;
+
+      console.log("data: ", data);
+
+      if (FetchError) {
+        SetError(FetchError);
+        return;
+      }
+
+      setUsers(data || []);
+
+      setLoading(false);
+    }
+
+    fetchData();
+
+    const channel = supabaseClient.channel("Users Channel");
 
     channel
       .on(
@@ -24,15 +48,30 @@ export function UseUsers() {
         { event: "INSERT", schema: "public", table: "Users" },
         (payload) => {
           const newUser = payload.new as User;
+
           setUsers((prev) => [...prev, newUser]);
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "Users" },
+        (payload) => {
+          const updatedUser = payload.new as User;
+
+          setUsers((prev) =>
+            prev.map((user) =>
+              user.id === updatedUser.id ? updatedUser : user,
+            ),
+          );
         },
       )
       .on(
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "Users" },
         (payload) => {
-          const oldUser = payload.old as User;
-          setUsers((prev) => prev.filter((user) => user.id !== oldUser.id));
+          const deletedUser = payload.old as User;
+
+          setUsers((prev) => prev.filter((user) => user.id !== deletedUser.id));
         },
       )
       .subscribe((status) => {
@@ -44,38 +83,9 @@ export function UseUsers() {
     };
   }, []);
 
-  async function addUser(user: User) {
-    setIsAdding(true);
-
-    const { error } = await supabaseClient.from("Users").insert(user).single();
-
-    if (error) {
-      const msg = `An Error Occurred: ${error.message}`;
-      console.error(msg);
-      setIsAdding(false);
-      return false;
-    }
-    setIsAdding(false);
-    return true;
-  }
-
-  async function deleteUser(userId: string) {
-    setIsDeleting(userId);
-
-    const { error } = await supabaseClient
-      .from("Users")
-      .delete()
-      .eq("id", userId);
-
-    if (error) {
-      const msg = `An Error Occurred: ${error.message}`;
-      console.error(msg);
-      setIsDeleting(null);
-      return false;
-    }
-    setIsDeleting(null);
-    return true;
-  }
-
-  return { Users, Loading, Error, addUser, deleteUser, isAdding, isDeleting };
+  return {
+    Users,
+    Loading,
+    Error,
+  };
 }
