@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import accountImage from "../assets/Images/account_circle_30.png";
-import logoutImage from "../assets/Images/logout_24.png";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import rhuLogo from "../assets/Images/rhu_logo.png";
 
 export default function Header() {
   const { Session, SignOut, Loading } = useAuth();
+  const location = useLocation();
 
   async function LogOut() {
     await SignOut();
@@ -14,46 +14,57 @@ export default function Header() {
 
   const DisplayName: string =
     Session?.user.user_metadata?.display_name?.trim() ||
-    email?.slice(0, email.indexOf("@"));
+    email?.slice(0, email.indexOf("@")) ||
+    "User";
+
+  const initials = DisplayName.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
-    <header className="bg-dark text-white d-flex flex-wrap justify-content-between align-items-center p-3">
-      <div className="d-flex align-items-center">
-        <img
-          src={accountImage}
-          alt="Profile"
-          className="rounded-circle me-2"
-          style={{ width: "40px", height: "40px" }}
+    <header className="site-header">
+      <div className="header-brand" style={{ position: "relative" }}>
+        <img 
+          src={rhuLogo} 
+          alt="RHU Logo" 
+          style={{ 
+            width: "290px", 
+            height: "75px",
+            objectFit: "contain",
+            padding: "0.5rem"
+          }}
         />
-        <p className="mb-0">{DisplayName}</p>
       </div>
 
-      <nav className="d-flex justify-content-between align-items-between w-25">
-        <Link to="/" className="text-white text-decoration-none">
+      <nav className="header-nav">
+        <Link
+          to="/"
+          className={`nav-item ${location.pathname === "/" ? "active" : ""}`}
+        >
           Home
         </Link>
         <Link
           to="/workstudy"
-          className="text-white text-white text-decoration-none"
+          className={`nav-item ${location.pathname === "/workstudy" ? "active" : ""}`}
         >
           Edit Workstudy
         </Link>
       </nav>
 
-      <div>
+      <div className="header-user">
+        <div className="user-name">{DisplayName}</div>
+        <div className="user-avatar">{initials}</div>
         {Session && (
           <button
-            className="btn btn-danger d-flex align-items-center"
+            className="btn btn-ghost"
             onClick={LogOut}
             disabled={Loading}
+            style={{ marginLeft: "0.5rem", padding: "0" }}
+            title="Logout"
           >
-            <img
-              src={logoutImage}
-              alt="Logout"
-              className="me-2"
-              style={{ width: "20px", height: "20px" }}
-            />
-            Logout
+            ↻
           </button>
         )}
       </div>

@@ -111,6 +111,20 @@ export default function Home() {
 
   return (
     <>
+      <div className="page-header">
+        <div className="page-breadcrumb">LSC–CAS › <span>Home</span></div>
+        <h1 className="page-title">Student Support Session Records</h1>
+        <p className="page-desc">Manage and track learning support sessions for students.</p>
+      </div>
+
+      <div className="status-row">
+        <div className="status-dot"></div>
+        <div className="status-text"><strong>Active Records</strong> — Total students registered in the system.</div>
+        <div style={{ marginLeft: "auto" }}>
+          <span className="info-tag">AY 2025–2026</span>
+        </div>
+      </div>
+
       <InputForm
         mode="student"
         studentInput={StudentInput}
@@ -119,15 +133,15 @@ export default function Home() {
         handleStudentSubmit={handleSubmit}
       />
       {Session.user.role === "admin" && (
-        <div className="d-flex justify-content-end mb-3">
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
           {/* Button to extract the table to a csv file */}
           <CSVLink
             data={Students}
             headers={headers}
             filename="Learning Support Center Student Visits.csv"
-            className="btn btn-success"
+            className="btn btn-gold"
           >
-            <img src={exportImage} alt="" />
+            <img src={exportImage} alt="" style={{ width: "16px", marginRight: "0.5rem" }} />
             Export CSV
           </CSVLink>
         </div>
