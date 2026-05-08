@@ -1,6 +1,5 @@
 import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import InputForm from "../components/InputForm";
@@ -33,7 +32,7 @@ export default function WorkStudy() {
   if (error) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
         {error}
@@ -44,18 +43,16 @@ export default function WorkStudy() {
   if (loading) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
-        <Spinner
-          text={AuthLoading ? "Checking Authentication" : "Loading Data"}
-        />
+        {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
   }
 
   if (!Session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   function updateFields(fields: Partial<UserInput>) {
@@ -65,31 +62,31 @@ export default function WorkStudy() {
   return (
     <>
       <InputForm
-        mode="user"
+        mode='user'
         loading={loading}
         updateFields={updateFields}
         handleUserSubmit={handleSubmit}
         userInput={Input}
       />
       <div
-        className="table-responsive"
+        className='table-responsive'
         style={{ maxHeight: "50vh", overflowY: "auto" }}
       >
-        <table className="table table-secondary table-striped table-hover table-bordered text-center align-middle">
-          <thead className="table-light">
-            <tr className="sticky-top">
-              <th scope="col">WorkStudy ID</th>
-              <th scope="col">WorkStudy Name</th>
+        <table className='table table-secondary table-striped table-hover table-bordered text-center align-middle'>
+          <thead className='table-light'>
+            <tr className='sticky-top'>
+              <th scope='col'>WorkStudy ID</th>
+              <th scope='col'>WorkStudy Name</th>
             </tr>
           </thead>
           <tbody>
             {Users.map((user) => {
               return (
-                <tr key={user.id} className="text-center">
-                  <th scope="row">{user.email}</th>
-                  <td className="hover-cell">
-                    <div className="d-flex flex-wrap align-items-center">
-                      <span className="flex-grow-1 text-center">
+                <tr key={user.id} className='text-center'>
+                  <th scope='row'>{user.email}</th>
+                  <td className='hover-cell'>
+                    <div className='d-flex flex-wrap align-items-center'>
+                      <span className='grow text-center'>
                         {user.role}
                       </span>
                     </div>

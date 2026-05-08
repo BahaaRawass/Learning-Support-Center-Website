@@ -2,14 +2,13 @@ import { Navigate } from "react-router-dom";
 import InputForm from "../components/InputForm";
 import Table from "../components/Table";
 import { checkDupes, formatDate } from "../helper/functions";
-import Spinner from "../components/Spinner";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
 import { useStudents } from "../hooks/useStudents";
 import { useState, type SubmitEvent } from "react";
 import { titleCase } from "title-case";
 import { CSVLink } from "react-csv";
-import exportImage from "../assets/Images/file-export_24.png";
+import exportImage from "/Images/file-export_24.png";
 import type { NewStudent, StudentInput } from "../types/students";
 
 export default function Home() {
@@ -75,24 +74,22 @@ export default function Home() {
   if (loading) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
-        <Spinner
-          text={AuthLoading ? "Checking Authentication" : "Loading Data"}
-        />
+        {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
   }
 
   if (!Session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   if (error) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
         {error}
@@ -111,37 +108,48 @@ export default function Home() {
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-breadcrumb">LSC–CAS › <span>Home</span></div>
-        <h1 className="page-title">Student Support Session Records</h1>
-        <p className="page-desc">Manage and track learning support sessions for students.</p>
+      <div className='page-header'>
+        <div className='page-breadcrumb'>
+          LSC–CAS › <span>Home</span>
+        </div>
+        <h1 className='page-title'>Student Support Session Records</h1>
+        <p className='page-desc'>
+          Manage and track learning support sessions for students.
+        </p>
       </div>
 
-      <div className="status-row">
-        <div className="status-dot"></div>
-        <div className="status-text"><strong>Active Records</strong> — Total students registered in the system.</div>
+      <div className='status-row'>
+        <div className='status-dot'></div>
+        <div className='status-text'>
+          <strong>Active Records</strong> — Total students registered in the
+          system.
+        </div>
         <div style={{ marginLeft: "auto" }}>
-          <span className="info-tag">AY 2025–2026</span>
+          <span className='info-tag'>AY 2025–2026</span>
         </div>
       </div>
 
       <InputForm
-        mode="student"
+        mode='student'
         studentInput={StudentInput}
         updateFields={updateFields}
         loading={loading}
         handleStudentSubmit={handleSubmit}
       />
       {Session.user.role === "admin" && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
+        <div className='flex justify-end mb-6'>
           {/* Button to extract the table to a csv file */}
           <CSVLink
             data={Students}
             headers={headers}
-            filename="Learning Support Center Student Visits.csv"
-            className="btn btn-gold"
+            filename='Learning Support Center Student Visits.csv'
+            className='btn btn-gold'
           >
-            <img src={exportImage} alt="" style={{ width: "16px", marginRight: "0.5rem" }} />
+            <img
+              src={exportImage}
+              alt=''
+              style={{ width: "16px", marginRight: "0.5rem" }}
+            />
             Export CSV
           </CSVLink>
         </div>

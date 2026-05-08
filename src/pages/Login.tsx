@@ -1,6 +1,5 @@
 import { useState, type SubmitEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
 import type { LoginInput } from "../types/auth";
@@ -32,57 +31,54 @@ export default function Login() {
 
   if (AuthLoading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "50vh" }}
-      >
-        <Spinner text="Checking Authentication" />
+      <div className='d-flex justify-content-center align-items-center h-[50vh]'>
+        Checking Authentication
       </div>
     );
   }
 
   if (Session) {
-    return <Navigate to="/" replace />;
+    return <Navigate to='/' replace />;
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <div className="card shadow-sm p-4" style={{ width: "350px" }}>
-        <h2 className="text-center mb-4">Login</h2>
+    <div className='d-flex justify-content-center align-items-center min-vh-100'>
+      <div className='card shadow-sm p-4 w-87.5'>
+        <h2 className='text-center mb-4'>Login</h2>
 
         {AuthError && (
-          <div className="alert alert-danger" role="alert">
+          <div className='alert alert-danger' role='alert'>
             {AuthError}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
+          <div className='mb-3'>
+            <label htmlFor='email' className='form-label'>
               Email
             </label>
             <input
               required
-              type="email"
-              id="email"
-              className="form-control"
-              placeholder="Enter your RHU email"
+              type='email'
+              id='email'
+              className='form-control'
+              placeholder='Enter your RHU email'
               onChange={(event) =>
                 setLogin({ ...Login, email: event.target.value })
               }
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
+          <div className='mb-3'>
+            <label htmlFor='password' className='form-label'>
               Password
             </label>
             <input
               required
-              type="password"
-              id="password"
-              className="form-control"
-              placeholder="Enter your password"
+              type='password'
+              id='password'
+              className='form-control'
+              placeholder='Enter your password'
               onChange={(event) =>
                 setLogin({ ...Login, password: event.target.value })
               }
@@ -90,14 +86,14 @@ export default function Login() {
           </div>
 
           <button
-            type="submit"
-            className="btn btn-dark w-100"
+            type='submit'
+            className='btn btn-dark w-100'
             disabled={AuthLoading}
           >
             {AuthLoading ? (
               <>
-                <div className="spinner-border spinner-border-sm" role="status">
-                  <span className="visually-hidden">Loading...</span>
+                <div className='spinner-border spinner-border-sm' role='status'>
+                  <span className='visually-hidden'>Loading...</span>
                 </div>
                 <span>Logging In</span>
               </>
