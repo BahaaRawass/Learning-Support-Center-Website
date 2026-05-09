@@ -1,4 +1,5 @@
 import type { Student } from "../types/students";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 export type TableProps = {
   Students: Student[];
@@ -6,30 +7,30 @@ export type TableProps = {
   isUpdating: number | null;
 };
 
-export default function Table({
+export default function StudentTable({
   Students,
   handleUpdate,
   isUpdating,
 }: TableProps) {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>Student Name</th>
-          <th>Added At</th>
-          <th>Added By</th>
-          <th>Visits</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Student ID</TableHead>
+          <TableHead>Student Name</TableHead>
+          <TableHead>Added At</TableHead>
+          <TableHead>Added By</TableHead>
+          <TableHead>Visits</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {Students.map((student) => (
-          <tr key={student.id} className='text-center'>
-            <th>{student.studentId}</th>
-            <td>{student.studentName}</td>
-            <td>{student.added_at}</td>
-            <td>{student.added_by}</td>
-            <td className='hover-cell'>
+          <TableRow key={student.id} className='text-center'>
+            <TableCell>{student.studentId}</TableCell>
+            <TableCell>{student.studentName}</TableCell>
+            <TableCell>{student.added_at}</TableCell>
+            <TableCell>{student.added_by}</TableCell>
+            <TableCell className='hover-cell'>
               <div className='flex flex-wrap items-center'>
                 <span className='grow text-center'>{student.nb_visits}</span>
                 {isUpdating === student.studentId ? (
@@ -44,10 +45,10 @@ export default function Table({
                   </button>
                 )}
               </div>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

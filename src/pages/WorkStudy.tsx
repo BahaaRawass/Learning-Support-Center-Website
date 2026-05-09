@@ -3,20 +3,52 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import InputForm from "../components/InputForm";
-import type { UserInput } from "../types/users";
+import type { NewUser, UserInput } from "../types/users";
 import { useUsers } from "../hooks/useUsers";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { useDepartments } from "../hooks/useDepartments";
 
 export default function WorkStudy() {
   useDocumentTitle("Workstudy");
 
-  const InitialValue: UserInput = { displayname: "", email: "", password: "" };
+  const InitialValue: UserInput = {
+    displayname: "",
+    email: "",
+    password: "",
+    department_id: NaN,
+    isSupervisor: false,
+  };
 
-  const { Session, Loading: AuthLoading, Error: AuthError, SignUp } = useAuth();
+  const {
+    Session,
+    Loading: AuthLoading,
+    Error: AuthError,
+    SignUp,
+    RestoreSession,
+  } = useAuth();
 
-  const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
+  const {
+    Users,
+    Loading: UsersLoading,
+    Error: UsersError,
+    AddUser,
+  } = useUsers();
 
-  const loading = AuthLoading || UsersLoading;
-  const error = AuthError || UsersError;
+  const {
+    Departments,
+    Loading: DepartmentsLoading,
+    Error: DepartmentsError,
+  } = useDepartments();
+
+  const loading = AuthLoading || UsersLoading || DepartmentsLoading;
+  const error = AuthError || UsersError || DepartmentsError;
 
   const [Input, setInput] = useState<UserInput>(InitialValue);
 
@@ -24,28 +56,40 @@ export default function WorkStudy() {
     event.preventDefault();
     if (loading) return;
 
-    const ok = await SignUp(Input.email, Input.password, Input.displayname);
+    const prevSession = Session;
 
-    if (ok) return setInput(InitialValue);
+    const Auth_confirmed = await SignUp(
+      Input.email,
+      Input.password,
+      Input.displayname,
+      Input.isSupervisor,
+    );
+
+    if (prevSession) await RestoreSession(prevSession);
+
+    const newUser: NewUser = {
+      email: Input.email,
+      display_name: Input.displayname,
+      role: Input.isSupervisor ? "admin" : "workstudy",
+      department_id: Input.department_id,
+    };
+
+    const Insert_confirmed = await AddUser(newUser);
+
+    if (Auth_confirmed && Insert_confirmed) {
+      setInput(InitialValue);
+    }
   }
 
   if (error) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh" }}
-      >
-        {error}
-      </div>
+      <div className='flex justify-center items-center h-[50vh]'>{error}</div>
     );
   }
 
   if (loading) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh" }}
-      >
+      <div className='flex justify-center items-center h-[50vh]'>
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
@@ -67,36 +111,31 @@ export default function WorkStudy() {
         updateFields={updateFields}
         handleUserSubmit={handleSubmit}
         userInput={Input}
+        Departments={Departments}
       />
-      <div
-        className='table-responsive'
-        style={{ maxHeight: "50vh", overflowY: "auto" }}
-      >
-        <table className='table table-secondary table-striped table-hover table-bordered text-center align-middle'>
-          <thead className='table-light'>
-            <tr className='sticky-top'>
-              <th scope='col'>WorkStudy ID</th>
-              <th scope='col'>WorkStudy Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Users.map((user) => {
-              return (
-                <tr key={user.id} className='text-center'>
-                  <th scope='row'>{user.email}</th>
-                  <td className='hover-cell'>
-                    <div className='d-flex flex-wrap align-items-center'>
-                      <span className='grow text-center'>
-                        {user.role}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className='text-left'>WorkStudy Name</TableHead>
+            <TableHead className='text-center'>WorkStudy Email</TableHead>
+            <TableHead className='text-right'>WorkStudy Added At</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Users.map((user) => {
+            return (
+              <TableRow key={user.id}>
+                <TableHead scope='row' className='text-left'>
+                  {user.display_name}
+                </TableHead>
+                <TableCell className='text-center'>{user.email}</TableCell>
+                <TableCell className='text-right'>{user.created_at}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </>
   );
 }

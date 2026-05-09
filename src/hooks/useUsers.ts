@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { supabaseClient } from "../supabase-client";
 import { PostgrestError } from "@supabase/supabase-js";
 import type { Data } from "../types/types";
-import type { User } from "../types/users";
+import type { NewUser, User } from "../types/users";
 
 export function useUsers() {
   const [Users, setUsers] = useState<User[]>([]);
   const [Loading, setLoading] = useState<boolean>(false);
   const [Error, setError] = useState<string>("");
+
+  function resetStates() {
+    setLoading(true);
+    setError("");
+  }
 
   function SetError(error: PostgrestError) {
     const msg = `An Error Occurred: Error Code: ${error.code}\nError Message: ${error.message}`;
@@ -15,23 +20,15 @@ export function useUsers() {
     setLoading(false);
   }
 
-  // console.log(Users);
-
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
-      setError("");
+      resetStates();
 
       const { data, error: FetchError } = (await supabaseClient
         .from("Users")
         .select("*")) as Data<User[]>;
 
-      console.log("data: ", data);
-
-      if (FetchError) {
-        SetError(FetchError);
-        return;
-      }
+      if (FetchError) return SetError(FetchError);
 
       setUsers(data || []);
 
@@ -83,9 +80,45 @@ export function useUsers() {
     };
   }, []);
 
+  async function AddUser(user: NewUser) {
+    resetStates();
+
+    const { error: InsertError } = await supabaseClient
+      .from("Users")
+      .insert(user)
+      .single();
+
+    if (InsertError) {
+      SetError(InsertError);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
+  async function RemoveUser(id: User["id"]) {
+    resetStates();
+
+    const { error: DeleteError } = await supabaseClient
+      .from("Users")
+      .delete()
+      .eq("id", id);
+
+    if (DeleteError) {
+      SetError(DeleteError);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
   return {
     Users,
     Loading,
     Error,
+    AddUser,
+    RemoveUser,
   };
 }

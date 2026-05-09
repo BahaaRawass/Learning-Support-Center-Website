@@ -69,7 +69,12 @@ export function useAuth() {
     return true;
   }
 
-  async function SignUp(email: string, password: string, displayname: string) {
+  async function SignUp(
+    email: string,
+    password: string,
+    displayname: string,
+    isSupervisor: boolean,
+  ) {
     resetSates();
 
     const { error: SignUpError } = await supabaseClient.auth.signUp({
@@ -78,7 +83,7 @@ export function useAuth() {
       options: {
         data: {
           display_name: displayname,
-          role: "workstudy",
+          role: isSupervisor ? "admin" : "workstudy",
         },
       },
     });
@@ -105,5 +110,22 @@ export function useAuth() {
     return true;
   }
 
-  return { Session, Error, Loading, SignInWithPassword, SignUp, SignOut };
+  async function RestoreSession(prevSession: Session) {
+    const { error } = await supabaseClient.auth.setSession(prevSession);
+    if (error) {
+      SetError(error);
+      return false;
+    }
+    return true;
+  }
+
+  return {
+    Session,
+    Error,
+    Loading,
+    SignInWithPassword,
+    SignUp,
+    SignOut,
+    RestoreSession,
+  };
 }
