@@ -7,7 +7,6 @@ const studentsIcon = "/Images/students-icon.svg";
 const visitsIcon = "/Images/visits-icon.svg";
 const staffIcon = "/Images/staff-icon.svg";
 const averageIcon = "/Images/average-icon.svg";
-import "./dashboard.css";
 
 export default function Home() {
   useDocumentTitle("Home");
@@ -20,11 +19,7 @@ export default function Home() {
     Error: StudentsError,
   } = useStudents(Session?.user);
 
-  const {
-    Users,
-    Loading: UsersLoading,
-    Error: UsersError,
-  } = useUsers();
+  const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
 
   const loading = AuthLoading || StudentsLoading || UsersLoading;
   const error = AuthError || StudentsError || UsersError;
@@ -32,7 +27,7 @@ export default function Home() {
   if (loading) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
@@ -41,13 +36,13 @@ export default function Home() {
   }
 
   if (!Session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   if (error) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className='d-flex justify-content-center align-items-center'
         style={{ height: "50vh" }}
       >
         {error}
@@ -59,7 +54,7 @@ export default function Home() {
 
   const totalVisits = Students.reduce(
     (sum, student) => sum + (student.nb_visits || 0),
-    0
+    0,
   );
 
   const totalWorkstudy = Users.length;
@@ -70,68 +65,68 @@ export default function Home() {
   const mostActiveStudent =
     Students.length > 0
       ? Students.reduce((max, student) =>
-          (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max
+          (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max,
         ).studentName
       : "No data";
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-breadcrumb">
+      <div className='page-header'>
+        <div className='page-breadcrumb'>
           LSC–CAS › <span>Home</span>
         </div>
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-desc">
+        <h1 className='page-title'>Dashboard</h1>
+        <p className='page-desc'>
           Overview of support center activity and staff statistics.
         </p>
       </div>
 
-      <div className="dashboard-container">
-        <div className="stat-card">
-          <img src={studentsIcon} alt="Students" className="stat-icon" />
-          <div className="stat-content">
-            <p className="stat-label">Students Visited</p>
-            <p className="stat-value">{totalStudents}</p>
+      <div className='dashboard-container'>
+        <div className='stat-card'>
+          <img src={studentsIcon} alt='Students' className='stat-icon' />
+          <div className='stat-content'>
+            <p className='stat-label'>Students Visited</p>
+            <p className='stat-value'>{totalStudents}</p>
           </div>
         </div>
 
-        <div className="stat-card">
-          <img src={visitsIcon} alt="Visits" className="stat-icon" />
-          <div className="stat-content">
-            <p className="stat-label">Total Visits</p>
-            <p className="stat-value">{totalVisits}</p>
+        <div className='stat-card'>
+          <img src={visitsIcon} alt='Visits' className='stat-icon' />
+          <div className='stat-content'>
+            <p className='stat-label'>Total Visits</p>
+            <p className='stat-value'>{totalVisits}</p>
           </div>
         </div>
 
-        <div className="stat-card">
-          <img src={staffIcon} alt="Staff" className="stat-icon" />
-          <div className="stat-content">
-            <p className="stat-label">WorkStudy Staff</p>
-            <p className="stat-value">{totalWorkstudy}</p>
+        <div className='stat-card'>
+          <img src={staffIcon} alt='Staff' className='stat-icon' />
+          <div className='stat-content'>
+            <p className='stat-label'>WorkStudy Staff</p>
+            <p className='stat-value'>{totalWorkstudy}</p>
           </div>
         </div>
 
-        <div className="stat-card">
-          <img src={averageIcon} alt="Average" className="stat-icon" />
-          <div className="stat-content">
-            <p className="stat-label">Avg. Visits per Student</p>
-            <p className="stat-value">{averageVisits}</p>
+        <div className='stat-card'>
+          <img src={averageIcon} alt='Average' className='stat-icon' />
+          <div className='stat-content'>
+            <p className='stat-label'>Avg. Visits per Student</p>
+            <p className='stat-value'>{averageVisits}</p>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-section">
-        <h2 className="section-title">Quick Stats</h2>
+      <div className='dashboard-section'>
+        <h2 className='section-title'>Quick Stats</h2>
 
-        <div className="stats-grid">
-          <div className="stat-item">
-            <span className="stat-item-label">Most Active Student:</span>
-            <span className="stat-item-value">{mostActiveStudent}</span>
+        <div className='stats-grid'>
+          <div className='stat-item'>
+            <span className='stat-item-label'>Most Active Student:</span>
+            <span className='stat-item-value'>{mostActiveStudent}</span>
           </div>
 
-          <div className="stat-item">
-            <span className="stat-item-label">Registration Period:</span>
-            <span className="stat-item-value">AY 2025–2026</span>
+          <div className='stat-item'>
+            <span className='stat-item-label'>Registration Period:</span>
+            <span className='stat-item-value'>AY 2025–2026</span>
           </div>
         </div>
       </div>

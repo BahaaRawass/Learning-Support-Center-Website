@@ -6,6 +6,14 @@ import InputForm from "../components/InputForm";
 import type { NewUser, UserInput } from "../types/users";
 import { useUsers } from "../hooks/useUsers";
 import { useDepartments } from "../hooks/useDepartments";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
 
 export default function WorkStudy() {
   useDocumentTitle("Workstudy");
@@ -17,6 +25,9 @@ export default function WorkStudy() {
     department_id: NaN,
     isSupervisor: false,
   };
+
+  const [Input, setInput] = useState<UserInput>(InitialValue);
+  const [LocalError, setLocalError] = useState<string>("");
 
   const {
     Session,
@@ -40,9 +51,7 @@ export default function WorkStudy() {
   } = useDepartments();
 
   const loading = AuthLoading || UsersLoading || DepartmentsLoading;
-  const error = AuthError || UsersError || DepartmentsError;
-
-  const [Input, setInput] = useState<UserInput>(InitialValue);
+  const error = AuthError || UsersError || DepartmentsError || LocalError;
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,18 +60,24 @@ export default function WorkStudy() {
 
     const prevSession = Session;
 
-    const Auth_confirmed = await SignUp(
+    const SignUpData = await SignUp(
       Input.email,
       Input.password,
       Input.displayname,
-      Input.isSupervisor
+      Input.isSupervisor,
     );
+
+    if (!SignUpData?.user)
+      return setLocalError("Failed to create account. Please try again.");
+
+    const UserId = SignUpData.user.id;
 
     if (prevSession) {
       await RestoreSession(prevSession);
     }
 
     const newUser: NewUser = {
+      id: UserId,
       email: Input.email,
       display_name: Input.displayname,
       role: Input.isSupervisor ? "admin" : "workstudy",
@@ -71,9 +86,7 @@ export default function WorkStudy() {
 
     const Insert_confirmed = await AddUser(newUser);
 
-    if (Auth_confirmed && Insert_confirmed) {
-      setInput(InitialValue);
-    }
+    if (Insert_confirmed) return setInput(InitialValue);
   }
 
   function updateFields(fields: Partial<UserInput>) {
@@ -82,36 +95,34 @@ export default function WorkStudy() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-[50vh]">
-        {error}
-      </div>
+      <div className='flex justify-center items-center h-[50vh]'>{error}</div>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[50vh]">
+      <div className='flex justify-center items-center h-[50vh]'>
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
   }
 
   if (!Session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-breadcrumb">
+      <div className='page-header'>
+        <div className='page-breadcrumb'>
           LSC–CAS › <span>WorkStudy</span>
         </div>
-        <h1 className="page-title">WorkStudy Management</h1>
-        <p className="page-desc">Manage WorkStudy staff accounts.</p>
+        <h1 className='page-title'>WorkStudy Management</h1>
+        <p className='page-desc'>Manage WorkStudy staff accounts.</p>
       </div>
 
       <InputForm
-        mode="user"
+        mode='user'
         loading={loading}
         updateFields={updateFields}
         handleUserSubmit={handleSubmit}
@@ -129,37 +140,38 @@ export default function WorkStudy() {
             fontWeight: "600",
           }}
         >
-          WorkStudy Staff Accounts
+          Active WorkStudy Accounts 
         </h2>
 
-        <div
-          className="table-responsive"
-          style={{ maxHeight: "50vh", overflowY: "auto" }}
-        >
-          <table className="table table-secondary table-striped table-hover table-bordered text-center align-middle">
-            <thead className="table-light">
-              <tr className="sticky-top">
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
-                <th scope="col">Added At</th>
-              </tr>
-            </thead>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='text-center'>Name</TableHead>
+              <TableHead className='text-center'>Email</TableHead>
+              <TableHead className='text-center'>Role</TableHead>
+              <TableHead className='text-center'>Department</TableHead>
+              <TableHead className='text-center'>Added At</TableHead>
+            </TableRow>
+          </TableHeader>
 
-            <tbody>
-              {Users.map((user) => {
-                return (
-                  <tr key={user.id} className="text-center">
-                    <td>{user.display_name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role || "Staff"}</td>
-                    <td>{user.created_at}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+          <TableBody>
+            {Users.map((user) => {
+              return (
+                <TableRow key={user.id} className='text-center'>
+                  <TableCell>{user.display_name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role || "Staff"}</TableCell>
+                  <TableCell>
+                    {Departments.find(
+                      (department) => department.id === user.department_id,
+                    )?.name || "-"}
+                  </TableCell>
+                  <TableCell>{user.created_at}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import type { Tables } from "./types";
+import type { AsyncSubmitFunction, Tables, UpdateFieldsType } from "./types";
 
 type StudentsTable = Tables["Students"];
 
@@ -7,7 +7,17 @@ export type Student = StudentsTable["Row"];
 export type NewStudent = StudentsTable["Insert"];
 
 export type StudentInput = {
-  email?: Student["email"];
-studentId: Student["studentId"];
   studentName: Student["studentName"];
+  department_id: Student["department_id"];
+  studentId: Student["studentId"];
+  email?: Student["email"];
+};
+
+export type StudentMode = {
+  mode: "student";
+  studentInput: StudentInput;
+  handleStudentSubmit: AsyncSubmitFunction;
+  updateFields: UpdateFieldsType<StudentInput>;
+  userInput?: never;
+  handleUserSubmit?: never;
 };

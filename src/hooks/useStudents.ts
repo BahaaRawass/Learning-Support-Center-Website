@@ -113,7 +113,7 @@ export function useStudents(added_by?: User) {
     return true;
   }
 
-  async function incrementStudentVisits(studentId: number) {
+  async function incrementStudentVisits(studentId: Student["studentId"]) {
     setIsUpdating(studentId);
     setError("");
 

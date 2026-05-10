@@ -24,6 +24,22 @@ export default function SideBar() {
       </Link>
 
       <Link
+        to='/student-records'
+        className={`sidebar-link ${location.pathname === "/student-records" ? "active" : ""}`}
+      >
+        <svg
+          viewBox='0 0 16 16'
+          fill='none'
+          stroke='currentColor'
+          strokeWidth='1.4'
+        >
+          <circle cx='8' cy='6' r='3' />
+          <path d='M3 14c0-3 2.2-5 5-5s5 2 5 5' />
+        </svg>
+        Student Records
+      </Link>
+
+      <Link
         to='/workstudy'
         className={`sidebar-link ${location.pathname === "/workstudy" ? "active" : ""}`}
       >

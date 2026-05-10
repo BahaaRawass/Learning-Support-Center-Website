@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import RHULogo from "/Images/rhu_logo.png";
 
@@ -7,7 +6,6 @@ type ThemeMode = "light" | "dark";
 
 export default function Header() {
   const { Session, SignOut, Loading } = useAuth();
-  const location = useLocation();
 
   const [theme, setTheme] = useState<ThemeMode>(() => {
     return (localStorage.getItem("theme") as ThemeMode) || "light";
@@ -19,9 +17,7 @@ export default function Header() {
   }, [theme]);
 
   function toggleTheme() {
-    setTheme((currentTheme) =>
-      currentTheme === "light" ? "dark" : "light"
-    );
+    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
   }
 
   async function LogOut() {
@@ -42,59 +38,37 @@ export default function Header() {
     .slice(0, 2);
 
   return (
-    <header className="site-header">
-      <div className="header-brand" style={{ position: "relative" }}>
-        <img
-          src={RHULogo}
-          alt="RHU Logo"
-          className="header-logo"
-        />
+    <header className='site-header'>
+      <div className='header-brand' style={{ position: "relative" }}>
+        <img src={RHULogo} alt='RHU Logo' className='header-logo' />
       </div>
 
-      <nav className="header-nav">
-        <Link
-          to="/"
-          className={`nav-item ${location.pathname === "/" ? "active" : ""}`}
-        >
-          Home
-        </Link>
-
-        <Link
-          to="/workstudy"
-          className={`nav-item ${
-            location.pathname === "/workstudy" ? "active" : ""
-          }`}
-        >
-          Edit Workstudy
-        </Link>
-      </nav>
-
       <button
-        type="button"
-        className="theme-toggle"
+        type='button'
+        className='theme-toggle'
         onClick={toggleTheme}
-        aria-label="Toggle theme"
+        aria-label='Toggle theme'
       >
-        <span className="theme-toggle-icon">
+        <span className='theme-toggle-icon'>
           {theme === "light" ? "☾" : "☀"}
         </span>
-        <span className="theme-toggle-label">
+        <span className='theme-toggle-label'>
           {theme === "light" ? "Dark" : "Light"}
         </span>
       </button>
 
-      <div className="header-user">
-        <div className="user-name">{DisplayName}</div>
-        <div className="user-avatar">{initials}</div>
+      <div className='header-user'>
+        <div className='user-name'>{DisplayName}</div>
+        <div className='user-avatar'>{initials}</div>
 
         {Session && (
           <button
-            className="btn btn-ghost"
+            className='btn btn-ghost'
             onClick={LogOut}
             disabled={Loading}
             style={{ marginLeft: "0.5rem", padding: "0" }}
-            title="Logout"
-            type="button"
+            title='Logout'
+            type='button'
           >
             ↻
           </button>

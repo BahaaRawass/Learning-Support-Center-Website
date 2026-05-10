@@ -77,7 +77,7 @@ export function useAuth() {
   ) {
     resetSates();
 
-    const { error: SignUpError } = await supabaseClient.auth.signUp({
+    const { data, error: SignUpError } = await supabaseClient.auth.signUp({
       email,
       password,
       options: {
@@ -90,11 +90,11 @@ export function useAuth() {
 
     if (SignUpError) {
       SetError(SignUpError);
-      return false;
+      return null;
     }
 
     setLoading(false);
-    return true;
+    return data;
   }
 
   async function SignOut() {

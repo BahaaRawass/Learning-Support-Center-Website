@@ -1,4 +1,4 @@
-import type { Tables } from "./types";
+import type { AsyncSubmitFunction, Tables, UpdateFieldsType } from "./types";
 
 type UsersTable = Tables["Users"];
 
@@ -12,4 +12,13 @@ export type UserInput = {
   password: string;
   department_id: User["department_id"];
   isSupervisor: boolean;
+};
+
+export type UserMode = {
+  mode: "user";
+  userInput: UserInput;
+  handleUserSubmit: AsyncSubmitFunction;
+  updateFields: UpdateFieldsType<UserInput>;
+  studentInput?: never;
+  handleStudentSubmit?: never;
 };
