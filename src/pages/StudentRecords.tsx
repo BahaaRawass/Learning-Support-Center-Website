@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import {Spinner} from "../components/ui/spinner";
+import { Spinner } from "../components/ui/spinner";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useStudents } from "../hooks/useStudents";
@@ -33,11 +33,10 @@ export default function StudentRecords() {
     return (
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{ height: "50vh" }}
+        style={{ height: "50vh", gap: "0.5rem" }}
       >
-        <Spinner
-       text={AuthLoading ? "Checking Authentication" : "Loading Data"}
-        />
+        <Spinner className="size-5" />
+        <span>{AuthLoading ? "Checking Authentication" : "Loading Data"}</span>
       </div>
     );
   }
@@ -49,9 +48,14 @@ export default function StudentRecords() {
   return (
     <>
       <div className="page-header">
-        <div className="page-breadcrumb">LSC–CAS › <span>Student Records</span></div>
+        <div className="page-breadcrumb">
+          LSC–CAS › <span>Student Records</span>
+        </div>
         <h1 className="page-title">Student Support Center Visits</h1>
-        <p className="page-desc">Track student visits and support sessions at the Learning Support Center.</p>
+        <p className="page-desc">
+          Track student visits and support sessions at the Learning Support
+          Center.
+        </p>
       </div>
 
       <div
@@ -69,33 +73,50 @@ export default function StudentRecords() {
               <th scope="col">Staff Visited</th>
             </tr>
           </thead>
+
           <tbody>
             {Students.length > 0 ? (
-              Students.map((student) => {
-                return (
-                  <tr key={student.id} className="text-center">
-                    <th scope="row">{student.studentId}</th>
-                    <td>{student.studentName}</td>
-                    <td>{student.email || "—"}</td>
-                    <td>
-                      <span className="badge bg-primary">{student.nb_visits}</span>
-                    </td>
-                    <td>
-                      <span style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-                        —
-                      </span>
-                    </td>
-                    <td>
-                      <span style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-                        —
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })
+              Students.map((student) => (
+                <tr key={student.id} className="text-center">
+                  <th scope="row">{student.studentId}</th>
+                  <td>{student.studentName}</td>
+                  <td>{student.email || "—"}</td>
+                  <td>
+                    <span className="badge bg-primary">
+                      {student.nb_visits || 0}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      style={{
+                        color: "var(--text-muted)",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      —
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      style={{
+                        color: "var(--text-muted)",
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      —
+                    </span>
+                  </td>
+                </tr>
+              ))
             ) : (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center", color: "var(--text-muted)" }}>
+                <td
+                  colSpan={6}
+                  style={{
+                    textAlign: "center",
+                    color: "var(--text-muted)",
+                  }}
+                >
                   No student records found
                 </td>
               </tr>
@@ -104,8 +125,16 @@ export default function StudentRecords() {
         </table>
       </div>
 
-      <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginTop: "1rem", fontStyle: "italic" }}>
-        Note: "Courses Asked About" and "Staff Visited" columns require tracking data to be implemented in the system.
+      <p
+        style={{
+          fontSize: "0.85rem",
+          color: "var(--text-muted)",
+          marginTop: "1rem",
+          fontStyle: "italic",
+        }}
+      >
+        Note: "Courses Asked About" and "Staff Visited" columns require tracking
+        data to be implemented in the system.
       </p>
     </>
   );
