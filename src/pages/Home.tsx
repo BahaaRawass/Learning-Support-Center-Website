@@ -1,15 +1,13 @@
 import { Navigate } from "react-router-dom";
-import InputForm from "../components/InputForm";
-import Table from "../components/Table";
-import { checkDupes, formatDate } from "../helper/functions";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useAuth } from "../hooks/useAuth";
 import { useStudents } from "../hooks/useStudents";
-import { useState, type SubmitEvent } from "react";
-import { titleCase } from "title-case";
-import { CSVLink } from "react-csv";
-import exportImage from "/Images/file-export_24.png";
-import type { NewStudent, StudentInput } from "../types/students";
+import { useUsers } from "../hooks/useUsers";
+const studentsIcon = "/Images/students-icon.svg";
+const visitsIcon = "/Images/visits-icon.svg";
+const staffIcon = "/Images/staff-icon.svg";
+const averageIcon = "/Images/average-icon.svg";
+import "./dashboard.css";
 
 export default function Home() {
   useDocumentTitle("Home");
@@ -20,61 +18,21 @@ export default function Home() {
     Students,
     Loading: StudentsLoading,
     Error: StudentsError,
-    addStudent,
-    incrementStudentVisits,
-    isUpdating,
   } = useStudents(Session?.user);
 
-  const InitialValue: StudentInput = {
-    studentName: "",
-    studentId: NaN,
-    email: "",
-  };
+  const {
+    Users,
+    Loading: UsersLoading,
+    Error: UsersError,
+  } = useUsers();
 
-  const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
-
-  function updateFields(fields: Partial<StudentInput>) {
-    setStudentInput((prev) => ({ ...prev, ...fields }));
-  }
-
-  const loading = AuthLoading || StudentsLoading;
-  const error = AuthError || StudentsError;
-
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!Session || loading) return;
-
-    if (checkDupes(Students, StudentInput)) {
-      alert("the ID  or email already exists!!");
-      return;
-    }
-
-    const newStudent: NewStudent = {
-      id: crypto.randomUUID(),
-      studentId: StudentInput.studentId,
-      studentName: titleCase(StudentInput.studentName),
-      email: StudentInput.email,
-      added_at: formatDate(),
-      added_by: Session.user.id,
-      nb_visits: 1,
-    };
-
-    const ok = await addStudent(newStudent);
-
-    if (ok) setStudentInput(InitialValue);
-  }
-
-  async function handleUpdate(studentId: number) {
-    if (isUpdating) return;
-
-    await incrementStudentVisits(studentId);
-  }
+  const loading = AuthLoading || StudentsLoading || UsersLoading;
+  const error = AuthError || StudentsError || UsersError;
 
   if (loading) {
     return (
       <div
-        className='d-flex justify-content-center align-items-center'
+        className="d-flex justify-content-center align-items-center"
         style={{ height: "50vh" }}
       >
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
@@ -83,13 +41,13 @@ export default function Home() {
   }
 
   if (!Session) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (error) {
     return (
       <div
-        className='d-flex justify-content-center align-items-center'
+        className="d-flex justify-content-center align-items-center"
         style={{ height: "50vh" }}
       >
         {error}
@@ -97,68 +55,86 @@ export default function Home() {
     );
   }
 
-  const headers = [
-    { label: "Student ID", key: "studentId" },
-    { label: "Student Name", key: "studentName" },
-    { label: "Student Email", key: "email" },
-    { label: "Added At", key: "added_at" },
-    { label: "Added By", key: "added_by" },
-    { label: "Visits", key: "nb_visits" },
-  ];
+  const totalStudents = Students.length;
+
+  const totalVisits = Students.reduce(
+    (sum, student) => sum + (student.nb_visits || 0),
+    0
+  );
+
+  const totalWorkstudy = Users.length;
+
+  const averageVisits =
+    totalStudents > 0 ? (totalVisits / totalStudents).toFixed(1) : "0";
+
+  const mostActiveStudent =
+    Students.length > 0
+      ? Students.reduce((max, student) =>
+          (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max
+        ).studentName
+      : "No data";
 
   return (
     <>
-      <div className='page-header'>
-        <div className='page-breadcrumb'>
+      <div className="page-header">
+        <div className="page-breadcrumb">
           LSC–CAS › <span>Home</span>
         </div>
-        <h1 className='page-title'>Student Support Session Records</h1>
-        <p className='page-desc'>
-          Manage and track learning support sessions for students.
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-desc">
+          Overview of support center activity and staff statistics.
         </p>
       </div>
 
-      <div className='status-row'>
-        <div className='status-dot'></div>
-        <div className='status-text'>
-          <strong>Active Records</strong> — Total students registered in the
-          system.
+      <div className="dashboard-container">
+        <div className="stat-card">
+          <img src={studentsIcon} alt="Students" className="stat-icon" />
+          <div className="stat-content">
+            <p className="stat-label">Students Visited</p>
+            <p className="stat-value">{totalStudents}</p>
+          </div>
         </div>
-        <div style={{ marginLeft: "auto" }}>
-          <span className='info-tag'>AY 2025–2026</span>
+
+        <div className="stat-card">
+          <img src={visitsIcon} alt="Visits" className="stat-icon" />
+          <div className="stat-content">
+            <p className="stat-label">Total Visits</p>
+            <p className="stat-value">{totalVisits}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <img src={staffIcon} alt="Staff" className="stat-icon" />
+          <div className="stat-content">
+            <p className="stat-label">WorkStudy Staff</p>
+            <p className="stat-value">{totalWorkstudy}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <img src={averageIcon} alt="Average" className="stat-icon" />
+          <div className="stat-content">
+            <p className="stat-label">Avg. Visits per Student</p>
+            <p className="stat-value">{averageVisits}</p>
+          </div>
         </div>
       </div>
 
-      <InputForm
-        mode='student'
-        studentInput={StudentInput}
-        updateFields={updateFields}
-        loading={loading}
-        handleStudentSubmit={handleSubmit}
-      />
-      {Session.user.role === "admin" && (
-        <div className='flex justify-end mb-6'>
-          {/* Button to extract the table to a csv file */}
-          <CSVLink
-            data={Students}
-            headers={headers}
-            filename='Learning Support Center Student Visits.csv'
-            className='btn btn-gold'
-          >
-            <img
-              src={exportImage}
-              alt=''
-              style={{ width: "16px", marginRight: "0.5rem" }}
-            />
-            Export CSV
-          </CSVLink>
+      <div className="dashboard-section">
+        <h2 className="section-title">Quick Stats</h2>
+
+        <div className="stats-grid">
+          <div className="stat-item">
+            <span className="stat-item-label">Most Active Student:</span>
+            <span className="stat-item-value">{mostActiveStudent}</span>
+          </div>
+
+          <div className="stat-item">
+            <span className="stat-item-label">Registration Period:</span>
+            <span className="stat-item-value">AY 2025–2026</span>
+          </div>
         </div>
-      )}
-      <Table
-        Students={Students}
-        handleUpdate={handleUpdate}
-        isUpdating={isUpdating}
-      />
+      </div>
     </>
   );
 }

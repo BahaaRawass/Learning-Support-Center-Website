@@ -5,14 +5,6 @@ import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import InputForm from "../components/InputForm";
 import type { NewUser, UserInput } from "../types/users";
 import { useUsers } from "../hooks/useUsers";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table";
 import { useDepartments } from "../hooks/useDepartments";
 
 export default function WorkStudy() {
@@ -54,6 +46,7 @@ export default function WorkStudy() {
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+
     if (loading) return;
 
     const prevSession = Session;
@@ -62,10 +55,12 @@ export default function WorkStudy() {
       Input.email,
       Input.password,
       Input.displayname,
-      Input.isSupervisor,
+      Input.isSupervisor
     );
 
-    if (prevSession) await RestoreSession(prevSession);
+    if (prevSession) {
+      await RestoreSession(prevSession);
+    }
 
     const newUser: NewUser = {
       email: Input.email,
@@ -81,32 +76,42 @@ export default function WorkStudy() {
     }
   }
 
+  function updateFields(fields: Partial<UserInput>) {
+    setInput((prev) => ({ ...prev, ...fields }));
+  }
+
   if (error) {
     return (
-      <div className='flex justify-center items-center h-[50vh]'>{error}</div>
+      <div className="flex justify-center items-center h-[50vh]">
+        {error}
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <div className='flex justify-center items-center h-[50vh]'>
+      <div className="flex justify-center items-center h-[50vh]">
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
   }
 
   if (!Session) {
-    return <Navigate to='/login' replace />;
-  }
-
-  function updateFields(fields: Partial<UserInput>) {
-    setInput((prev) => ({ ...prev, ...fields }));
+    return <Navigate to="/login" replace />;
   }
 
   return (
     <>
+      <div className="page-header">
+        <div className="page-breadcrumb">
+          LSC–CAS › <span>WorkStudy</span>
+        </div>
+        <h1 className="page-title">WorkStudy Management</h1>
+        <p className="page-desc">Manage WorkStudy staff accounts.</p>
+      </div>
+
       <InputForm
-        mode='user'
+        mode="user"
         loading={loading}
         updateFields={updateFields}
         handleUserSubmit={handleSubmit}
@@ -114,28 +119,48 @@ export default function WorkStudy() {
         Departments={Departments}
       />
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className='text-left'>WorkStudy Name</TableHead>
-            <TableHead className='text-center'>WorkStudy Email</TableHead>
-            <TableHead className='text-right'>WorkStudy Added At</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {Users.map((user) => {
-            return (
-              <TableRow key={user.id}>
-                <TableHead scope='row' className='text-left'>
-                  {user.display_name}
-                </TableHead>
-                <TableCell className='text-center'>{user.email}</TableCell>
-                <TableCell className='text-right'>{user.created_at}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      <div style={{ marginTop: "2rem" }}>
+        <h2
+          style={{
+            fontSize: "1.25rem",
+            color: "var(--navy)",
+            marginBottom: "1rem",
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: "600",
+          }}
+        >
+          WorkStudy Staff Accounts
+        </h2>
+
+        <div
+          className="table-responsive"
+          style={{ maxHeight: "50vh", overflowY: "auto" }}
+        >
+          <table className="table table-secondary table-striped table-hover table-bordered text-center align-middle">
+            <thead className="table-light">
+              <tr className="sticky-top">
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Added At</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {Users.map((user) => {
+                return (
+                  <tr key={user.id} className="text-center">
+                    <td>{user.display_name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.role || "Staff"}</td>
+                    <td>{user.created_at}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </>
   );
 }
