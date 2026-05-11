@@ -1,6 +1,7 @@
 import { AuthError, PostgrestError, type Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../supabase-client";
+import type { Department } from "../types/department";
 
 export function useAuth() {
   const [Session, setSession] = useState<Session | null>(null);
@@ -74,6 +75,7 @@ export function useAuth() {
     password: string,
     displayname: string,
     isSupervisor: boolean,
+    department_id: Department["id"],
   ) {
     resetSates();
 
@@ -84,6 +86,7 @@ export function useAuth() {
         data: {
           display_name: displayname,
           role: isSupervisor ? "admin" : "workstudy",
+          department_id: department_id,
         },
       },
     });

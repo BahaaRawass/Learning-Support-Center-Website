@@ -75,6 +75,7 @@ export default function WorkStudy() {
       Input.password,
       Input.displayname,
       Input.isSupervisor,
+      Input.department_id
     );
 
     if (!SignUpData?.user)
