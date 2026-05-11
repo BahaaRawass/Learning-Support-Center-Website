@@ -31,9 +31,12 @@ export function useStudents(added_by?: User) {
       setLoading(true);
       setError("");
 
-      let query = supabaseClient.from("Students").select("*");
+      let query = supabaseClient
+        .from("Students")
+        .select("*")
+        .eq("department_id", added_by.user_metadata.department_id);
 
-    if (added_by.user_metadata.role !== "admin")
+      if (added_by.user_metadata.role !== "admin")
         query = query.eq("added_by", added_by.id);
 
       const { data, error: FetchError } = (await query) as Data<Student[]>;
