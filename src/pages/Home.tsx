@@ -62,12 +62,9 @@ export default function Home() {
   const averageVisits =
     totalStudents > 0 ? (totalVisits / totalStudents).toFixed(1) : "0";
 
-  const mostActiveStudent =
-    Students.length > 0
-      ? Students.reduce((max, student) =>
-          (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max,
-        ).studentName
-      : "No data";
+  const mostActiveStudent = Students.reduce((max, student) =>
+    (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max,
+  );
 
   return (
     <>
@@ -123,12 +120,16 @@ export default function Home() {
         <div className='stats-grid'>
           <div className='stat-item'>
             <span className='stat-item-label'>Most Active Student:</span>
-            <span className='stat-item-value'>{mostActiveStudent}</span>
+            <span className='stat-item-value'>
+              {mostActiveStudent.studentName || "No Data"}
+            </span>
           </div>
 
           <div className='stat-item'>
-            <span className='stat-item-label'>Registration Period:</span>
-            <span className='stat-item-value'>AY 2025–2026</span>
+            <span className='stat-item-label'>Registration Date:</span>
+            <span className='stat-item-value'>
+              {mostActiveStudent.added_at || "No Data"}
+            </span>
           </div>
         </div>
       </div>
