@@ -98,13 +98,15 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='stat-card'>
-          <img src={staffIcon} alt='Staff' className='stat-icon' />
-          <div className='stat-content'>
-            <p className='stat-label'>WorkStudy Staff</p>
-            <p className='stat-value'>{totalWorkstudy}</p>
+        {Session.user.user_metadata.role === "admin" && (
+          <div className='stat-card'>
+            <img src={staffIcon} alt='Staff' className='stat-icon' />
+            <div className='stat-content'>
+              <p className='stat-label'>WorkStudy Staff</p>
+              <p className='stat-value'>{totalWorkstudy}</p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className='stat-card'>
           <img src={averageIcon} alt='Average' className='stat-icon' />
