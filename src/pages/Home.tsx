@@ -52,19 +52,22 @@ export default function Home() {
 
   const totalStudents = Students.length;
 
-  const totalVisits = Students.reduce(
-    (sum, student) => sum + (student.nb_visits || 0),
-    0,
-  );
+  const totalVisits =
+    Students && Students.length > 0
+      ? Students.reduce((sum, student) => sum + (student.nb_visits || 0), 0)
+      : 0;
 
   const totalWorkstudy = Users.length;
 
   const averageVisits =
     totalStudents > 0 ? (totalVisits / totalStudents).toFixed(1) : "0";
 
-  const mostActiveStudent = Students.reduce((max, student) =>
-    (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max,
-  );
+  const mostActiveStudent =
+    Students && Students.length > 0
+      ? Students.reduce((max, student) =>
+          (student.nb_visits || 0) > (max.nb_visits || 0) ? student : max,
+        )
+      : null;
 
   return (
     <>
@@ -121,14 +124,14 @@ export default function Home() {
           <div className='stat-item'>
             <span className='stat-item-label'>Most Active Student:</span>
             <span className='stat-item-value'>
-              {mostActiveStudent.studentName || "No Data"}
+              {mostActiveStudent?.studentName || "No Data"}
             </span>
           </div>
 
           <div className='stat-item'>
             <span className='stat-item-label'>Registration Date:</span>
             <span className='stat-item-value'>
-              {mostActiveStudent.added_at || "No Data"}
+              {mostActiveStudent?.added_at || "No Data"}
             </span>
           </div>
         </div>

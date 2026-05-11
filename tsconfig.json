@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "types": ["deno"],
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {

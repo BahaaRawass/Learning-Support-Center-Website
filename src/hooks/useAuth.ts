@@ -1,7 +1,16 @@
-import { AuthError, PostgrestError, type Session } from "@supabase/supabase-js";
+import {
+  AuthError,
+  PostgrestError,
+  type Session,
+  type User,
+} from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../supabase-client";
 import type { Department } from "../types/department";
+import { invokeFunction } from "../lib/invokeFunction";
+import type { EdgeFunctionError } from "../lib/functions.types";
+
+type Error = PostgrestError | AuthError | EdgeFunctionError;
 
 export function useAuth() {
   const [Session, setSession] = useState<Session | null>(null);
@@ -15,8 +24,8 @@ export function useAuth() {
   }
 
   // Helper function to set the error
-  function SetError(error: PostgrestError | AuthError) {
-    const msg = `Failed to fetch Session. Error Code: ${error.code}\nError message: ${error.message}`;
+  function SetError(error: Error) {
+    const msg = `Failed to fetch Session.\n Error Code: ${error.code}.\n Error message: ${error.message}`;
     console.error(msg);
     setError(msg);
     setLoading(false);
@@ -79,17 +88,11 @@ export function useAuth() {
   ) {
     resetSates();
 
-    const { data, error: SignUpError } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: displayname,
-          role: isSupervisor ? "admin" : "workstudy",
-          department_id: department_id,
-        },
-      },
-    });
+    const { data, error: SignUpError } = await invokeFunction(
+      supabaseClient,
+      "createUser",
+      { email, password, displayname, isSupervisor, department_id },
+    );
 
     if (SignUpError) {
       SetError(SignUpError);
@@ -122,6 +125,31 @@ export function useAuth() {
     return true;
   }
 
+  async function DeleteUser(id: User["id"]) {
+    resetSates();
+
+    const { error } = await invokeFunction(supabaseClient, "deleteUser", {
+      userId: id,
+    });
+    if (error) {
+      SetError(error);
+      return false;
+    }
+    return true;
+  }
+
+  async function DeleteNonAdminUsers() {
+    resetSates();
+
+    const DeletionSummary = await invokeFunction(
+      supabaseClient,
+      "deleteAllNonAdminUsers",
+      {},
+    );
+
+    return DeletionSummary;
+  }
+
   return {
     Session,
     Error,
@@ -130,5 +158,7 @@ export function useAuth() {
     SignUp,
     SignOut,
     RestoreSession,
+    DeleteUser,
+    DeleteNonAdminUsers,
   };
 }

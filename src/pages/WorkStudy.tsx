@@ -44,6 +44,7 @@ export default function WorkStudy() {
     Error: AuthError,
     SignUp,
     RestoreSession,
+    DeleteUser,
   } = useAuth();
 
   const {
@@ -51,7 +52,6 @@ export default function WorkStudy() {
     Loading: UsersLoading,
     Error: UsersError,
     AddUser,
-    RemoveUser,
   } = useUsers();
 
   const {
@@ -75,7 +75,7 @@ export default function WorkStudy() {
       Input.password,
       Input.displayname,
       Input.isSupervisor,
-      Input.department_id
+      Input.department_id,
     );
 
     if (!SignUpData?.user)
@@ -123,7 +123,7 @@ export default function WorkStudy() {
   }
 
   async function handleDelete(id: User["id"]) {
-    const ok = await RemoveUser(id);
+    const ok = await DeleteUser(id);
 
     if (!ok) {
       setLocalError("Failed to remove user. Please try again.");
@@ -188,9 +188,7 @@ export default function WorkStudy() {
                       {user.display_name}
                     </TableCell>
                     <TableCell className='text-center'>{user.email}</TableCell>
-                    <TableCell className='text-center'>
-                      {user.role}
-                    </TableCell>
+                    <TableCell className='text-center'>{user.role}</TableCell>
                     <TableCell className='text-center'>
                       {Departments.find(
                         (department) => department.id === user.department_id,
