@@ -1,8 +1,8 @@
 import type { Student, StudentInput } from "../types/students";
 
 // Formatting the Date to this format: Day, Month, Year at HH:MM AM/PM
-export function formatDate() {
-  return new Date().toLocaleString("en-LB", {
+export function formatDate(date?: string) {
+  return new Date(date || "").toLocaleString("en-LB", {
     timeZone: "Asia/Beirut",
     weekday: "long",
     year: "numeric",

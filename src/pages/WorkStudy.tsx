@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import InputForm from "../components/InputForm";
-import type { NewUser, UserInput } from "../types/users";
+import type { NewUser, User, UserInput } from "../types/users";
 import { useUsers } from "../hooks/useUsers";
 import { useDepartments } from "../hooks/useDepartments";
 import {
@@ -14,6 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import { Button } from "../components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import { MoreHorizontalIcon } from "lucide-react";
+import { formatDate } from "../helper/functions";
 
 export default function WorkStudy() {
   useDocumentTitle("Workstudy");
@@ -42,6 +51,7 @@ export default function WorkStudy() {
     Loading: UsersLoading,
     Error: UsersError,
     AddUser,
+    RemoveUser,
   } = useUsers();
 
   const {
@@ -111,6 +121,14 @@ export default function WorkStudy() {
     return <Navigate to='/login' replace />;
   }
 
+  async function handleDelete(id: User["id"]) {
+    const ok = await RemoveUser(id);
+
+    if (!ok) {
+      setLocalError("Failed to remove user. Please try again.");
+    }
+  }
+
   return (
     <>
       <div className='page-header'>
@@ -147,30 +165,72 @@ export default function WorkStudy() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className='text-center'></TableHead>
               <TableHead className='text-center'>Name</TableHead>
               <TableHead className='text-center'>Email</TableHead>
               <TableHead className='text-center'>Role</TableHead>
               <TableHead className='text-center'>Department</TableHead>
               <TableHead className='text-center'>Added At</TableHead>
+              <TableHead className='text-center'>Actions</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {Users.map((user) => {
-              return (
-                <TableRow key={user.id} className='text-center'>
-                  <TableCell>{user.display_name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role || "Staff"}</TableCell>
-                  <TableCell>
-                    {Departments.find(
-                      (department) => department.id === user.department_id,
-                    )?.name || "-"}
-                  </TableCell>
-                  <TableCell>{user.created_at}</TableCell>
-                </TableRow>
-              );
-            })}
+            {Users.length > 0 ? (
+              Users.map((user, index) => {
+                if (user.id === Session.user.id) return null;
+
+                return (
+                  <TableRow key={user.id}>
+                    <TableHead className='text-center'>{index + 1}</TableHead>
+                    <TableCell className='text-center'>
+                      {user.display_name}
+                    </TableCell>
+                    <TableCell className='text-center'>{user.email}</TableCell>
+                    <TableCell className='text-center'>
+                      {user.role}
+                    </TableCell>
+                    <TableCell className='text-center'>
+                      {Departments.find(
+                        (department) => department.id === user.department_id,
+                      )?.name || "—"}
+                    </TableCell>
+                    <TableCell className='text-center'>
+                      {formatDate(user.created_at)}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild className='cursor-pointer'>
+                          <Button variant='secondary'>
+                            <MoreHorizontalIcon />
+                            <span className='sr-only'>Open Menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align='center'
+                          className='focus:bg-none w-full'
+                        >
+                          <DropdownMenuItem variant='destructive'>
+                            <Button
+                              variant='destructive'
+                              onClick={() => handleDelete(user.id)}
+                            >
+                              Remove
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} className='text-center text-muted'>
+                  No workstudy accounts found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
