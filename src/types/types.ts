@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction, SubmitEvent } from "react";
 import type { Database } from "../../database.types";
 import type { UserMode } from "./users";
 import type { Department } from "./department";
-import type { StudentMode } from "./students";
+import type { Student, StudentMode } from "./students";
 
 export type UpdaterFunction<T> = Dispatch<SetStateAction<T>>;
 
@@ -27,4 +27,10 @@ export type Data<T> =
 export type InputFormProps = {
   loading: boolean;
   Departments: Department[];
+  formError: string;
 } & (StudentMode | UserMode);
+
+export type ErrorNotice = {
+  id: Student["studentId"];
+  message: string;
+};

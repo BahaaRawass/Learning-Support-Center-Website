@@ -14,6 +14,7 @@ export function useStudents(added_by?: User) {
 
   function ResetStates() {
     setLoading(false);
+    setIsUpdating(null);
     setError("");
   }
 
@@ -161,6 +162,43 @@ export function useStudents(added_by?: User) {
     return true;
   }
 
+  async function UpdateStudent(
+    id: Student["studentId"],
+    updatedStudent: Partial<Student>,
+  ) {
+    ResetStates();
+
+    const { error: UpdateError } = await supabaseClient
+      .from("Students")
+      .update(updatedStudent)
+      .eq("studentId", id);
+
+    if (UpdateError) {
+      SetError(UpdateError);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
+  async function DeleteStudent(id: Student["studentId"]) {
+    ResetStates();
+
+    const { error: DeleteError } = await supabaseClient
+      .from("Students")
+      .delete()
+      .eq("studentId", id);
+
+    if (DeleteError) {
+      SetError(DeleteError);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
   return {
     Students,
     Loading,
@@ -169,5 +207,7 @@ export function useStudents(added_by?: User) {
     incrementStudentVisits,
     isUpdating,
     ClearStudents,
+    UpdateStudent,
+    DeleteStudent,
   };
 }

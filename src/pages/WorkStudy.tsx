@@ -128,6 +128,7 @@ export default function WorkStudy() {
         handleUserSubmit={handleSubmit}
         userInput={Input}
         Departments={Departments}
+        formError={error}
       />
 
       <div style={{ marginTop: "2rem" }}>
@@ -140,7 +141,7 @@ export default function WorkStudy() {
             fontWeight: "600",
           }}
         >
-          Active WorkStudy Accounts 
+          Active WorkStudy Accounts
         </h2>
 
         <Table>

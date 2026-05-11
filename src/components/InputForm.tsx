@@ -7,9 +7,9 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
-  FieldSeparator,
   FieldSet,
   FieldTitle,
+  FieldError,
 } from "../components/ui/field";
 
 import {
@@ -37,6 +37,7 @@ export default function InputForm({
   userInput,
   updateFields,
   Departments,
+  formError,
 }: InputFormProps) {
   const isStudent = mode === "student";
 
@@ -46,8 +47,6 @@ export default function InputForm({
     ? "Register a new student to track their support center visits"
     : "Create a new WorkStudy account";
 
-  console.log(userInput?.isSupervisor);
-
   return (
     <FieldSet className='form-card &>*:block!'>
       <FieldGroup className='form-card-header gold'>
@@ -56,6 +55,8 @@ export default function InputForm({
           {description}
         </FieldDescription>
       </FieldGroup>
+
+      {formError && <FieldError>{formError}</FieldError>}
 
       <FieldGroup className='form-body'>
         <form onSubmit={isStudent ? handleStudentSubmit : handleUserSubmit}>
@@ -80,6 +81,9 @@ export default function InputForm({
                   <FieldDescription>
                     Enter the full name of the student.
                   </FieldDescription>
+                  {!studentInput.studentName && (
+                    <FieldError>Student name is required.</FieldError>
+                  )}
                 </Field>
 
                 <Field className='field'>
@@ -104,26 +108,31 @@ export default function InputForm({
                     }
                   />
                   <FieldDescription>Enter the student ID</FieldDescription>
+                  {!studentInput.studentId && (
+                    <FieldError>Student ID is required.</FieldError>
+                  )}
                 </Field>
 
                 <Field className='field'>
                   <FieldLabel htmlFor='studentEmail'>Student Email</FieldLabel>
 
                   <Input
-                    required
                     type='email'
                     id='studentEmail'
-                    placeholder='john.doe@students.rhu.edu'
+                    placeholder='johndoe@students.rhu.edu.lb'
                     value={studentInput.email || ""}
                     onChange={(event) =>
                       updateFields({ email: event.target.value })
                     }
                   />
                   <FieldDescription>
-                    Enter the student's email address
-                    <FieldSeparator />
+                    Enter the student's email address.
+                    <br />
                     Optional
                   </FieldDescription>
+                  {!studentInput.email && (
+                    <FieldError>Enter a valid email address.</FieldError>
+                  )}
                 </Field>
 
                 <Field className='field'>
@@ -160,6 +169,9 @@ export default function InputForm({
                   <FieldDescription>
                     Enter the student's department
                   </FieldDescription>
+                  {!studentInput.department_id && (
+                    <FieldError>Student department is required.</FieldError>
+                  )}
                 </Field>
               </>
             )}
@@ -175,12 +187,19 @@ export default function InputForm({
                     required
                     type='text'
                     id='displayname'
-                    placeholder='Jane Smith'
+                    placeholder='John Doe'
                     value={userInput.displayname}
                     onChange={(event) =>
                       updateFields({ displayname: event.target.value })
                     }
                   />
+                  <FieldDescription>
+                    Enter the full name of the
+                    {userInput.isSupervisor ? "supervisor" : "workstudy "}.
+                  </FieldDescription>
+                  {!userInput.displayname && (
+                    <FieldError>Display name is required.</FieldError>
+                  )}
                 </Field>
 
                 <Field className='field'>
@@ -192,12 +211,18 @@ export default function InputForm({
                     required
                     type='email'
                     id='email'
-                    placeholder='jane@example.com'
+                    placeholder='johndoe@students.rhu.edu.lb'
                     value={userInput.email}
                     onChange={(event) =>
                       updateFields({ email: event.target.value })
                     }
                   />
+                  <FieldDescription>
+                    Enter the email address for this account
+                  </FieldDescription>
+                  {!userInput.email && (
+                    <FieldError>Email is required.</FieldError>
+                  )}
                 </Field>
 
                 <Field className='field'>
@@ -214,6 +239,15 @@ export default function InputForm({
                     }
                     className='pr-10'
                   />
+                  <FieldDescription>
+                    Enter a password for this account. Must be at least 6
+                    characters.
+                  </FieldDescription>
+                  {!userInput.password && (
+                    <FieldError>
+                      Password is required. Must be at least 6 characters.
+                    </FieldError>
+                  )}
                 </Field>
 
                 <FieldGroup>
@@ -281,6 +315,13 @@ export default function InputForm({
                         : "workstudy"}
                     's department
                   </FieldDescription>
+                  {!userInput.department_id && (
+                    <FieldError>
+                      {userInput.isSupervisor
+                        ? "Supervisor department is required."
+                        : "WorkStudy department is required."}
+                    </FieldError>
+                  )}
                 </Field>
               </>
             )}

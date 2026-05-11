@@ -4,11 +4,12 @@ import { useAuth } from "../hooks/useAuth";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useStudents } from "../hooks/useStudents";
 import StudentTable from "../components/StudentTable";
-import type { Student, StudentInput } from "../types/students";
+import type { NewStudent, StudentInput } from "../types/students";
 import InputForm from "../components/InputForm";
 import { useDepartments } from "../hooks/useDepartments";
 import { useState, type SubmitEvent } from "react";
 import { useUsers } from "../hooks/useUsers";
+import { checkDupes, formatDate } from "../helper/functions";
 
 export default function StudentRecords() {
   useDocumentTitle("Student Records");
@@ -21,6 +22,7 @@ export default function StudentRecords() {
   };
 
   const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
+  const [LocalError, setLocalError] = useState<string>("");
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
 
@@ -30,6 +32,9 @@ export default function StudentRecords() {
     Error: StudentsError,
     incrementStudentVisits,
     isUpdating,
+    addStudent,
+    UpdateStudent,
+    DeleteStudent,
   } = useStudents(Session?.user);
 
   const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
@@ -42,9 +47,10 @@ export default function StudentRecords() {
 
   const loading =
     AuthLoading || StudentsLoading || DepartmentsLoading || UsersLoading;
-  const error = AuthError || StudentsError || DepartmentsError || UsersError;
+  const error =
+    AuthError || StudentsError || DepartmentsError || UsersError || LocalError;
 
-  if (error) {
+  if (error && !LocalError) {
     return (
       <div
         className='d-flex justify-content-center align-items-center'
@@ -71,13 +77,31 @@ export default function StudentRecords() {
     return <Navigate to='/login' replace />;
   }
 
-  async function handleUpdate(id: Student["studentId"]) {
-    // TODO: Implement Loading and Error Handling for this function
-    await incrementStudentVisits(id);
-  }
-
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (loading || !Session) return;
+
+    if (checkDupes(Students, StudentInput))
+      return setLocalError("A student with this ID or email already exists.");
+
+    const newStudent: NewStudent = {
+      studentName: StudentInput.studentName,
+      studentId: StudentInput.studentId,
+      email: StudentInput.email,
+      department_id: StudentInput.department_id,
+      added_at: formatDate(),
+      added_by: Session.user.id,
+      nb_visits: 1,
+    };
+
+    const ok = await addStudent(newStudent);
+
+    if (ok) {
+      setStudentInput(InitialValue);
+      setLocalError("");
+    } else {
+      setLocalError("Failed to add student. Please try again.");
+    }
   }
 
   function UpdateFields(fields: Partial<StudentInput>) {
@@ -104,13 +128,16 @@ export default function StudentRecords() {
         updateFields={UpdateFields}
         Departments={Departments}
         loading={loading}
+        formError={error}
       />
 
       <StudentTable
         Students={Students}
         Users={Users}
         Departments={Departments}
-        handleUpdate={handleUpdate}
+        IncrementVisits={incrementStudentVisits}
+        UpdateStudent={UpdateStudent}
+        DeleteStudent={DeleteStudent}
         isUpdating={isUpdating}
       />
     </>
