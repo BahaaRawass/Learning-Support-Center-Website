@@ -1,7 +1,19 @@
 import InputForm from "@/components/InputForm";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
@@ -50,7 +62,7 @@ export default function WorkStudy() {
     Error: DepartmentsError,
   } = useDepartments();
 
-  const { settings } = useSettings();
+  const { Settings } = useSettings();
 
   const loading = AuthLoading || UsersLoading || DepartmentsLoading;
   const error = AuthError || UsersError || DepartmentsError || LocalError;
@@ -134,7 +146,7 @@ export default function WorkStudy() {
 
     exportData(
       exportData_formatted,
-      settings.exportFormat as "csv" | "excel",
+      Settings.exportFormat as "csv" | "excel",
       "support-center-staff",
     );
   }
@@ -145,13 +157,22 @@ export default function WorkStudy() {
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Support Center Staff</span>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
           <div>
             <h1 className='page-title'>Support Center Staff Management</h1>
             <p className='page-desc'>Manage Support Center Staff accounts.</p>
           </div>
-          <button onClick={handleExport} className='btn btn-primary export-button'>
-            Export {settings.exportFormat === "csv" ? "CSV" : "Excel"}
+          <button
+            onClick={handleExport}
+            className='btn btn-primary export-button'
+          >
+            Export {Settings.exportFormat === "csv" ? "CSV" : "Excel"}
           </button>
         </div>
       </div>

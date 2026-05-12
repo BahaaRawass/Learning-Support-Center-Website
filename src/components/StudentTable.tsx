@@ -5,11 +5,33 @@ import type { User } from "@/types/users";
 import { useSettings } from "@/hooks/useSettings";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 import { Input } from "./ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Spinner } from "./ui/spinner";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import Modal from "./Modal";
 
@@ -47,7 +69,7 @@ export default function StudentTable({
     message: "",
   };
 
-  const { settings } = useSettings();
+  const { Settings } = useSettings();
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [EditId, setEditId] = useState<Student["studentId"] | null>(null);
@@ -109,10 +131,10 @@ export default function StudentTable({
   }
 
   // Pagination logic
-  const startIndex = (currentPage - 1) * settings.pageSize;
-  const endIndex = startIndex + settings.pageSize;
+  const startIndex = (currentPage - 1) * Settings.pageSize;
+  const endIndex = startIndex + Settings.pageSize;
   const paginatedStudents = Students.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(Students.length / settings.pageSize);
+  const totalPages = Math.ceil(Students.length / Settings.pageSize);
 
   return (
     <>

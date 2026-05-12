@@ -27,7 +27,7 @@ export default function StudentRecords() {
   const [LocalError, setLocalError] = useState<string>("");
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
-  const { settings } = useSettings();
+  const { Settings } = useSettings();
 
   const {
     Students,
@@ -107,24 +107,22 @@ export default function StudentRecords() {
     }
   }
 
-  function UpdateFields(fields: Partial<StudentInput>) {
-    setStudentInput((prev) => ({ ...prev, ...fields }));
-  }
-
   function handleExport() {
     const exportData_formatted = Students.map((student) => ({
       "Student ID": student.studentId,
       "Student Name": student.studentName,
       Email: student.email,
-      Department: Departments.find((d) => d.id === student.department_id)?.name || "—",
-      "Added By": Users.find((u) => u.id === student.added_by)?.display_name || "—",
+      Department:
+        Departments.find((d) => d.id === student.department_id)?.name || "—",
+      "Added By":
+        Users.find((u) => u.id === student.added_by)?.display_name || "—",
       "Added At": student.added_at,
       Visits: student.nb_visits,
     }));
 
     exportData(
       exportData_formatted,
-      settings.exportFormat as "csv" | "excel",
+      Settings.exportFormat as "csv" | "excel",
       "student-records",
     );
   }
@@ -139,7 +137,13 @@ export default function StudentRecords() {
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Student Records</span>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
           <div>
             <h1 className='page-title'>Student Support Center Visits</h1>
             <p className='page-desc'>
@@ -147,8 +151,11 @@ export default function StudentRecords() {
               Center.
             </p>
           </div>
-          <button onClick={handleExport} className='btn btn-primary export-button'>
-            Export {settings.exportFormat === "csv" ? "CSV" : "Excel"}
+          <button
+            onClick={handleExport}
+            className='btn btn-primary export-button'
+          >
+            Export {Settings.exportFormat === "csv" ? "CSV" : "Excel"}
           </button>
         </div>
       </div>

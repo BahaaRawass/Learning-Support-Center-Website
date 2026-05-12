@@ -153,6 +153,108 @@ export function useAuth() {
     return DeletionSummary;
   }
 
+  /**
+   * Update the current user's display name.
+   * @param displayName - New display name
+   * @returns true if successful, false otherwise
+   */
+  async function UpdateDisplayName(displayName: string) {
+    resetSates();
+
+    const { error } = await supabaseClient.auth.updateUser({
+      data: {
+        display_name: displayName,
+      },
+    });
+
+    if (error) {
+      SetError(error);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
+  /**
+   * Update the current user's password directly (not via email).
+   * @param newPassword - The new password
+   * @returns true if successful, false otherwise
+   */
+  async function UpdatePassword(newPassword: string) {
+    resetSates();
+
+    const { error } = await supabaseClient.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      SetError(error);
+      return false;
+    }
+
+    setLoading(false);
+    return true;
+  }
+
+  /**
+   * Upload a profile picture to the "Profile Pictures" bucket.
+   * File size must be <= 1MB. The file is stored in a folder named {displayname}_{userId}.
+   * @param file - The image file to upload
+   * @returns the public URL of the uploaded file if successful, null otherwise
+   */
+  async function UpdateProfilePicture(file: File): Promise<string | null> {
+    resetSates();
+
+    if (!Session?.user) {
+      setError("No user session");
+      setLoading(false);
+      return null;
+    }
+
+    // Check file size (1 MB = 1048576 bytes)
+    const MAX_FILE_SIZE = 1048576;
+    if (file.size > MAX_FILE_SIZE) {
+      setError(
+        `File size exceeds 1MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.`,
+      );
+      setLoading(false);
+      return null;
+    }
+
+    const displayName = Session.user.user_metadata?.display_name || "user";
+    const userId = Session.user.id;
+    const folderPath = `${displayName}_${userId}`;
+    const fileName = `${Date.now()}_${file.name}`;
+    const filePath = `${folderPath}/${fileName}`;
+
+    const bucketName = import.meta.env.VITE_PROFILE_PICTURES_BUCKET;
+
+    if (!bucketName) {
+      setError("Missing VITE_PROFILE_PICTURES_BUCKET environment variable.");
+      setLoading(false);
+      return null;
+    }
+
+    const { error: uploadError } = await supabaseClient.storage
+      .from(bucketName)
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      setError(`Failed to upload profile picture: ${uploadError.message}`);
+      setLoading(false);
+      return null;
+    }
+
+    // Get public URL
+    const { data: publicUrlData } = supabaseClient.storage
+      .from(bucketName)
+      .getPublicUrl(filePath);
+
+    setLoading(false);
+    return publicUrlData?.publicUrl || null;
+  }
+
   return {
     Session,
     Error,
@@ -163,5 +265,8 @@ export function useAuth() {
     RestoreSession,
     DeleteUser,
     DeleteNonAdminUsers,
+    UpdateDisplayName,
+    UpdatePassword,
+    UpdateProfilePicture,
   };
 }
