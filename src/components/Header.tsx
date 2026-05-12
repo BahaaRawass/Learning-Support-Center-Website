@@ -16,10 +16,29 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
     return (localStorage.getItem("theme") as ThemeMode) || "light";
   });
 
+  const [profilePicture, setProfilePicture] = useState<string>(() => {
+    return localStorage.getItem("profilePicture") || "";
+  });
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    function syncProfilePicture() {
+      setProfilePicture(localStorage.getItem("profilePicture") || "");
+    }
+
+    syncProfilePicture();
+    window.addEventListener("storage", syncProfilePicture);
+    window.addEventListener("profilePictureUpdated", syncProfilePicture);
+
+    return () => {
+      window.removeEventListener("storage", syncProfilePicture);
+      window.removeEventListener("profilePictureUpdated", syncProfilePicture);
+    };
+  }, []);
 
   function toggleTheme() {
     setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
@@ -91,7 +110,17 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
 
       <div className='header-user'>
         <div className='user-name'>{DisplayName}</div>
-        <div className='user-avatar'>{initials}</div>
+        <div className='user-avatar'>
+          {profilePicture ? (
+            <img
+              src={profilePicture}
+              alt='Profile'
+              style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
+            />
+          ) : (
+            initials
+          )}
+        </div>
 
         {Session && (
           <button

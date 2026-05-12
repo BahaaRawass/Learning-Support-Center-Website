@@ -112,6 +112,9 @@ export function useAuth() {
       SetError(SignOutError);
       return false;
     }
+
+    localStorage.removeItem("profilePicture");
+    window.dispatchEvent(new Event("profilePictureUpdated"));
     setLoading(false);
     return true;
   }

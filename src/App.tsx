@@ -4,6 +4,7 @@ import Login from "./pages/Login.tsx";
 import WorkStudy from "./pages/WorkStudy.tsx";
 import StudentRecords from "./pages/StudentRecords.tsx";
 import Home from "./pages/Home.tsx";
+import Settings from "./pages/Settings.tsx";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "workstudy", element: <WorkStudy /> },
       { path: "student-records", element: <StudentRecords /> },
+      { path: "settings", element: <Settings /> },
       { path: "*", element: <div>404: Not Found</div> },
     ],
   },

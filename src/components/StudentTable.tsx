@@ -2,6 +2,7 @@ import type { Department } from "@/types/department";
 import type { Student, StudentInput } from "@/types/students";
 import type { ErrorNotice } from "@/types/types";
 import type { User } from "@/types/users";
+import { useSettings } from "@/hooks/useSettings";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
@@ -45,6 +46,9 @@ export default function StudentTable({
     id: NaN,
     message: "",
   };
+
+  const { settings } = useSettings();
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [EditId, setEditId] = useState<Student["studentId"] | null>(null);
   const [EditValues, setEditValues] = useState<StudentInput>(InitialValue);
@@ -104,6 +108,12 @@ export default function StudentTable({
     setEditValues((prev) => ({ ...prev, ...fields }));
   }
 
+  // Pagination logic
+  const startIndex = (currentPage - 1) * settings.pageSize;
+  const endIndex = startIndex + settings.pageSize;
+  const paginatedStudents = Students.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(Students.length / settings.pageSize);
+
   return (
     <>
       <Table>
@@ -122,8 +132,8 @@ export default function StudentTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Students.length > 0 ? (
-            Students.map((student, index) => {
+          {paginatedStudents.length > 0 ? (
+            paginatedStudents.map((student, index) => {
               const isEditing = EditId === student.studentId;
 
               if (ErrorNotice.id === student.studentId)
@@ -326,6 +336,34 @@ export default function StudentTable({
           )}
         </TableBody>
       </Table>
+
+      {/* Pagination */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "1rem",
+          marginTop: "1.5rem",
+          padding: "0 1rem",
+        }}
+      >
+        <Button
+          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
+          Page {currentPage} of {Math.max(1, totalPages)}
+        </span>
+        <Button
+          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
 
       {IsOpen && (
         <Modal

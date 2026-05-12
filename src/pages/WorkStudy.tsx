@@ -6,7 +6,9 @@ import { formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useSettings } from "@/hooks/useSettings";
 import { useUsers } from "@/hooks/useUsers";
+import { exportData } from "@/lib/exportUtils";
 import type { NewUser, User, UserInput } from "@/types/users";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
@@ -47,6 +49,8 @@ export default function WorkStudy() {
     Loading: DepartmentsLoading,
     Error: DepartmentsError,
   } = useDepartments();
+
+  const { settings } = useSettings();
 
   const loading = AuthLoading || UsersLoading || DepartmentsLoading;
   const error = AuthError || UsersError || DepartmentsError || LocalError;
@@ -118,14 +122,38 @@ export default function WorkStudy() {
     }
   }
 
+  function handleExport() {
+    const exportData_formatted = Users.map((user) => ({
+      Name: user.display_name,
+      Email: user.email,
+      Role: user.role,
+      Department:
+        Departments.find((d) => d.id === user.department_id)?.name || "—",
+      "Created At": formatDate(user.created_at),
+    }));
+
+    exportData(
+      exportData_formatted,
+      settings.exportFormat as "csv" | "excel",
+      "support-center-staff",
+    );
+  }
+
   return (
     <>
       <div className='page-header'>
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Support Center Staff</span>
         </div>
-        <h1 className='page-title'>Support Center Staff Management</h1>
-        <p className='page-desc'>Manage Support Center Staff accounts.</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1 className='page-title'>Support Center Staff Management</h1>
+            <p className='page-desc'>Manage Support Center Staff accounts.</p>
+          </div>
+          <button onClick={handleExport} className='btn btn-primary export-button'>
+            Export {settings.exportFormat === "csv" ? "CSV" : "Excel"}
+          </button>
+        </div>
       </div>
 
       <InputForm

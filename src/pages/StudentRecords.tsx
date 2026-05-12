@@ -5,8 +5,10 @@ import { checkDupes, formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useSettings } from "@/hooks/useSettings";
 import { useStudents } from "@/hooks/useStudents";
 import { useUsers } from "@/hooks/useUsers";
+import { exportData } from "@/lib/exportUtils";
 import type { NewStudent, StudentInput } from "@/types/students";
 import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
@@ -25,6 +27,7 @@ export default function StudentRecords() {
   const [LocalError, setLocalError] = useState<string>("");
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
+  const { settings } = useSettings();
 
   const {
     Students,
@@ -108,17 +111,46 @@ export default function StudentRecords() {
     setStudentInput((prev) => ({ ...prev, ...fields }));
   }
 
+  function handleExport() {
+    const exportData_formatted = Students.map((student) => ({
+      "Student ID": student.studentId,
+      "Student Name": student.studentName,
+      Email: student.email,
+      Department: Departments.find((d) => d.id === student.department_id)?.name || "—",
+      "Added By": Users.find((u) => u.id === student.added_by)?.display_name || "—",
+      "Added At": student.added_at,
+      Visits: student.nb_visits,
+    }));
+
+    exportData(
+      exportData_formatted,
+      settings.exportFormat as "csv" | "excel",
+      "student-records",
+    );
+  }
+
+  function UpdateFields(fields: Partial<StudentInput>) {
+    setStudentInput((prev) => ({ ...prev, ...fields }));
+  }
+
   return (
     <>
       <div className='page-header'>
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Student Records</span>
         </div>
-        <h1 className='page-title'>Student Support Center Visits</h1>
-        <p className='page-desc'>
-          Track student visits and support sessions at the Learning Support
-          Center.
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1 className='page-title'>Student Support Center Visits</h1>
+            <p className='page-desc'>
+              Track student visits and support sessions at the Learning Support
+              Center.
+            </p>
+          </div>
+          <button onClick={handleExport} className='btn btn-primary export-button'>
+            Export {settings.exportFormat === "csv" ? "CSV" : "Excel"}
+          </button>
+        </div>
       </div>
 
       <InputForm

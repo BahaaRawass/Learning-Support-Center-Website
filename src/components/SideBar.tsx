@@ -107,7 +107,11 @@ export default function SideBar({ onNavigate, isOpen }: SideBarProps) {
       <hr className='sidebar-divider' />
       <div className='sidebar-section-label'>Account</div>
 
-      <Link to='/login' className='sidebar-link' onClick={onNavigate}>
+      <Link
+        to='/settings'
+        className={`sidebar-link ${location.pathname === "/settings" ? "active" : ""}`}
+        onClick={onNavigate}
+      >
         <svg
           viewBox='0 0 16 16'
           fill='none'
