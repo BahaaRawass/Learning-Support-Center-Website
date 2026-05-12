@@ -1,4 +1,4 @@
-import { supabaseClient } from "../supabase-client";
+import { supabaseClient } from "@/supabase-client";
 import type { Department } from "@/types/department";
 import type { Data } from "@/types/types";
 import type { PostgrestError } from "@supabase/supabase-js";

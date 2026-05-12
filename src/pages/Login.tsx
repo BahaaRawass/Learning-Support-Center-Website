@@ -1,8 +1,8 @@
+import { useAuth } from "@/hooks/useAuth";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import type { LoginInput } from "@/types/auth";
 import { useState, type SubmitEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import { useAuth } from "../hooks/useAuth";
-import type { LoginInput } from "../types/auth";
 
 export default function Login() {
   useDocumentTitle("Login");

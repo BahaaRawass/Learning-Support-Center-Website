@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabaseClient } from "../supabase-client";
-import type { NewStudent, Student } from "../types/students";
 import { PostgrestError, type User } from "@supabase/supabase-js";
-import type { Data } from "../types/types";
+import type { NewStudent, Student } from "@/types/students";
+import { supabaseClient } from "@/supabase-client";
+import type { Data } from "@/types/types";
+
 
 export function useStudents(added_by?: User) {
   const [Students, setStudents] = useState<Student[]>([]);

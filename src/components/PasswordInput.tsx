@@ -1,7 +1,7 @@
 import { useRef, useState, type ComponentProps } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { EyeClosedIcon, EyeIcon } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 type PasswordInputProps = Omit<ComponentProps<"input">, "type">;
 

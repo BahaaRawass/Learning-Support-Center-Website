@@ -1,39 +1,16 @@
-import type { User } from "../types/users";
-import type { Student, StudentInput } from "../types/students";
-import type { Department } from "../types/department";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import { Spinner } from "./ui/spinner";
-import { Button } from "./ui/button";
-import { useState } from "react";
-import Modal from "./Modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import type { Department } from "@/types/department";
+import type { Student, StudentInput } from "@/types/students";
+import type { ErrorNotice } from "@/types/types";
+import type { User } from "@/types/users";
 import { MoreHorizontalIcon } from "lucide-react";
+import { useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Input } from "./ui/input";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import type { ErrorNotice } from "../types/types";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./ui/select";
+import { Spinner } from "./ui/spinner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import Modal from "./Modal";
 
 export type TableProps = {
   Students: Student[];

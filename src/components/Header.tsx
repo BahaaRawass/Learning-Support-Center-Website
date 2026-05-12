@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
 import RHULogo from "/Images/rhu_logo.png";
+import { useAuth } from "@/hooks/useAuth";
 
 type ThemeMode = "light" | "dark";
 

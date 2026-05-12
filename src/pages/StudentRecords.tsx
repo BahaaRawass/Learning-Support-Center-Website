@@ -1,15 +1,15 @@
-import { Navigate } from "react-router-dom";
-import { Spinner } from "../components/ui/spinner";
-import { useAuth } from "../hooks/useAuth";
-import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import { useStudents } from "../hooks/useStudents";
-import StudentTable from "../components/StudentTable";
-import type { NewStudent, StudentInput } from "../types/students";
-import InputForm from "../components/InputForm";
-import { useDepartments } from "../hooks/useDepartments";
+import InputForm from "@/components/InputForm";
+import StudentTable from "@/components/StudentTable";
+import { Spinner } from "@/components/ui/spinner";
+import { checkDupes, formatDate } from "@/helper/functions";
+import { useAuth } from "@/hooks/useAuth";
+import { useDepartments } from "@/hooks/useDepartments";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useStudents } from "@/hooks/useStudents";
+import { useUsers } from "@/hooks/useUsers";
+import type { NewStudent, StudentInput } from "@/types/students";
 import { useState, type SubmitEvent } from "react";
-import { useUsers } from "../hooks/useUsers";
-import { checkDupes, formatDate } from "../helper/functions";
+import { Navigate } from "react-router-dom";
 
 export default function StudentRecords() {
   useDocumentTitle("Student Records");

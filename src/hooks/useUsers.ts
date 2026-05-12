@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabaseClient } from "../supabase-client";
 import { PostgrestError } from "@supabase/supabase-js";
-import type { Data } from "../types/types";
-import type { NewUser, User } from "../types/users";
+import type { NewUser, User } from "@/types/users";
+import { supabaseClient } from "@/supabase-client";
+import type { Data } from "@/types/types";
 
 export function useUsers() {
   const [Users, setUsers] = useState<User[]>([]);

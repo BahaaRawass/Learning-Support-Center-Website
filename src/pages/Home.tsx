@@ -1,12 +1,12 @@
 import { Navigate } from "react-router-dom";
-import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import { useAuth } from "../hooks/useAuth";
-import { useStudents } from "../hooks/useStudents";
-import { useUsers } from "../hooks/useUsers";
-const studentsIcon = "/Images/students-icon.svg";
-const visitsIcon = "/Images/visits-icon.svg";
-const staffIcon = "/Images/staff-icon.svg";
-const averageIcon = "/Images/average-icon.svg";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useAuth } from "@/hooks/useAuth";
+import { useStudents } from "@/hooks/useStudents";
+import { useUsers } from "@/hooks/useUsers";
+import studentsIcon from "/Images/students-icon.svg";
+import visitsIcon from "/Images/visits-icon.svg";
+import staffIcon from "/Images/staff-icon.svg";
+import averageIcon from "/Images/average-icon.svg";
 
 export default function Home() {
   useDocumentTitle("Home");

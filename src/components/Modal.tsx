@@ -1,4 +1,4 @@
-import type { UpdaterFunction } from "../types/types";
+import type { UpdaterFunction } from "@/types/types";
 import {
   Dialog,
   DialogBackdrop,

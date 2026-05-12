@@ -1,29 +1,7 @@
-import type { InputFormProps } from "../types/types";
-
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-  FieldTitle,
-  FieldError,
-} from "../components/ui/field";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-
+import type { InputFormProps } from "@/types/types";
+import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet, FieldTitle } from "./ui/field";
 import { Input } from "./ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./ui/select";
 import PasswordInput from "./PasswordInput";
 import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";

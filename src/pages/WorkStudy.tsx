@@ -1,28 +1,16 @@
+import InputForm from "@/components/InputForm";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDate } from "@/helper/functions";
+import { useAuth } from "@/hooks/useAuth";
+import { useDepartments } from "@/hooks/useDepartments";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useUsers } from "@/hooks/useUsers";
+import type { NewUser, User, UserInput } from "@/types/users";
+import { MoreHorizontalIcon } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import InputForm from "../components/InputForm";
-import type { NewUser, User, UserInput } from "../types/users";
-import { useUsers } from "../hooks/useUsers";
-import { useDepartments } from "../hooks/useDepartments";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../components/ui/table";
-import { Button } from "../components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { MoreHorizontalIcon } from "lucide-react";
-import { formatDate } from "../helper/functions";
 
 export default function WorkStudy() {
   useDocumentTitle("Workstudy");

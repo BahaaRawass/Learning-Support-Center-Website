@@ -1,3 +1,7 @@
+import type { EdgeFunctionError } from "@/lib/functions.types";
+import { invokeFunction } from "@/lib/invokeFunction";
+import { supabaseClient } from "@/supabase-client";
+import type { Department } from "@/types/department";
 import {
   AuthError,
   PostgrestError,
@@ -5,10 +9,6 @@ import {
   type User,
 } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-import { supabaseClient } from "../supabase-client";
-import type { Department } from "../types/department";
-import { invokeFunction } from "../lib/invokeFunction";
-import type { EdgeFunctionError } from "../lib/functions.types";
 
 type Error = PostgrestError | AuthError | EdgeFunctionError;
 
