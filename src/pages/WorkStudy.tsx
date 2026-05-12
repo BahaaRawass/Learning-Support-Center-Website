@@ -122,10 +122,10 @@ export default function WorkStudy() {
     <>
       <div className='page-header'>
         <div className='page-breadcrumb'>
-          LSC–CAS › <span>WorkStudy</span>
+          LSC–CAS › <span>Support Center Staff</span>
         </div>
-        <h1 className='page-title'>WorkStudy Management</h1>
-        <p className='page-desc'>Manage WorkStudy staff accounts.</p>
+        <h1 className='page-title'>Support Center Staff Management</h1>
+        <p className='page-desc'>Manage Support Center Staff accounts.</p>
       </div>
 
       <InputForm

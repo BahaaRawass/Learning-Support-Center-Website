@@ -1,15 +1,28 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function SideBar() {
+type SideBarProps = {
+  onNavigate: () => void;
+  isOpen: boolean;
+};
+
+export default function SideBar({ onNavigate, isOpen }: SideBarProps) {
   const location = useLocation();
+  const { Session, SignOut } = useAuth();
+
+  async function handleLogout() {
+    await SignOut();
+    onNavigate();
+  }
 
   return (
-    <aside className='sidebar'>
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       <div className='sidebar-section-label'>Navigation</div>
 
       <Link
         to='/'
         className={`sidebar-link ${location.pathname === "/" ? "active" : ""}`}
+        onClick={onNavigate}
       >
         <svg
           viewBox='0 0 16 16'
@@ -26,6 +39,7 @@ export default function SideBar() {
       <Link
         to='/student-records'
         className={`sidebar-link ${location.pathname === "/student-records" ? "active" : ""}`}
+        onClick={onNavigate}
       >
         <svg
           viewBox='0 0 16 16'
@@ -42,6 +56,7 @@ export default function SideBar() {
       <Link
         to='/workstudy'
         className={`sidebar-link ${location.pathname === "/workstudy" ? "active" : ""}`}
+        onClick={onNavigate}
       >
         <svg
           viewBox='0 0 16 16'
@@ -52,28 +67,47 @@ export default function SideBar() {
           <circle cx='8' cy='6' r='3' />
           <path d='M3 14c0-3 2.2-5 5-5s5 2 5 5' />
         </svg>
-        Edit Workstudy
+        Support Center Staff
       </Link>
 
-      <Link
-        to='/login'
-        className={`sidebar-link ${location.pathname === "/login" ? "active" : ""}`}
-      >
-        <svg
-          viewBox='0 0 16 16'
-          fill='none'
-          stroke='currentColor'
-          strokeWidth='1.4'
+      {Session ? (
+        <button
+          onClick={handleLogout}
+          className='sidebar-link'
+          style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
         >
-          <path d='M3 3h10v10H3z M6 3v10 M3 8h7' />
-        </svg>
-        Login
-      </Link>
+          <svg
+            viewBox='0 0 16 16'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='1.4'
+          >
+            <path d='M3 3h10v10H3z M6 3v10 M3 8h7' />
+          </svg>
+          Logout
+        </button>
+      ) : (
+        <Link
+          to='/login'
+          className={`sidebar-link ${location.pathname === "/login" ? "active" : ""}`}
+          onClick={onNavigate}
+        >
+          <svg
+            viewBox='0 0 16 16'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='1.4'
+          >
+            <path d='M3 3h10v10H3z M6 3v10 M3 8h7' />
+          </svg>
+          Login
+        </Link>
+      )}
 
       <hr className='sidebar-divider' />
       <div className='sidebar-section-label'>Account</div>
 
-      <Link to='/login' className='sidebar-link'>
+      <Link to='/login' className='sidebar-link' onClick={onNavigate}>
         <svg
           viewBox='0 0 16 16'
           fill='none'

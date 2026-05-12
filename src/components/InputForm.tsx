@@ -19,11 +19,11 @@ export default function InputForm({
 }: InputFormProps) {
   const isStudent = mode === "student";
 
-  const title = isStudent ? "Add New Student" : "Add New WorkStudy";
+  const title = isStudent ? "Add New Student" : "Add New Support Center Staff";
 
   const description = isStudent
     ? "Register a new student to track their support center visits"
-    : "Create a new WorkStudy account";
+    : "Create a new Support Center Staff account";
 
   return (
     <FieldSet className='form-card &>*:block!'>
