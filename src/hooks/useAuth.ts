@@ -225,8 +225,14 @@ export function useAuth() {
     const displayName = Session.user.user_metadata?.display_name || "user";
     const userId = Session.user.id;
     const folderPath = `${displayName}_${userId}`;
-    const fileName = `${Date.now()}_${file.name}`;
-    const filePath = `${folderPath}/${fileName}`;
+
+    // Use a stable filename so uploads overwrite the previous profile picture.
+    // Preserve the file extension if present (e.g. .jpg, .png).
+    const originalName = file.name || "";
+    const lastDot = originalName.lastIndexOf(".");
+    const ext = lastDot > 0 ? originalName.slice(lastDot) : "";
+    const targetFileName = `User_Profile${ext}`;
+    const filePath = `${folderPath}/${targetFileName}`;
 
     const bucketName = import.meta.env.VITE_PROFILE_PICTURES_BUCKET;
 
@@ -234,6 +240,41 @@ export function useAuth() {
       setError("Missing VITE_PROFILE_PICTURES_BUCKET environment variable.");
       setLoading(false);
       return null;
+    }
+
+    // Remove any existing User_Profile files in the folder (different extensions)
+    try {
+      const { data: existingFiles, error: listError } =
+        await supabaseClient.storage.from(bucketName).list(folderPath);
+
+      if (listError) {
+        // non-fatal: continue to upload; we'll report upload errors below
+        console.warn(
+          "Failed to list existing profile pictures:",
+          listError.message,
+        );
+      } else if (Array.isArray(existingFiles) && existingFiles.length > 0) {
+        const toRemove = existingFiles
+          .filter(
+            (f: any) =>
+              typeof f.name === "string" && f.name.startsWith("User_Profile"),
+          )
+          .map((f: any) => `${folderPath}/${f.name}`);
+
+        if (toRemove.length > 0) {
+          const { error: removeError } = await supabaseClient.storage
+            .from(bucketName)
+            .remove(toRemove);
+          if (removeError) {
+            console.warn(
+              "Failed to remove existing profile pictures:",
+              removeError.message,
+            );
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Error while cleaning existing profile pictures:", err);
     }
 
     const { error: uploadError } = await supabaseClient.storage
