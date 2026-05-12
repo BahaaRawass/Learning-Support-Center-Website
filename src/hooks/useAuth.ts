@@ -32,6 +32,42 @@ export function useAuth() {
   }
 
   useEffect(() => {
+    // Helper: fetch user's existing profile picture (if any) and store public URL
+    async function fetchAndStoreProfilePicture(user: User | null) {
+      try {
+        const bucketName = import.meta.env.VITE_PROFILE_PICTURES_BUCKET;
+        if (!user || !bucketName) return;
+
+        const displayName = user.user_metadata?.display_name || "user";
+        const userId = user.id;
+        const folderPath = `${displayName}_${userId}`;
+
+        const { data: files, error: listError } = await supabaseClient.storage
+          .from(bucketName)
+          .list(folderPath);
+
+        if (listError || !files || files.length === 0) return;
+
+        const profileFile = files.find(
+          (f: any) =>
+            typeof f.name === "string" && f.name.startsWith("User_Profile"),
+        );
+
+        if (!profileFile) return;
+
+        const { data: publicUrlData } = supabaseClient.storage
+          .from(bucketName)
+          .getPublicUrl(`${folderPath}/${profileFile.name}`);
+
+        const publicUrl = publicUrlData?.publicUrl;
+        if (publicUrl) {
+          localStorage.setItem("profilePicture", publicUrl);
+          window.dispatchEvent(new Event("profilePictureUpdated"));
+        }
+      } catch (err) {
+        console.warn("Failed to restore profile picture:", err);
+      }
+    }
     async function getSession() {
       resetSates();
 
@@ -43,6 +79,8 @@ export function useAuth() {
         return;
       }
       setSession(data.session);
+      // try to restore profile picture when session is obtained
+      await fetchAndStoreProfilePicture(data.session?.user || null);
       setLoading(false);
     }
 
@@ -51,6 +89,8 @@ export function useAuth() {
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        // try to restore profile picture on auth change
+        void fetchAndStoreProfilePicture(session?.user || null);
         setLoading(false);
       },
     );
