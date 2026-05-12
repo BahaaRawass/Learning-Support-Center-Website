@@ -14,7 +14,7 @@ const router = createBrowserRouter([
       // List all your individual pages here:
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
-      { path: "workstudy", element: <WorkStudy /> },
+      { path: "support-center-staff", element: <WorkStudy /> },
       { path: "student-records", element: <StudentRecords /> },
       { path: "settings", element: <Settings /> },
       { path: "*", element: <div>404: Not Found</div> },

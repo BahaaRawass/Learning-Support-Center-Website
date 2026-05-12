@@ -1,5 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 
 type SideBarProps = {
   onNavigate: () => void;
@@ -8,12 +7,6 @@ type SideBarProps = {
 
 export default function SideBar({ onNavigate, isOpen }: SideBarProps) {
   const location = useLocation();
-  const { Session, SignOut } = useAuth();
-
-  async function handleLogout() {
-    await SignOut();
-    onNavigate();
-  }
 
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -54,8 +47,8 @@ export default function SideBar({ onNavigate, isOpen }: SideBarProps) {
       </Link>
 
       <Link
-        to='/workstudy'
-        className={`sidebar-link ${location.pathname === "/workstudy" ? "active" : ""}`}
+        to='/support-center-staff'
+        className={`sidebar-link ${location.pathname === "/support-center-staff" ? "active" : ""}`}
         onClick={onNavigate}
       >
         <svg
@@ -69,40 +62,6 @@ export default function SideBar({ onNavigate, isOpen }: SideBarProps) {
         </svg>
         Support Center Staff
       </Link>
-
-      {Session ? (
-        <button
-          onClick={handleLogout}
-          className='sidebar-link'
-          style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
-        >
-          <svg
-            viewBox='0 0 16 16'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='1.4'
-          >
-            <path d='M3 3h10v10H3z M6 3v10 M3 8h7' />
-          </svg>
-          Logout
-        </button>
-      ) : (
-        <Link
-          to='/login'
-          className={`sidebar-link ${location.pathname === "/login" ? "active" : ""}`}
-          onClick={onNavigate}
-        >
-          <svg
-            viewBox='0 0 16 16'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='1.4'
-          >
-            <path d='M3 3h10v10H3z M6 3v10 M3 8h7' />
-          </svg>
-          Login
-        </Link>
-      )}
 
       <hr className='sidebar-divider' />
       <div className='sidebar-section-label'>Account</div>

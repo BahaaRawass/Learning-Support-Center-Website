@@ -17,6 +17,7 @@ import { FieldGroup } from "@/components/ui/field";
 import type { PageSize } from "@/types/settings";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function Settings() {
   useDocumentTitle("Settings");
@@ -122,9 +123,8 @@ export default function Settings() {
           <FieldGroup>
             <div>
               <Label htmlFor='oldPassword'>Old Password</Label>
-              <Input
+              <PasswordInput
                 id='oldPassword'
-                type='password'
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
                 placeholder='Enter your current password'
@@ -132,9 +132,8 @@ export default function Settings() {
             </div>
             <div>
               <Label htmlFor='newPassword'>New Password</Label>
-              <Input
+              <PasswordInput
                 id='newPassword'
-                type='password'
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder='Enter your new password'
@@ -142,9 +141,8 @@ export default function Settings() {
             </div>
             <div>
               <Label htmlFor='confirmPassword'>Confirm New Password</Label>
-              <Input
+              <PasswordInput
                 id='confirmPassword'
-                type='password'
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder='Confirm your new password'

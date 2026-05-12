@@ -126,6 +126,11 @@ export default function WorkStudy() {
     return <Navigate to='/login' replace />;
   }
 
+  if (Session.user.user_metadata.role !== "admin") {
+    alert("You do not have permission to access this page.");
+    return <Navigate to='/' replace />;
+  }
+
   async function handleDelete(id: User["id"]) {
     const ok = await DeleteUser(id);
 
