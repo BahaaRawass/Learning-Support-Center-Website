@@ -61,7 +61,7 @@ export function simplifyErrorMessage(message?: string | null): string {
     lowerMessage.includes("duplicate key value") ||
     lowerMessage.includes("already exists")
   ) {
-    return "This item already exists.";
+    return "This Student/User already exists.";
   }
 
   if (

@@ -27,6 +27,7 @@ import { Button } from "./ui/button";
 import { useState, type SubmitEvent } from "react";
 import CoursesMenu from "./CoursesMenu";
 import { DateTimePicker } from "./DateTimePicker.tsx";
+import { simplifyErrorMessage } from "@/helper/functions.ts";
 
 export default function InputForm({
   loading,
@@ -73,7 +74,15 @@ export default function InputForm({
         </FieldDescription>
       </FieldGroup>
 
-      {formError && <FieldError>{formError}</FieldError>}
+      {formError && (
+        <FieldGroup className="bg-red-500/15 rounded-lg p-5">
+          <Field>
+            <FieldError className='px-5 font-bold text-lg'>
+              {simplifyErrorMessage(formError)}
+            </FieldError>
+          </Field>
+        </FieldGroup>
+      )}
 
       <FieldGroup className='form-body'>
         <form onSubmit={onSubmit}>
