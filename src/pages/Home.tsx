@@ -19,8 +19,6 @@ export default function Home() {
     Error: StudentsError,
   } = useStudents(Session?.user);
 
-  console.log("User: ", Session?.user);
-
   const {
     Users,
     Loading: UsersLoading,
@@ -32,10 +30,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh" }}
-      >
+      <div className='flex items-center justify-center h-[50vh]'>
         {AuthLoading ? "Checking Authentication" : "Loading Data"}
       </div>
     );
@@ -47,12 +42,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh" }}
-      >
-        {error}
-      </div>
+      <div className='flex items-center justify-center h-[50vh]'>{error}</div>
     );
   }
 

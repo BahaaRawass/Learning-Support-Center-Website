@@ -51,9 +51,9 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
   const email = Session?.user.email;
 
   const DisplayName: string = Session
-    ? (Session.user.user_metadata?.display_name?.trim() ||
-       email?.slice(0, email.indexOf("@")) ||
-       "User")
+    ? Session.user.user_metadata?.display_name?.trim() ||
+      email?.slice(0, email.indexOf("@")) ||
+      "User"
     : "You are not logged in";
 
   const initials = Session
@@ -90,7 +90,7 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
         </button>
       )}
 
-      <div className='header-brand' style={{ position: "relative" }}>
+      <div className='header-brand relative'>
         <img src={RHULogo} alt='RHU Logo' className='header-logo' />
       </div>
 
@@ -115,7 +115,7 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
             <img
               src={profilePicture}
               alt='Profile'
-              style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
+              className='w-full h-full rounded-full object-cover'
             />
           ) : (
             initials
@@ -124,10 +124,9 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
 
         {Session && (
           <button
-            className='btn btn-ghost logout-button'
+            className='btn btn-ghost logout-button ml-2 p-0'
             onClick={LogOut}
             disabled={Loading}
-            style={{ marginLeft: "0.5rem", padding: "0" }}
             title='Logout'
             type='button'
           >

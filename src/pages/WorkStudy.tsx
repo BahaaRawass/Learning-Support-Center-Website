@@ -162,13 +162,7 @@ export default function WorkStudy() {
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Support Center Staff</span>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
+        <div className='flex justify-between items-start'>
           <div>
             <h1 className='page-title'>Support Center Staff Management</h1>
             <p className='page-desc'>Manage Support Center Staff accounts.</p>
@@ -192,16 +186,8 @@ export default function WorkStudy() {
         formError={error}
       />
 
-      <div style={{ marginTop: "2rem" }}>
-        <h2
-          style={{
-            fontSize: "1.25rem",
-            color: "var(--navy)",
-            marginBottom: "1rem",
-            fontFamily: "'Cormorant Garamond', serif",
-            fontWeight: "600",
-          }}
-        >
+      <div className='mt-8'>
+        <h2 className='text-xl text-(--navy) mb-4 font-serif font-semibold'>
           Active WorkStudy Accounts
         </h2>
 

@@ -77,46 +77,18 @@ export default function AccountSection({
     <section className='settings-section'>
       <h2 className='settings-section-title'>Account</h2>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          alignItems: "flex-start",
-          marginBottom: "2rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            alignItems: "center",
-          }}
-        >
+      <div className='flex gap-8 items-start mb-8'>
+        <div className='flex flex-col gap-4 items-center'>
           <div
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              backgroundColor: profilePicture
-                ? "transparent"
-                : "var(--navy-light)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-              border: "3px solid var(--navy)",
-            }}
+            className={`w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden border-[3px] border-[var(--navy)] ${
+              profilePicture ? "bg-transparent" : "bg-[var(--navy-light)]"
+            }`}
           >
             {profilePicture ? (
               <img
                 src={profilePicture}
                 alt='Profile'
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                className='w-full h-full object-cover'
               />
             ) : (
               <svg
@@ -126,7 +98,7 @@ export default function AccountSection({
                 fill='none'
                 stroke='currentColor'
                 strokeWidth='1.5'
-                style={{ color: "var(--gold)" }}
+                className='text-[var(--gold)]'
               >
                 <circle cx='12' cy='8' r='4' />
                 <path d='M4 20c0-4 3.5-7 8-7s8 3 8 7' />
@@ -141,7 +113,7 @@ export default function AccountSection({
           />
         </div>
 
-        <div style={{ flex: 1 }}>
+        <div className='flex-1'>
           <FieldGroup>
             <div>
               <Label htmlFor='displayName'>Display Name</Label>
@@ -162,12 +134,7 @@ export default function AccountSection({
                 defaultValue={session.user.email || ""}
                 disabled
               />
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--muted-foreground)",
-                }}
-              >
+              <p className='text-sm text-[var(--muted-foreground)]'>
                 Your login email address.
               </p>
             </div>
@@ -175,18 +142,17 @@ export default function AccountSection({
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className='flex flex-col gap-4'>
         <Button onClick={handleSaveProfile} disabled={isSaving}>
           {isSaving ? "Saving..." : "Save Profile"}
         </Button>
         {saveMessage && (
           <p
-            style={{
-              fontSize: "0.875rem",
-              color: saveMessage.startsWith("Error")
-                ? "var(--destructive)"
-                : "var(--green-600)",
-            }}
+            className={`text-sm ${
+              saveMessage.startsWith("Error")
+                ? "text-[var(--destructive)]"
+                : "text-[var(--success)]"
+            }`}
           >
             {saveMessage}
           </p>

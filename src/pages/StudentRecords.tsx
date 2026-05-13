@@ -59,21 +59,13 @@ export default function StudentRecords() {
 
   if (error && !LocalError) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh" }}
-      >
-        {error}
-      </div>
+      <div className='flex items-center justify-center h-[50vh]'>{error}</div>
     );
   }
 
   if (loading) {
     return (
-      <div
-        className='d-flex justify-content-center align-items-center'
-        style={{ height: "50vh", gap: "0.5rem" }}
-      >
+      <div className='flex items-center justify-center h-[50vh] gap-2'>
         <Spinner className='size-5' />
         <span>{AuthLoading ? "Checking Authentication" : "Loading Data"}</span>
       </div>
@@ -141,13 +133,7 @@ export default function StudentRecords() {
         <div className='page-breadcrumb'>
           LSC–CAS › <span>Student Records</span>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
+        <div className='flex justify-between items-start'>
           <div>
             <h1 className='page-title'>Student Support Center Visits</h1>
             <p className='page-desc'>

@@ -256,7 +256,9 @@ export default function StudentTable({
                   </TableCell>
                   <TableCell>{student.added_at}</TableCell>
                   <TableCell>
-                    <span className='text-black text-[0.9rem]'>—</span>
+                    <span className='text-[0.9rem] text-[var(--text-muted)]'>
+                      —
+                    </span>
                   </TableCell>
                   <TableCell>
                     {isUpdating === student.studentId ? (
@@ -360,23 +362,14 @@ export default function StudentTable({
       </Table>
 
       {/* Pagination */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "1rem",
-          marginTop: "1.5rem",
-          padding: "0 1rem",
-        }}
-      >
+      <div className='flex justify-center items-center gap-4 mt-6 px-4'>
         <Button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
         >
           Previous
         </Button>
-        <span style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
+        <span className='text-[0.9rem] text-[var(--text-muted)]'>
           Page {currentPage} of {Math.max(1, totalPages)}
         </span>
         <Button

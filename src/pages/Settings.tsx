@@ -157,34 +157,24 @@ export default function Settings() {
             </Button>
             {passwordMessage && (
               <p
-                style={{
-                  fontSize: "0.875rem",
-                  color:
-                    passwordMessage.includes("Error") ||
-                    passwordMessage.includes("do not match") ||
-                    passwordMessage.includes("must be different") ||
-                    passwordMessage.includes("required")
-                      ? "var(--destructive)"
-                      : "var(--green-600)",
-                }}
+                className={`text-sm ${
+                  passwordMessage.includes("Error") ||
+                  passwordMessage.includes("do not match") ||
+                  passwordMessage.includes("must be different") ||
+                  passwordMessage.includes("required")
+                    ? "text-[var(--destructive)]"
+                    : "text-[var(--success)]"
+                }`}
               >
                 {passwordMessage}
               </p>
             )}
           </FieldGroup>
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
+          <div className='flex flex-col gap-4'>
             <div>
               <Label>Logout Everywhere</Label>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--muted-foreground)",
-                  marginBottom: "0.5rem",
-                }}
-              >
+              <p className='text-sm text-[var(--muted-foreground)] mb-2'>
                 Log out from all devices and browsers.
               </p>
             </div>
@@ -201,15 +191,8 @@ export default function Settings() {
           <FieldGroup>
             <div>
               <Label>Theme</Label>
-              <div style={{ display: "flex", gap: "2rem" }}>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+              <div className='flex gap-8'>
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='theme'
@@ -218,14 +201,7 @@ export default function Settings() {
                   />
                   Light Mode
                 </label>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='theme'
@@ -239,15 +215,8 @@ export default function Settings() {
 
             <div>
               <Label>Font Size</Label>
-              <div style={{ display: "flex", gap: "2rem" }}>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+              <div className='flex gap-8'>
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='fontSize'
@@ -256,14 +225,7 @@ export default function Settings() {
                   />
                   Normal
                 </label>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='fontSize'
@@ -275,9 +237,7 @@ export default function Settings() {
               </div>
             </div>
 
-            <div
-              style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
-            >
+            <div className='flex items-center gap-3'>
               <Checkbox
                 id='compactMode'
                 checked={Settings.compactMode}
@@ -285,7 +245,7 @@ export default function Settings() {
                   updateSetting("compactMode", checked as boolean)
                 }
               />
-              <Label htmlFor='compactMode' style={{ margin: 0 }}>
+              <Label htmlFor='compactMode' className='m-0'>
                 Compact Mode - Reduce spacing in tables and forms
               </Label>
             </div>
@@ -316,27 +276,15 @@ export default function Settings() {
                   <SelectItem value='100'>100 records per page</SelectItem>
                 </SelectContent>
               </Select>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--muted-foreground)",
-                }}
-              >
+              <p className='text-sm text-[var(--muted-foreground)]'>
                 Number of records shown per page in tables.
               </p>
             </div>
 
             <div>
               <Label>Export Format</Label>
-              <div style={{ display: "flex", gap: "2rem" }}>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+              <div className='flex gap-8'>
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='exportFormat'
@@ -345,14 +293,7 @@ export default function Settings() {
                   />
                   CSV
                 </label>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    cursor: "pointer",
-                  }}
-                >
+                <label className='flex items-center gap-2 cursor-pointer'>
                   <input
                     type='radio'
                     name='exportFormat'
@@ -362,12 +303,7 @@ export default function Settings() {
                   Excel
                 </label>
               </div>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--muted-foreground)",
-                }}
-              >
+              <p className='text-sm text-[var(--muted-foreground)]'>
                 Default format for exporting records.
               </p>
             </div>
@@ -385,12 +321,7 @@ export default function Settings() {
                   updateSetting("archiveRetention", Number(e.target.value))
                 }
               />
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--muted-foreground)",
-                }}
-              >
+              <p className='text-sm text-[var(--muted-foreground)]'>
                 Days to keep archived records before deletion (
                 {Settings.archiveRetention} days).
               </p>
