@@ -218,7 +218,10 @@ export default function WorkStudy() {
         formError={error}
       />
 
-      <LoadingModal open={isSubmitting} message='Adding user...' />
+      <LoadingModal
+        open={isSubmitting}
+        message={`Adding ${Input.displayname || "user"}...`}
+      />
 
       <div className='mt-8'>
         <h2 className='text-xl text-(--navy) mb-4 font-serif font-semibold'>
