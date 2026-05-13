@@ -19,7 +19,13 @@ export default function Home() {
     Error: StudentsError,
   } = useStudents(Session?.user);
 
-  const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
+  console.log("User: ", Session?.user);
+
+  const {
+    Users,
+    Loading: UsersLoading,
+    Error: UsersError,
+  } = useUsers(Session?.user);
 
   const loading = AuthLoading || StudentsLoading || UsersLoading;
   const error = AuthError || StudentsError || UsersError;

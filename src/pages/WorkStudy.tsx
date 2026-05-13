@@ -27,7 +27,7 @@ import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
 
 export default function WorkStudy() {
-  useDocumentTitle("Workstudy");
+  useDocumentTitle("Support Center Staff");
 
   const InitialValue: UserInput = {
     displayname: "",
@@ -54,7 +54,7 @@ export default function WorkStudy() {
     Loading: UsersLoading,
     Error: UsersError,
     AddUser,
-  } = useUsers();
+  } = useUsers(Session?.user);
 
   const {
     Departments,

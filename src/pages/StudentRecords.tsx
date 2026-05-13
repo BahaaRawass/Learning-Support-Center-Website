@@ -40,7 +40,11 @@ export default function StudentRecords() {
     DeleteStudent,
   } = useStudents(Session?.user);
 
-  const { Users, Loading: UsersLoading, Error: UsersError } = useUsers();
+  const {
+    Users,
+    Loading: UsersLoading,
+    Error: UsersError,
+  } = useUsers(Session?.user);
 
   const {
     Departments,

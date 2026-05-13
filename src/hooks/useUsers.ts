@@ -3,8 +3,9 @@ import { PostgrestError } from "@supabase/supabase-js";
 import type { NewUser, User } from "@/types/users";
 import { supabaseClient } from "@/supabase-client";
 import type { Data } from "@/types/types";
+import type { User as AuthUser } from "@supabase/supabase-js";
 
-export function useUsers() {
+export function useUsers(user: AuthUser | undefined) {
   const [Users, setUsers] = useState<User[]>([]);
   const [Loading, setLoading] = useState<boolean>(false);
   const [Error, setError] = useState<string>("");
@@ -22,11 +23,14 @@ export function useUsers() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!user) return;
+
       resetStates();
 
       const { data, error: FetchError } = (await supabaseClient
         .from("Users")
-        .select("*")) as Data<User[]>;
+        .select("*")
+        .eq("department_id", user.user_metadata.department_id)) as Data<User[]>;
 
       if (FetchError) return SetError(FetchError);
 
@@ -78,7 +82,7 @@ export function useUsers() {
     return () => {
       supabaseClient.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
   async function AddUser(user: NewUser) {
     resetStates();
