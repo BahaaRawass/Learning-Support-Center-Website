@@ -256,7 +256,7 @@ export default function StudentTable({
                   </TableCell>
                   <TableCell>{student.added_at}</TableCell>
                   <TableCell>
-                    <span className='text-[0.9rem] text-[var(--text-muted)]'>
+                    <span className='text-[0.9rem] text-(--text-muted)'>
                       —
                     </span>
                   </TableCell>
@@ -369,7 +369,7 @@ export default function StudentTable({
         >
           Previous
         </Button>
-        <span className='text-[0.9rem] text-[var(--text-muted)]'>
+        <span className='text-[0.9rem] text-(--text-muted)'>
           Page {currentPage} of {Math.max(1, totalPages)}
         </span>
         <Button

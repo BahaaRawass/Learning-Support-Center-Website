@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { simplifyErrorMessage } from "@/helper/functions";
 
 type AccountSectionProps = {
   session: Session;
@@ -36,7 +37,7 @@ export default function AccountSection({
       ) {
         const displayNameUpdated = await updateDisplayName(displayName);
         if (!displayNameUpdated) {
-          setSaveMessage("Error updating display name");
+          setSaveMessage("Failed to update display name.");
           setIsSaving(false);
           return;
         }
@@ -45,9 +46,8 @@ export default function AccountSection({
       setSaveMessage("Profile updated successfully!");
       setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      setSaveMessage(
-        `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-      );
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      setSaveMessage(simplifyErrorMessage(errorMsg));
     }
 
     setIsSaving(false);
@@ -80,8 +80,8 @@ export default function AccountSection({
       <div className='flex gap-8 items-start mb-8'>
         <div className='flex flex-col gap-4 items-center'>
           <div
-            className={`w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden border-[3px] border-[var(--navy)] ${
-              profilePicture ? "bg-transparent" : "bg-[var(--navy-light)]"
+            className={`w-25 h-25 rounded-full flex items-center justify-center overflow-hidden border-[3px] border-(--navy) ${
+              profilePicture ? "bg-transparent" : "bg-(--navy-light)"
             }`}
           >
             {profilePicture ? (
@@ -98,7 +98,7 @@ export default function AccountSection({
                 fill='none'
                 stroke='currentColor'
                 strokeWidth='1.5'
-                className='text-[var(--gold)]'
+                className='text-(--gold)'
               >
                 <circle cx='12' cy='8' r='4' />
                 <path d='M4 20c0-4 3.5-7 8-7s8 3 8 7' />
@@ -134,7 +134,7 @@ export default function AccountSection({
                 defaultValue={session.user.email || ""}
                 disabled
               />
-              <p className='text-sm text-[var(--muted-foreground)]'>
+              <p className='text-sm text-muted-foreground'>
                 Your login email address.
               </p>
             </div>
@@ -150,8 +150,8 @@ export default function AccountSection({
           <p
             className={`text-sm ${
               saveMessage.startsWith("Error")
-                ? "text-[var(--destructive)]"
-                : "text-[var(--success)]"
+                ? "text-destructive"
+                : "text-(--success)"
             }`}
           >
             {saveMessage}

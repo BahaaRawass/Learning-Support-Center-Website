@@ -1,10 +1,30 @@
 import type { InputFormProps } from "@/types/types";
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet, FieldTitle } from "./ui/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+  FieldTitle,
+} from "./ui/field";
 import { Input } from "./ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import PasswordInput from "./PasswordInput";
 import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
+import { useState, type SubmitEvent } from "react";
 
 export default function InputForm({
   loading,
@@ -25,6 +45,23 @@ export default function InputForm({
     ? "Register a new student to track their support center visits"
     : "Create a new Support Center Staff account";
 
+  const [successMessage, setSuccessMessage] = useState<string>("");
+
+  async function onSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setSuccessMessage("");
+
+    const ok = isStudent
+      ? await handleStudentSubmit(event)
+      : await handleUserSubmit(event);
+
+    if (ok) {
+      setSuccessMessage(isStudent ? "Student added." : "User added.");
+      setTimeout(() => setSuccessMessage(""), 3500);
+    }
+  }
+
   return (
     <FieldSet className='form-card &>*:block!'>
       <FieldGroup className='form-card-header gold'>
@@ -37,7 +74,7 @@ export default function InputForm({
       {formError && <FieldError>{formError}</FieldError>}
 
       <FieldGroup className='form-body'>
-        <form onSubmit={isStudent ? handleStudentSubmit : handleUserSubmit}>
+        <form onSubmit={onSubmit}>
           <div className={isStudent ? "grid-3" : "grid-1"}>
             {isStudent && (
               <>
@@ -108,9 +145,6 @@ export default function InputForm({
                     <br />
                     Optional
                   </FieldDescription>
-                  {!studentInput.email && (
-                    <FieldError>Enter a valid email address.</FieldError>
-                  )}
                 </Field>
 
                 <Field className='field'>
@@ -306,15 +340,20 @@ export default function InputForm({
           </div>
 
           <FieldLegend className='form-actions'>
-            <Button
-              type='submit'
-              className='btn btn-primary p-5!'
-              disabled={loading}
-            >
-              {loading
-                ? "Loading..."
-                : `Add ${isStudent ? "Student" : userInput.isSupervisor ? "Supervisor" : "WorkStudy"}`}
-            </Button>
+            {successMessage && (
+              <div className='mr-auto'>{successMessage}</div>
+            )}
+            <div className='flex items-center gap-3'>
+              <Button
+                type='submit'
+                className='btn btn-primary p-5!'
+                disabled={loading}
+              >
+                {loading
+                  ? "Loading..."
+                  : `Add ${isStudent ? "Student" : userInput.isSupervisor ? "Supervisor" : "WorkStudy"}`}
+              </Button>
+            </div>
           </FieldLegend>
         </form>
       </FieldGroup>

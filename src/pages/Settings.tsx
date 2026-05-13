@@ -18,6 +18,11 @@ import type { PageSize } from "@/types/settings";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import PasswordInput from "@/components/PasswordInput";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import ErrorCard from "@/components/error-card";
+import LoadingCard from "@/components/loading-card";
+import LoadingModal from "@/components/loading-modal";
+import { simplifyErrorMessage } from "@/helper/functions";
 
 export default function Settings() {
   useDocumentTitle("Settings");
@@ -73,9 +78,8 @@ export default function Settings() {
         setPasswordMessage("Failed to change password. Please try again.");
       }
     } catch (err) {
-      setPasswordMessage(
-        `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-      );
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      setPasswordMessage(simplifyErrorMessage(errorMsg));
     }
 
     setIsChangingPassword(false);
@@ -92,11 +96,11 @@ export default function Settings() {
   }
 
   if (AuthLoading) {
-    return <p>Checking Authentication...</p>;
+    return <LoadingCard message='Checking authentication' />;
   }
 
   if (AuthError) {
-    return <p>{AuthError}</p>;
+    return <ErrorCard error={simplifyErrorMessage(AuthError)} />;
   }
 
   if (!Session) {
@@ -106,9 +110,7 @@ export default function Settings() {
   return (
     <>
       <div className='page-header'>
-        <div className='page-breadcrumb'>
-          LSC–CAS › <span>Settings</span>
-        </div>
+        <Breadcrumbs />
         <h1 className='page-title'>Settings</h1>
       </div>
 
@@ -162,8 +164,8 @@ export default function Settings() {
                   passwordMessage.includes("do not match") ||
                   passwordMessage.includes("must be different") ||
                   passwordMessage.includes("required")
-                    ? "text-[var(--destructive)]"
-                    : "text-[var(--success)]"
+                    ? "text-destructive"
+                    : "text-(--success)"
                 }`}
               >
                 {passwordMessage}
@@ -174,7 +176,7 @@ export default function Settings() {
           <div className='flex flex-col gap-4'>
             <div>
               <Label>Logout Everywhere</Label>
-              <p className='text-sm text-[var(--muted-foreground)] mb-2'>
+              <p className='text-sm text-muted-foreground mb-2'>
                 Log out from all devices and browsers.
               </p>
             </div>
@@ -183,6 +185,11 @@ export default function Settings() {
             </Button>
           </div>
         </section>
+
+        <LoadingModal
+          open={isChangingPassword}
+          message='Updating settings...'
+        />
 
         {/* APPEARANCE SECTION */}
         <section className='settings-section'>
@@ -276,7 +283,7 @@ export default function Settings() {
                   <SelectItem value='100'>100 records per page</SelectItem>
                 </SelectContent>
               </Select>
-              <p className='text-sm text-[var(--muted-foreground)]'>
+              <p className='text-sm text-muted-foreground'>
                 Number of records shown per page in tables.
               </p>
             </div>
@@ -303,7 +310,7 @@ export default function Settings() {
                   Excel
                 </label>
               </div>
-              <p className='text-sm text-[var(--muted-foreground)]'>
+              <p className='text-sm text-muted-foreground'>
                 Default format for exporting records.
               </p>
             </div>
@@ -321,7 +328,7 @@ export default function Settings() {
                   updateSetting("archiveRetention", Number(e.target.value))
                 }
               />
-              <p className='text-sm text-[var(--muted-foreground)]'>
+              <p className='text-sm text-muted-foreground'>
                 Days to keep archived records before deletion (
                 {Settings.archiveRetention} days).
               </p>

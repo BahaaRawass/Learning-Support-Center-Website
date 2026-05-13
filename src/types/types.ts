@@ -9,7 +9,7 @@ export type UpdaterFunction<T> = Dispatch<SetStateAction<T>>;
 
 export type AsyncSubmitFunction = (
   event: SubmitEvent<HTMLFormElement>,
-) => Promise<void>;
+) => Promise<boolean>;
 
 export type UpdateFieldsType<T> = (fields: Partial<T>) => void;
 
@@ -33,4 +33,9 @@ export type InputFormProps = {
 export type ErrorNotice = {
   id: Student["studentId"];
   message: string;
+};
+
+export type BreadcrumbItem = {
+  label: string;
+  path: string;
 };

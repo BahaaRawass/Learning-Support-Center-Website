@@ -4,6 +4,9 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { LoginInput } from "@/types/auth";
 import { useState, type SubmitEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import ErrorCard from "@/components/error-card";
+import LoadingCard from "@/components/loading-card";
+import { simplifyErrorMessage } from "@/helper/functions";
 
 export default function Login() {
   useDocumentTitle("Login");
@@ -35,11 +38,7 @@ export default function Login() {
   }
 
   if (AuthLoading) {
-    return (
-      <div className='d-flex justify-content-center align-items-center h-[50vh]'>
-        Checking Authentication
-      </div>
-    );
+    return <LoadingCard message='Checking authentication' />;
   }
 
   if (Session) {
@@ -63,11 +62,7 @@ export default function Login() {
             <p>Use your Learning Center account credentials to continue.</p>
           </div>
 
-          {AuthError && (
-            <div className='login-alert' role='alert'>
-              {AuthError}
-            </div>
-          )}
+          {AuthError && <ErrorCard error={simplifyErrorMessage(AuthError)} />}
 
           <form onSubmit={handleSubmit} className='login-form'>
             <div className='login-field'>

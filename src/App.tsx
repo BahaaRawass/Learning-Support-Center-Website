@@ -5,11 +5,14 @@ import WorkStudy from "./pages/WorkStudy.tsx";
 import StudentRecords from "./pages/StudentRecords.tsx";
 import Home from "./pages/Home.tsx";
 import Settings from "./pages/Settings.tsx";
+import NotFound from "./pages/NotFound.tsx";
+import ErrorPage from "./pages/ErrorPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       // List all your individual pages here:
       { index: true, element: <Home /> },
@@ -17,7 +20,7 @@ const router = createBrowserRouter([
       { path: "support-center-staff", element: <WorkStudy /> },
       { path: "student-records", element: <StudentRecords /> },
       { path: "settings", element: <Settings /> },
-      { path: "*", element: <div>404: Not Found</div> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

@@ -1,6 +1,5 @@
 import InputForm from "@/components/InputForm";
 import StudentTable from "@/components/StudentTable";
-import { Spinner } from "@/components/ui/spinner";
 import { checkDupes, formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
@@ -12,6 +11,9 @@ import { exportData } from "@/lib/exportUtils";
 import type { NewStudent, StudentInput } from "@/types/students";
 import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import LoadingCard from "@/components/loading-card";
+import LoadingModal from "@/components/loading-modal";
 
 export default function StudentRecords() {
   useDocumentTitle("Student Records");
@@ -25,6 +27,7 @@ export default function StudentRecords() {
 
   const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
   const [LocalError, setLocalError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
   const { Settings } = useSettings();
@@ -65,10 +68,9 @@ export default function StudentRecords() {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-[50vh] gap-2'>
-        <Spinner className='size-5' />
-        <span>{AuthLoading ? "Checking Authentication" : "Loading Data"}</span>
-      </div>
+      <LoadingCard
+        message={AuthLoading ? "Checking authentication" : "Loading students"}
+      />
     );
   }
 
@@ -78,10 +80,12 @@ export default function StudentRecords() {
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (loading || !Session) return;
+    if (loading || !Session) return false;
 
-    if (checkDupes(Students, StudentInput))
-      return setLocalError("A student with this ID or email already exists.");
+    if (checkDupes(Students, StudentInput)) {
+      setLocalError("A student with this ID or email already exists.");
+      return false;
+    }
 
     const newStudent: NewStudent = {
       studentName: StudentInput.studentName,
@@ -93,14 +97,20 @@ export default function StudentRecords() {
       nb_visits: 1,
     };
 
+    // show a small modal while submitting
+    setLocalError("");
+    setIsSubmitting(true);
     const ok = await addStudent(newStudent);
+    setIsSubmitting(false);
 
     if (ok) {
       setStudentInput(InitialValue);
       setLocalError("");
-    } else {
-      setLocalError("Failed to add student. Please try again.");
+      return true;
     }
+
+    setLocalError("Failed to add student. Please try again.");
+    return false;
   }
 
   function handleExport() {
@@ -130,9 +140,7 @@ export default function StudentRecords() {
   return (
     <>
       <div className='page-header'>
-        <div className='page-breadcrumb'>
-          LSC–CAS › <span>Student Records</span>
-        </div>
+        <Breadcrumbs />
         <div className='flex justify-between items-start'>
           <div>
             <h1 className='page-title'>Student Support Center Visits</h1>
@@ -158,6 +166,11 @@ export default function StudentRecords() {
         Departments={Departments}
         loading={loading}
         formError={error}
+      />
+
+      <LoadingModal
+        open={isSubmitting}
+        message={`Adding ${StudentInput.studentName || "student"}...`}
       />
 
       <StudentTable

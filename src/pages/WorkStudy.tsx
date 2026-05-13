@@ -25,6 +25,12 @@ import type { NewUser, User, UserInput } from "@/types/users";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
 import { Navigate } from "react-router-dom";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import ErrorCard from "@/components/error-card";
+import LoadingCard from "@/components/loading-card";
+import LoadingModal from "@/components/loading-modal";
+import { simplifyErrorMessage } from "@/helper/functions";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkStudy() {
   useDocumentTitle("Support Center Staff");
@@ -65,12 +71,18 @@ export default function WorkStudy() {
   const { Settings } = useSettings();
 
   const loading = AuthLoading || UsersLoading || DepartmentsLoading;
-  const error = AuthError || UsersError || DepartmentsError || LocalError;
+  const error = simplifyErrorMessage(
+    AuthError || UsersError || DepartmentsError || LocalError,
+  );
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (loading) return false;
 
-    if (loading) return;
+    setIsSubmitting(true);
 
     const prevSession = Session;
 
@@ -82,8 +94,11 @@ export default function WorkStudy() {
       Input.department_id,
     );
 
-    if (!SignUpData?.user)
-      return setLocalError("Failed to create account. Please try again.");
+    if (!SignUpData?.user) {
+      setIsSubmitting(false);
+      setLocalError("Failed to create account. Please try again.");
+      return false;
+    }
 
     const UserId = SignUpData.user.id;
 
@@ -101,7 +116,15 @@ export default function WorkStudy() {
 
     const Insert_confirmed = await AddUser(newUser);
 
-    if (Insert_confirmed) return setInput(InitialValue);
+    setIsSubmitting(false);
+
+    if (Insert_confirmed) {
+      setInput(InitialValue);
+      return true;
+    }
+
+    setLocalError("Failed to insert user.");
+    return false;
   }
 
   function updateFields(fields: Partial<UserInput>) {
@@ -109,16 +132,14 @@ export default function WorkStudy() {
   }
 
   if (error) {
-    return (
-      <div className='flex justify-center items-center h-[50vh]'>{error}</div>
-    );
+    return <ErrorCard error={error} />;
   }
 
   if (loading) {
     return (
-      <div className='flex justify-center items-center h-[50vh]'>
-        {AuthLoading ? "Checking Authentication" : "Loading Data"}
-      </div>
+      <LoadingCard
+        message={AuthLoading ? "Checking authentication" : "Loading data"}
+      />
     );
   }
 
@@ -127,8 +148,22 @@ export default function WorkStudy() {
   }
 
   if (Session.user.user_metadata.role !== "admin") {
-    alert("You do not have permission to access this page.");
-    return <Navigate to='/' replace />;
+    return (
+      <div className='flex items-center justify-center h-[60vh]'>
+        <div className='card p-6 text-center'>
+          <h2 className='text-lg font-semibold mb-2'>Access Denied</h2>
+          <p className='mb-4'>
+            You do not have permission to access this page.
+          </p>
+          <div className='flex gap-3 justify-center'>
+            <Button variant='outline' onClick={() => navigate(-1)}>
+              Go Back
+            </Button>
+            <Button onClick={() => navigate("/")}>Go Home</Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   async function handleDelete(id: User["id"]) {
@@ -159,9 +194,7 @@ export default function WorkStudy() {
   return (
     <>
       <div className='page-header'>
-        <div className='page-breadcrumb'>
-          LSC–CAS › <span>Support Center Staff</span>
-        </div>
+        <Breadcrumbs />
         <div className='flex justify-between items-start'>
           <div>
             <h1 className='page-title'>Support Center Staff Management</h1>
@@ -185,6 +218,8 @@ export default function WorkStudy() {
         Departments={Departments}
         formError={error}
       />
+
+      <LoadingModal open={isSubmitting} message='Adding user...' />
 
       <div className='mt-8'>
         <h2 className='text-xl text-(--navy) mb-4 font-serif font-semibold'>

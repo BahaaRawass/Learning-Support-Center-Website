@@ -3,6 +3,10 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import { useUsers } from "@/hooks/useUsers";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import ErrorCard from "@/components/error-card";
+import LoadingCard from "@/components/loading-card";
+import { simplifyErrorMessage } from "@/helper/functions";
 import studentsIcon from "/Images/students-icon.svg";
 import visitsIcon from "/Images/visits-icon.svg";
 import staffIcon from "/Images/staff-icon.svg";
@@ -26,13 +30,13 @@ export default function Home() {
   } = useUsers(Session?.user);
 
   const loading = AuthLoading || StudentsLoading || UsersLoading;
-  const error = AuthError || StudentsError || UsersError;
+  const error = simplifyErrorMessage(AuthError || StudentsError || UsersError);
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-[50vh]'>
-        {AuthLoading ? "Checking Authentication" : "Loading Data"}
-      </div>
+      <LoadingCard
+        message={AuthLoading ? "Checking authentication" : "Loading data"}
+      />
     );
   }
 
@@ -41,9 +45,7 @@ export default function Home() {
   }
 
   if (error) {
-    return (
-      <div className='flex items-center justify-center h-[50vh]'>{error}</div>
-    );
+    return <ErrorCard error={error} />;
   }
 
   const totalStudents = Students.length;
@@ -68,9 +70,7 @@ export default function Home() {
   return (
     <>
       <div className='page-header'>
-        <div className='page-breadcrumb'>
-          LSC–CAS › <span>Home</span>
-        </div>
+        <Breadcrumbs />
         <h1 className='page-title'>Dashboard</h1>
         <p className='page-desc'>
           Overview of support center activity and staff statistics.
