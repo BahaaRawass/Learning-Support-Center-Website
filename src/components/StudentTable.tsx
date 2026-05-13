@@ -66,6 +66,7 @@ export default function StudentTable({
     email: "",
     department_id: NaN,
     askedCourses: [],
+    visitDateTime: new Date().toISOString(),
   };
 
   const EmptyError: ErrorNotice = {
@@ -107,6 +108,7 @@ export default function StudentTable({
       email: student.email,
       department_id: student.department_id,
       askedCourses: askedCoursesByStudent[student.id] || [],
+      visitDateTime: student.added_at,
     });
     setEditAskedCourses(askedCoursesByStudent[student.id] || []);
   }

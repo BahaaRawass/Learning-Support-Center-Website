@@ -26,6 +26,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { useState, type SubmitEvent } from "react";
 import CoursesMenu from "./CoursesMenu";
+import { DateTimePicker } from "./DateTimePicker.tsx";
 
 export default function InputForm({
   loading,
@@ -202,6 +203,23 @@ export default function InputForm({
                     Choose the courses that the student asked about.
                     <br />
                     You can search by course name or code.
+                  </FieldDescription>
+                </Field>
+                <Field className='field'>
+                  <FieldLabel htmlFor='studentEmail'>
+                    Date & Time of Visit
+                  </FieldLabel>
+
+                  <DateTimePicker
+                    value={studentInput.visitDateTime}
+                    onChange={(visitDateTime: string) =>
+                      updateFields({ visitDateTime })
+                    }
+                  />
+                  <FieldDescription>
+                    Choose the date and time of the student's visit.
+                    <br />
+                    Defaults to the current date and time.
                   </FieldDescription>
                 </Field>
               </>

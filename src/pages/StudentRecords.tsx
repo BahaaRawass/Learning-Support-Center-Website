@@ -25,6 +25,7 @@ export default function StudentRecords() {
     email: "",
     department_id: NaN,
     askedCourses: [],
+    visitDateTime: new Date().toISOString(),
   };
 
   const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
@@ -96,7 +97,7 @@ export default function StudentRecords() {
       studentId: StudentInput.studentId,
       email: StudentInput.email,
       department_id: StudentInput.department_id,
-      added_at: formatDate(),
+      added_at: formatDate(StudentInput.visitDateTime),
       added_by: Session.user.id,
       nb_visits: 1,
     };

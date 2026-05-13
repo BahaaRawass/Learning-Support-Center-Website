@@ -12,6 +12,7 @@ export type StudentInput = {
   studentId: Student["studentId"];
   email?: Student["email"];
   askedCourses: string[];
+  visitDateTime: string;
 };
 
 export type StudentMode = {
