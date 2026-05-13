@@ -7,6 +7,7 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSettings } from "@/hooks/useSettings";
 import { useStudents } from "@/hooks/useStudents";
 import { useUsers } from "@/hooks/useUsers";
+import { useAsked_About } from "@/hooks/useAsked_About";
 import { exportData } from "@/lib/exportUtils";
 import type { NewStudent, StudentInput } from "@/types/students";
 import { useState, type SubmitEvent } from "react";
@@ -23,6 +24,7 @@ export default function StudentRecords() {
     studentName: "",
     email: "",
     department_id: NaN,
+    askedCourses: [],
   };
 
   const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
@@ -42,6 +44,8 @@ export default function StudentRecords() {
     UpdateStudent,
     DeleteStudent,
   } = useStudents(Session?.user);
+
+  const { syncStudentCourses } = useAsked_About();
 
   const {
     Users,
@@ -100,12 +104,24 @@ export default function StudentRecords() {
     // show a small modal while submitting
     setLocalError("");
     setIsSubmitting(true);
-    const ok = await addStudent(newStudent);
+    const createdStudent = await addStudent(newStudent);
     setIsSubmitting(false);
 
-    if (ok) {
+    if (createdStudent) {
+      if (StudentInput.askedCourses.length > 0) {
+        const coursesSaved = await syncStudentCourses(
+          createdStudent.id,
+          StudentInput.askedCourses,
+        );
+
+        if (!coursesSaved) {
+          setLocalError(
+            "Student added, but failed to save asked-about courses.",
+          );
+        }
+      }
+
       setStudentInput(InitialValue);
-      setLocalError("");
       return true;
     }
 

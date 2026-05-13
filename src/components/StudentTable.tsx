@@ -3,8 +3,9 @@ import type { Student, StudentInput } from "@/types/students";
 import type { ErrorNotice } from "@/types/types";
 import type { User } from "@/types/users";
 import { useSettings } from "@/hooks/useSettings";
+import { useAsked_About } from "@/hooks/useAsked_About";
 import { MoreHorizontalIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -34,6 +35,8 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import Modal from "./Modal";
+import CoursesMenu from "./CoursesMenu";
+import CoursesDisplayList from "./CoursesDisplayList";
 
 export type TableProps = {
   Students: Student[];
@@ -62,6 +65,7 @@ export default function StudentTable({
     studentName: "",
     email: "",
     department_id: NaN,
+    askedCourses: [],
   };
 
   const EmptyError: ErrorNotice = {
@@ -70,13 +74,30 @@ export default function StudentTable({
   };
 
   const { Settings } = useSettings();
+  const { AskedAbout, syncStudentCourses } = useAsked_About();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [EditId, setEditId] = useState<Student["studentId"] | null>(null);
   const [EditValues, setEditValues] = useState<StudentInput>(InitialValue);
+  const [EditAskedCourses, setEditAskedCourses] = useState<string[]>([]);
   const [DeletedStudent, setDeletedStudent] = useState<Student | null>(null);
   const [IsOpen, setIsOpen] = useState<boolean>(false);
   const [ErrorNotice, setErrorNotice] = useState<ErrorNotice>(EmptyError);
+
+  const askedCoursesByStudent = useMemo(() => {
+    const map: Record<string, string[]> = {};
+
+    for (const row of AskedAbout) {
+      if (!map[row.student_Id]) {
+        map[row.student_Id] = [];
+      }
+
+      map[row.student_Id].push(row.course_code);
+    }
+
+    return map;
+  }, [AskedAbout]);
 
   function startEditing(student: Student) {
     setEditId(student.studentId);
@@ -85,12 +106,15 @@ export default function StudentTable({
       studentName: student.studentName,
       email: student.email,
       department_id: student.department_id,
+      askedCourses: askedCoursesByStudent[student.id] || [],
     });
+    setEditAskedCourses(askedCoursesByStudent[student.id] || []);
   }
 
   function cancelEditing() {
     setEditId(null);
     setEditValues(InitialValue);
+    setEditAskedCourses([]);
   }
 
   async function handleDeleteStudent(id: Student["studentId"]) {
@@ -103,15 +127,34 @@ export default function StudentTable({
       });
   }
 
-  async function handleEditStudent(id: Student["studentId"]) {
-    const ok = await UpdateStudent(id, EditValues);
+  async function handleEditStudent(student: Student) {
+    const updatedStudentPayload: Partial<Student> = {
+      studentId: EditValues.studentId,
+      studentName: EditValues.studentName,
+      email: EditValues.email || null,
+      department_id: EditValues.department_id,
+    };
+
+    const ok = await UpdateStudent(student.studentId, updatedStudentPayload);
 
     if (!ok)
       return setErrorNotice({
-        id: id,
+        id: student.studentId,
         message: "Failed to update student. Please try again.",
       });
-    else return cancelEditing();
+
+    const coursesUpdated = await syncStudentCourses(
+      student.id,
+      EditAskedCourses,
+    );
+
+    if (!coursesUpdated)
+      return setErrorNotice({
+        id: student.studentId,
+        message: "Student updated, but asked-about courses could not be saved.",
+      });
+
+    return cancelEditing();
   }
 
   async function handleIncrementVisits(id: Student["studentId"]) {
@@ -256,9 +299,19 @@ export default function StudentTable({
                   </TableCell>
                   <TableCell>{student.added_at}</TableCell>
                   <TableCell>
-                    <span className='text-[0.9rem] text-(--text-muted)'>
-                      —
-                    </span>
+                    {isEditing ? (
+                      <CoursesMenu
+                        selectedCourseCodes={EditAskedCourses}
+                        onSelectionChange={setEditAskedCourses}
+                        buttonLabel='Open Courses Menu'
+                      />
+                    ) : (
+                      <CoursesDisplayList
+                        selectedCourseCodes={
+                          askedCoursesByStudent[student.id] || []
+                        }
+                      />
+                    )}
                   </TableCell>
                   <TableCell>
                     {isUpdating === student.studentId ? (
@@ -299,7 +352,7 @@ export default function StudentTable({
                                 className='cursor-pointer'
                                 onClick={() => {
                                   console.log("Clicked");
-                                  handleEditStudent(student.studentId);
+                                  handleEditStudent(student);
                                 }}
                               >
                                 Submit Edits

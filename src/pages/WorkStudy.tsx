@@ -71,9 +71,8 @@ export default function WorkStudy() {
   const { Settings } = useSettings();
 
   const loading = AuthLoading || UsersLoading || DepartmentsLoading;
-  const error = simplifyErrorMessage(
-    AuthError || UsersError || DepartmentsError || LocalError,
-  );
+  const rawError = AuthError || UsersError || DepartmentsError || LocalError;
+  const error = rawError ? simplifyErrorMessage(rawError) : "";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();

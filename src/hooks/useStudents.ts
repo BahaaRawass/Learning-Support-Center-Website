@@ -4,7 +4,6 @@ import type { NewStudent, Student } from "@/types/students";
 import { supabaseClient } from "@/supabase-client";
 import type { Data } from "@/types/types";
 
-
 export function useStudents(added_by?: User) {
   const [Students, setStudents] = useState<Student[]>([]);
   const [Loading, setLoading] = useState<boolean>(false);
@@ -106,17 +105,19 @@ export function useStudents(added_by?: User) {
   async function addStudent(student: NewStudent) {
     ResetStates();
 
-    const { error: AddError } = await supabaseClient
+    const { data, error: AddError } = await supabaseClient
       .from("Students")
       .insert(student)
+      .select("*")
       .single();
 
     if (AddError) {
       SetError(AddError);
-      return false;
+      return null;
     }
+
     setLoading(false);
-    return true;
+    return data;
   }
 
   async function incrementStudentVisits(studentId: Student["studentId"]) {

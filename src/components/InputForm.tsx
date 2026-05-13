@@ -25,6 +25,7 @@ import PasswordInput from "./PasswordInput";
 import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { useState, type SubmitEvent } from "react";
+import CoursesMenu from "./CoursesMenu";
 
 export default function InputForm({
   loading,
@@ -185,6 +186,24 @@ export default function InputForm({
                     <FieldError>Student department is required.</FieldError>
                   )}
                 </Field>
+                <Field className='field'>
+                  <FieldLabel htmlFor='studentEmail'>
+                    Courses Asked About
+                  </FieldLabel>
+
+                  <CoursesMenu
+                    selectedCourseCodes={studentInput.askedCourses}
+                    onSelectionChange={(askedCourses) =>
+                      updateFields({ askedCourses })
+                    }
+                    buttonLabel='Open Courses Menu'
+                  />
+                  <FieldDescription>
+                    Choose the courses that the student asked about.
+                    <br />
+                    You can search by course name or code.
+                  </FieldDescription>
+                </Field>
               </>
             )}
 
@@ -340,9 +359,7 @@ export default function InputForm({
           </div>
 
           <FieldLegend className='form-actions'>
-            {successMessage && (
-              <div className='mr-auto'>{successMessage}</div>
-            )}
+            {successMessage && <div className='mr-auto'>{successMessage}</div>}
             <div className='flex items-center gap-3'>
               <Button
                 type='submit'

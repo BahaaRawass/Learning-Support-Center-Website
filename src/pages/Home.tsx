@@ -30,7 +30,8 @@ export default function Home() {
   } = useUsers(Session?.user);
 
   const loading = AuthLoading || StudentsLoading || UsersLoading;
-  const error = simplifyErrorMessage(AuthError || StudentsError || UsersError);
+  const rawError = AuthError || StudentsError || UsersError;
+  const error = rawError ? simplifyErrorMessage(rawError) : "";
 
   if (loading) {
     return (
