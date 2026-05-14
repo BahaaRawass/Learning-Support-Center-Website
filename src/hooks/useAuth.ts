@@ -34,6 +34,8 @@ export function useAuth() {
   useEffect(() => {
     // Helper: fetch user's existing profile picture (if any) and store public URL
     async function fetchAndStoreProfilePicture(user: User | null) {
+      console.log("Fetching Profile Picture Started");
+      if (!user) return;
       try {
         const bucketName = import.meta.env.VITE_PROFILE_PICTURES_BUCKET;
         if (!user || !bucketName) return;
@@ -42,9 +44,21 @@ export function useAuth() {
         const userId = user.id;
         const folderPath = `${displayName}_${userId}`;
 
-        const { data: files, error: listError } = await supabaseClient.storage
+        // Add a 5-second timeout to prevent hanging on storage.list()
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(), 5000),
+        );
+
+        const listPromise = supabaseClient.storage
           .from(bucketName)
           .list(folderPath);
+
+        const { data: files, error: listError } = await Promise.race([
+          listPromise,
+          timeoutPromise,
+        ]);
+
+        console.log("Files: ", files);
 
         if (listError || !files || files.length === 0) return;
 
@@ -67,8 +81,11 @@ export function useAuth() {
       } catch (err) {
         console.warn("Failed to restore profile picture:", err);
       }
+      console.log("Fetching Profile Picture Ended");
     }
     async function getSession() {
+      console.log("Fetching Session Started");
+
       resetSates();
 
       const { data, error: SessionError } =
@@ -79,26 +96,29 @@ export function useAuth() {
         return;
       }
       setSession(data.session);
-      // try to restore profile picture when session is obtained
-      await fetchAndStoreProfilePicture(data.session?.user || null);
+      // try to restore profile picture when session is obtained (non-blocking)
+      void fetchAndStoreProfilePicture(data.session?.user || null);
       setLoading(false);
+      console.log("Fetching Session Ended");
     }
 
     getSession();
 
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (_event, session) => {
+        console.log("Switching Session Started");
         setSession(session);
-        // try to restore profile picture on auth change
-        void fetchAndStoreProfilePicture(session?.user || null);
         setLoading(false);
+        // try to restore profile picture on auth change (non-blocking)
+        void fetchAndStoreProfilePicture(session?.user || null);
+        console.log("Switching Session Ended");
       },
     );
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [Error]);
 
   async function SignInWithPassword(email: string, password: string) {
     resetSates();
@@ -154,7 +174,7 @@ export function useAuth() {
     }
 
     localStorage.removeItem("profilePicture");
-    window.dispatchEvent(new Event("profilePictureUpdated"));
+    // window.dispatchEvent(new Event("profilePictureUpdated"));
     setLoading(false);
     return true;
   }
