@@ -81,6 +81,22 @@ export default function WorkStudy() {
     event.preventDefault();
     if (loading) return false;
 
+    // Validate that a department has been selected
+    if (isNaN(Input.department_id)) {
+      setLocalError("Please select a department.");
+      return false;
+    }
+
+    // Validate that all required fields are filled
+    if (
+      !Input.displayname.trim() ||
+      !Input.email.trim() ||
+      !Input.password.trim()
+    ) {
+      setLocalError("Please fill in all required fields.");
+      return false;
+    }
+
     setIsSubmitting(true);
 
     const prevSession = Session;

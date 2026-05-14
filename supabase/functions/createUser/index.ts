@@ -28,9 +28,13 @@ async function sendConfirmationEmail(params: {
     throw new Error("Missing RESEND_API_KEY environment variable");
   }
 
-  const from =
-    Deno.env.get("RESEND_FROM_EMAIL") ??
-    "Learning Support Center <onboarding@resend.dev>";
+  const from = Deno.env.get("VITE_RESEND_FROM_EMAIL");
+
+  if (!from) {
+    throw new Error("Missing VITE_RESEND_FROM_EMAIL environment variable");
+  }
+
+  console.log("[createUser] Sending email from:", from);
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -121,15 +125,30 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await parseJsonBody<CreateUserRequest>(req);
+    console.log(
+      "[createUser] Received request body:",
+      JSON.stringify(body, null, 2),
+    );
     const { email, password, displayname, isSupervisor, department_id } = body;
 
+    console.log("[createUser] Validating email:", email, "type:", typeof email);
     if (!email || typeof email !== "string") {
+      console.error("[createUser] Email validation failed");
       return jsonResponse(
         { data: null, error: { message: "Missing or invalid field: email" } },
         400,
       );
     }
+    console.log("[createUser] Email validation passed");
+
+    console.log(
+      "[createUser] Validating password:",
+      password ? "***" : "missing",
+      "type:",
+      typeof password,
+    );
     if (!password || typeof password !== "string") {
+      console.error("[createUser] Password validation failed");
       return jsonResponse(
         {
           data: null,
@@ -138,7 +157,16 @@ Deno.serve(async (req: Request) => {
         400,
       );
     }
+    console.log("[createUser] Password validation passed");
+
+    console.log(
+      "[createUser] Validating displayname:",
+      displayname,
+      "type:",
+      typeof displayname,
+    );
     if (!displayname || typeof displayname !== "string") {
+      console.error("[createUser] Displayname validation failed");
       return jsonResponse(
         {
           data: null,
@@ -147,7 +175,19 @@ Deno.serve(async (req: Request) => {
         400,
       );
     }
+    console.log("[createUser] Displayname validation passed");
+
+    console.log(
+      "[createUser] Validating isSupervisor:",
+      isSupervisor,
+      "type:",
+      typeof isSupervisor,
+    );
     if (typeof isSupervisor !== "boolean") {
+      console.error(
+        "[createUser] isSupervisor validation failed. Got type:",
+        typeof isSupervisor,
+      );
       return jsonResponse(
         {
           data: null,
@@ -158,19 +198,38 @@ Deno.serve(async (req: Request) => {
         400,
       );
     }
-    if (typeof department_id !== "number") {
+    console.log("[createUser] isSupervisor validation passed");
+
+    console.log(
+      "[createUser] Validating department_id:",
+      department_id,
+      "type:",
+      typeof department_id,
+    );
+    if (typeof department_id !== "number" || isNaN(department_id)) {
+      console.error(
+        "[createUser] department_id validation failed. Got type:",
+        typeof department_id,
+        "value:",
+        department_id,
+        "isNaN:",
+        isNaN(department_id),
+      );
       return jsonResponse(
         {
           data: null,
           error: {
-            message: "Missing or invalid field: department_id (must be number)",
+            message:
+              "Missing or invalid field: department_id (must be a valid number)",
           },
         },
         400,
       );
     }
+    console.log("[createUser] department_id validation passed");
 
     const role: "admin" | "workstudy" = isSupervisor ? "admin" : "workstudy";
+    console.log("[createUser] Creating user with role:", role);
     const supabaseAdmin = getAdminClient();
 
     const { data: User, error: CreateError } =
@@ -182,11 +241,20 @@ Deno.serve(async (req: Request) => {
       });
 
     if (CreateError) {
+      console.error(
+        "[createUser] User creation error:",
+        serializeError(CreateError),
+      );
       return jsonResponse(
         { data: null, error: serializeError(CreateError) },
         400,
       );
     }
+
+    console.log(
+      "[createUser] User created successfully with ID:",
+      User?.user.id,
+    );
 
     const { data: LinkData, error: LinkError } =
       await supabaseAdmin.auth.admin.generateLink({
@@ -196,15 +264,21 @@ Deno.serve(async (req: Request) => {
       });
 
     if (LinkError) {
+      console.error(
+        "[createUser] Link generation error:",
+        serializeError(LinkError),
+      );
       return jsonResponse(
         { data: null, error: serializeError(LinkError) },
         400,
       );
     }
 
+    console.log("[createUser] Confirmation link generated successfully");
     const confirmationLink = LinkData?.properties?.action_link;
 
     if (!confirmationLink) {
+      console.error("[createUser] No confirmation link returned from Supabase");
       return jsonResponse(
         {
           data: null,
@@ -214,18 +288,23 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log("[createUser] Sending confirmation email to:", email);
     try {
       await sendConfirmationEmail({
         to: email,
         displayName: displayname,
         confirmationLink,
       });
+      console.log("[createUser] Confirmation email sent successfully");
     } catch (err: unknown) {
+      console.error("[createUser] Email sending error:", serializeError(err));
       return jsonResponse({ data: null, error: serializeError(err) }, 400);
     }
 
+    console.log("[createUser] Returning success response");
     return jsonResponse({ data: User, error: null }, 201);
   } catch (err: unknown) {
+    console.error("[createUser] Unexpected error:", serializeError(err));
     return jsonResponse({ data: null, error: serializeError(err) }, 500);
   }
 });

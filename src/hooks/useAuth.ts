@@ -165,6 +165,7 @@ export function useAuth() {
       SetError(error);
       return false;
     }
+    setLoading(false);
     return true;
   }
 
@@ -178,6 +179,7 @@ export function useAuth() {
       SetError(error);
       return false;
     }
+    setLoading(false);
     return true;
   }
 
@@ -189,6 +191,7 @@ export function useAuth() {
       "deleteAllNonAdminUsers",
       {},
     );
+    setLoading(false);
 
     return DeletionSummary;
   }
