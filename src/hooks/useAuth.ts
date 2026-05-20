@@ -34,7 +34,7 @@ export function useAuth() {
   useEffect(() => {
     // Helper: fetch user's existing profile picture (if any) and store public URL
     async function fetchAndStoreProfilePicture(user: User | null) {
-      console.log("Fetching Profile Picture Started");
+      // console.log("Fetching Profile Picture Started");
       if (!user) return;
       try {
         const bucketName = import.meta.env.VITE_PROFILE_PICTURES_BUCKET;
@@ -58,8 +58,6 @@ export function useAuth() {
           timeoutPromise,
         ]);
 
-        console.log("Files: ", files);
-
         if (listError || !files || files.length === 0) return;
 
         const profileFile = files.find(
@@ -81,10 +79,10 @@ export function useAuth() {
       } catch (err) {
         console.warn("Failed to restore profile picture:", err);
       }
-      console.log("Fetching Profile Picture Ended");
+      // console.log("Fetching Profile Picture Ended");
     }
     async function getSession() {
-      console.log("Fetching Session Started");
+      // console.log("Fetching Session Started");
 
       resetSates();
 
@@ -99,19 +97,19 @@ export function useAuth() {
       // try to restore profile picture when session is obtained (non-blocking)
       void fetchAndStoreProfilePicture(data.session?.user || null);
       setLoading(false);
-      console.log("Fetching Session Ended");
+      // console.log("Fetching Session Ended");
     }
 
     getSession();
 
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (_event, session) => {
-        console.log("Switching Session Started");
+        // console.log("Switching Session Started");
         setSession(session);
         setLoading(false);
         // try to restore profile picture on auth change (non-blocking)
         void fetchAndStoreProfilePicture(session?.user || null);
-        console.log("Switching Session Ended");
+        // console.log("Switching Session Ended");
       },
     );
 

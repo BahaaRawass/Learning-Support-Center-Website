@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import RHULogo from "/Images/rhu_logo.png";
 import { useAuth } from "@/hooks/useAuth";
 
-type ThemeMode = "light" | "dark";
-
 type HeaderProps = {
   onToggleMenu: () => void;
   isMenuOpen: boolean;
@@ -12,18 +10,9 @@ type HeaderProps = {
 export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
   const { Session, SignOut, Loading } = useAuth();
 
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    return (localStorage.getItem("theme") as ThemeMode) || "light";
-  });
-
   const [profilePicture, setProfilePicture] = useState<string>(() => {
     return localStorage.getItem("profilePicture") || "";
   });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     function syncProfilePicture() {
@@ -39,10 +28,6 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
       window.removeEventListener("profilePictureUpdated", syncProfilePicture);
     };
   }, []);
-
-  function toggleTheme() {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
-  }
 
   async function LogOut() {
     await SignOut();
@@ -93,20 +78,6 @@ export default function Header({ onToggleMenu, isMenuOpen }: HeaderProps) {
       <div className='header-brand relative'>
         <img src={RHULogo} alt='RHU Logo' className='header-logo' />
       </div>
-
-      <button
-        type='button'
-        className='theme-toggle'
-        onClick={toggleTheme}
-        aria-label='Toggle theme'
-      >
-        <span className='theme-toggle-icon'>
-          {theme === "light" ? "☾" : "☀"}
-        </span>
-        <span className='theme-toggle-label'>
-          {theme === "light" ? "Dark" : "Light"}
-        </span>
-      </button>
 
       <div className='header-user'>
         <div className='user-name'>{DisplayName}</div>
