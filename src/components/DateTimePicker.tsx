@@ -27,9 +27,8 @@ function getSafeDate(value: string) {
 function toTimeInputValue(date: Date) {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${hours}:${minutes}:${seconds}`;
+  return `${hours}:${minutes}`;
 }
 
 function updateDatePart(currentValue: string, nextDate: Date) {
@@ -46,9 +45,9 @@ function updateDatePart(currentValue: string, nextDate: Date) {
 
 function updateTimePart(currentValue: string, nextTime: string) {
   const updatedDate = getSafeDate(currentValue);
-  const [hours = "0", minutes = "0", seconds = "0"] = nextTime.split(":");
+  const [hours = "0", minutes = "0"] = nextTime.split(":");
 
-  updatedDate.setHours(Number(hours), Number(minutes), Number(seconds), 0);
+  updatedDate.setHours(Number(hours), Number(minutes), 0, 0);
 
   return updatedDate.toISOString();
 }
@@ -99,7 +98,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
         <Input
           type='time'
           id='visit-time'
-          step='1'
+          step='60'
           value={toTimeInputValue(selectedDate)}
           onChange={(event) =>
             onChange(updateTimePart(value, event.target.value))
