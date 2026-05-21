@@ -2,7 +2,7 @@ import PasswordInput from "@/components/PasswordInput";
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { LoginInput } from "@/types/auth";
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
@@ -10,6 +10,30 @@ import { simplifyErrorMessage } from "@/helper/functions";
 
 export default function Login() {
   useDocumentTitle("Login");
+
+  useEffect(() => {
+    
+    const main = document.querySelector(".main") as HTMLElement | null;
+    const footer = document.querySelector(".site-footer") as HTMLElement | null;
+
+    const originalMainPadding = main ? main.style.padding : "";
+    const originalMainMarginLeft = main ? main.style.marginLeft : "";
+    const originalFooterWidth = footer ? footer.style.width : "";
+
+    if (main) {
+      main.style.padding = "0px";
+      main.style.marginLeft = "0px";
+    }
+    if (footer) footer.style.width = "100%";
+
+    return () => {
+      if (main) {
+        main.style.padding = originalMainPadding;
+        main.style.marginLeft = originalMainMarginLeft;
+      }
+      if (footer) footer.style.width = originalFooterWidth;
+    };
+  }, []);
 
   const InitialValue: LoginInput = {
     email: "",
@@ -46,7 +70,7 @@ export default function Login() {
   }
 
   return (
-    <div className='login-page'>
+    <div className='login-page scrollbar-none'>
       <div className='login-panel'>
         <div className='login-hero'>
           <h1>RHU Learning Support Center</h1>

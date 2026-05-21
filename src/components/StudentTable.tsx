@@ -417,7 +417,7 @@ export default function StudentTable({
       </Table>
 
       {/* Pagination */}
-      <div className='flex justify-center items-center gap-4 mt-6 px-4'>
+      <div className='flex justify-center items-center gap-4 m-4'>
         <Button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}

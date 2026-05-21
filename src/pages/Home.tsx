@@ -3,7 +3,6 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudents } from "@/hooks/useStudents";
 import { useUsers } from "@/hooks/useUsers";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
 import { simplifyErrorMessage } from "@/helper/functions";
@@ -71,7 +70,6 @@ export default function Home() {
   return (
     <>
       <div className='page-header'>
-        <Breadcrumbs />
         <h1 className='page-title'>Dashboard</h1>
         <p className='page-desc'>
           Overview of support center activity and staff statistics.

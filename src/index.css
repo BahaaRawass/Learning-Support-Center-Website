@@ -462,8 +462,11 @@ body {
 
 .login-page {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   min-height: 100%;
-  padding: 1rem;
+  /* padding: 1rem; */
   flex: 1;
 }
 
@@ -483,7 +486,7 @@ body {
 .login-hero {
   background:
     linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.45)),
-    url('/Images/rhu-photo.jpg') center / 300% no-repeat;
+    url("/Images/rhu-photo.jpg") center / 300% no-repeat;
   color: #f7f2ea;
   padding: 1.5rem 1rem;
   display: flex;
@@ -671,7 +674,6 @@ body {
   color: var(--text-muted);
 }
 
-
 html[data-theme="dark"] .login-panel {
   background: rgba(31, 26, 38, 0.98);
   border-color: rgba(212, 199, 226, 0.16);
@@ -768,7 +770,7 @@ html[data-theme="dark"] .login-hero p {
   overflow: hidden;
 }
 
-.form-card >* {
+.form-card > * {
   display: block !important;
 }
 
@@ -1197,6 +1199,10 @@ html[data-theme="dark"] .login-hero p {
    ══════════════════════════════════════════════════════════════════════════════ */
 
 .site-footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: calc(100% - 220px);
   background: var(--navy);
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
@@ -1541,6 +1547,9 @@ html[data-theme="dark"] .badge.bg-primary {
     height: 32px;
     font-size: 0.65rem;
   }
+  .site-footer {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1838,7 +1847,9 @@ html[data-theme="dark"] .stat-icon {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--text-dark);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .settings-input:focus,
@@ -1906,11 +1917,11 @@ html[data-theme="dark"] .stat-icon {
 
 .settings-danger-button:hover {
   color: var(--white);
-   background: rgb(158, 0, 0);
-   border-color: transparent;
+  background: rgb(158, 0, 0);
+  border-color: transparent;
 }
 
-html[data-theme="dark"] .settings-action-button{
+html[data-theme="dark"] .settings-action-button {
   color: white;
 }
 html[data-theme="dark"] .settings-action-button.btn-primary {
@@ -1988,7 +1999,9 @@ html[data-theme="dark"] .settings-action-button.btn-gold:hover {
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .profile-picture-input::-webkit-file-upload-button {
@@ -2001,7 +2014,9 @@ html[data-theme="dark"] .settings-action-button.btn-gold:hover {
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .profile-picture-input:hover::file-selector-button,
@@ -2022,7 +2037,8 @@ html[data-theme="dark"] .profile-picture-input::-webkit-file-upload-button {
 }
 
 html[data-theme="dark"] .profile-picture-input:hover::file-selector-button,
-html[data-theme="dark"] .profile-picture-input:hover::-webkit-file-upload-button {
+html[data-theme="dark"]
+  .profile-picture-input:hover::-webkit-file-upload-button {
   background: var(--gold-light);
 }
 
