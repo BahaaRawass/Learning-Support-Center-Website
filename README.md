@@ -1,6 +1,6 @@
 # RHU Learning Support Center — Website
 
-A role-based web platform for Rafik Hariri University's Learning Support Center (LSC), built to digitize how student tutoring/workstudy visits are recorded and managed. This is Bahaa Rawass's Final Year Project (FYP).
+A role-based web platform for Rafik Hariri University's Learning Support Center (LSC), built to digitize how student tutoring/workstudy visits are recorded and managed.
 
 ## Table of Contents
 
