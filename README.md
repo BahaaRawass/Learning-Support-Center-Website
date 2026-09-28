@@ -1,6 +1,6 @@
 # RHU Learning Support Center — Website
 
-A role-based web platform for Rafik Hariri University's Learning Support Center (LSC). This is Bahaa Rawass's Final Year Project (FYP): a system currently used by Center staff to digitize tutoring/workstudy visit tracking, being grown into a full self-service platform for registration, scheduling, and reporting.
+A role-based web platform for Rafik Hariri University's Learning Support Center (LSC). This is a Final Year Project (FYP) done by Bahaa El Rawass, Ali Gharable, Mahdi Dagher and Rand Al Yaman: a system currently used by Center staff to digitize tutoring/workstudy visit tracking, being grown into a full self-service platform for registration, scheduling, and reporting.
 
 ## Table of Contents
 
