@@ -85,7 +85,7 @@ The system is organized around the Center's present staff roles and the future s
 
 ## 5. Use Case Diagram
 
-![Use Case Diagram](./public/Images/mermaid-diagram.png)
+![Use Case Diagram](./public/Images/LSC%20_Use_Case_daigram.png)
 
 **Figure 1.** Mermaid use case diagram source for the RHU Learning Support Center system.
 
