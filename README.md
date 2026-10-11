@@ -156,3 +156,4 @@ The current website mainly supports data entry by Supervisors and Workstudy Staf
 - Define semester entities and status history before migrating visit records so data remains auditable.
 - Meet Student Affairs and the Finance Office before finalizing their workflows, data requirements, and notification channels.
 - Treat the mobile application as optional and reuse the existing backend so push notifications and offline features do not require a separate data layer.
+- Treat the mobile application as optional and reuse the existing backend so push notifications and offline features do not require a separate data layer.
