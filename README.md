@@ -1,7 +1,7 @@
 # RHU Learning Support Center Website
 
-**Rafik Hariri University**  
-**Final Year Project**  
+**Rafik Hariri University**
+**Final Year Project**
 **Progress Report**
 
 ## Group Members
@@ -39,6 +39,9 @@ Planned objectives are to:
 - Give Supervisors a real-time analytics dashboard covering the most requested courses, visits per semester and per Workstudy, peak visiting hours, attendance trends, and Workstudy performance.
 - Allow students to leave reviews and comments about Workstudy, and allow Workstudy to leave comments about students that only Supervisors can read.
 - Send automated email reminders for student bookings.
+- Automate the workstudy registration and applicant review process, including account provisioning and schedule confirmation.
+- Allow students to book tutoring visits directly, with Workstudy able to decline or cancel when necessary.
+- Integrate with Student Affairs and the Finance Office for workstudy paperwork and payment processing.
 - Provide a Resource Library where Supervisors and Workstudy can upload and share documents, slides, and links.
 - Develop an optional mobile application for all users, with push notifications and offline support for selected features.
 
@@ -48,26 +51,26 @@ Planned objectives are to:
 
 The system currently implements the following functional requirements:
 
-| Requirement            | Implemented behavior                                                                                                             |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Authentication         | Staff can log in and request password resets by email.                                                                           |
-| Student visit entry    | Staff can create a student visit record, capture visit details, and connect it with an existing student when appropriate.        |
-| Student records        | Staff can view, search, filter, and export student visit records.                                                                |
+| Requirement            |                                                       Implemented behavior                                                       |
+| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------: |
+| Authentication         |                                      Staff can log in and request password resets by email.                                      |
+| Student visit entry    |    Staff can create a student visit record, capture visit details, and connect it with an existing student when appropriate.     |
+| Student records        |                                Staff can view, search, filter, and export student visit records.                                 |
 | Staff accounts         | Supervisors can create, edit, and delete Supervisor and Workstudy accounts, including role, department, courses, and time slots. |
-| Account settings       | Each user can manage personal details, security, appearance preferences, and permitted record-related actions.                   |
-| Feedback and reporting | Users can submit feedback or report issues through the Support area.                                                             |
-| Dashboard              | Authenticated staff can access a home dashboard with relevant information.                                                       |
+| Account settings       |          Each user can manage personal details, security, appearance preferences, and permitted record-related actions.          |
+| Feedback and reporting |                               Users can submit feedback or report issues through the Support area.                               |
 
 The following functional requirements are planned for future phases:
 
-| Requirement               | Planned behavior                                                                                                                                                                                                |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Analytics dashboard       | Supervisors can view real-time analytics: most requested courses, visits per semester and per Workstudy with the average, peak visiting hours, student attendance trends, and Workstudy performance metrics.    |
-| Student feedback          | Students can leave a review or comment about a Workstudy, for example when a topic is not explained well or the Workstudy is frequently absent. Supervisors can view this feedback.                             |
-| Comments about students   | Workstudy can leave a comment about a specific student. Only Supervisors can read these comments.                                                                                                               |
-| Automated email reminders | Reminders are sent automatically for student bookings as part of the booking workflow.                                                                                                                          |
-| Resource Library          | Supervisors and Workstudy can upload and manage documents, slides, links, and other useful resources for students to access.                                                                                    |
+| Requirement               |                                                                                                Planned behavior                                                                                                 |
+| ------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Analytics dashboard       |  Supervisors can view real-time analytics: most requested courses, visits per semester and per Workstudy with the average, peak visiting hours, student attendance trends, and Workstudy performance metrics.   |
+| Student feedback          |               Students can leave a review or comment about a Workstudy, for example when a topic is not explained well or the Workstudy is frequently absent. Supervisors can view this feedback.               |
+| Comments about students   |                                                        Workstudy can leave a comment about a specific student. Only Supervisors can read these comments.                                                        |
+| Automated email reminders |                                                             Reminders are sent automatically for student bookings as part of the booking workflow.                                                              |
+| Resource Library          |                                          Supervisors and Workstudy can upload and manage documents, slides, links, and other useful resources for students to access.                                           |
 | Mobile application        | Optional React Native application available to Supervisors, Workstudy, and students, with push notifications as an alternative to email and offline support for selected features such as the Resource Library. |
+| Student Booking           |               Students can book tutoring visits directly, with Workstudy able to decline or cancel when necessary. Booking triggers automated email reminders for both the student and Workstudy.               |
 
 ### 3.2 Nonfunctional Requirements
 
