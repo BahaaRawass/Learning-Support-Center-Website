@@ -17,6 +17,8 @@ The RHU Learning Support Center Website is a role-based web platform for Rafik H
 
 The wider project vision is a complete workstudy lifecycle system. It will allow students to register for the program, allow supervisors to review applicants and organize schedules, support direct booking of tutoring visits, and preserve records across semesters.
 
+Beyond registration and booking, the project aims to give Supervisors real-time analytics on Center activity, give students a channel for feedback, send automated email reminders for bookings, and provide a shared resource library. An optional mobile application is planned as a stretch goal.
+
 ## 2. Project Description
 
 The Learning Support Center needs a structured system for recording student support visits and managing the staff who provide that support. Before this website, information was handled through manual data entry with limited search, inconsistent structure, and weak separation between staff permissions. The current application provides one authenticated portal for daily Center operations.
@@ -31,6 +33,14 @@ Current objectives are to:
 - Provide account settings for profile details, security, appearance, and record-related options.
 - Provide a feedback and issue-reporting channel for staff.
 - Maintain a typed, extendable technical foundation for future self-service workflows.
+
+Planned objectives are to:
+
+- Give Supervisors a real-time analytics dashboard covering the most requested courses, visits per semester and per Workstudy, peak visiting hours, attendance trends, and Workstudy performance.
+- Allow students to leave reviews and comments about Workstudy, and allow Workstudy to leave comments about students that only Supervisors can read.
+- Send automated email reminders for student bookings.
+- Provide a Resource Library where Supervisors and Workstudy can upload and share documents, slides, and links.
+- Develop an optional mobile application for all users, with push notifications and offline support for selected features.
 
 ## 3. Requirements Analysis
 
@@ -48,16 +58,30 @@ The system currently implements the following functional requirements:
 | Feedback and reporting | Users can submit feedback or report issues through the Support area.                                                             |
 | Dashboard              | Authenticated staff can access a home dashboard with relevant information.                                                       |
 
+The following functional requirements are planned for future phases:
+
+| Requirement               | Planned behavior                                                                                                                                                                                                |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Analytics dashboard       | Supervisors can view real-time analytics: most requested courses, visits per semester and per Workstudy with the average, peak visiting hours, student attendance trends, and Workstudy performance metrics.    |
+| Student feedback          | Students can leave a review or comment about a Workstudy, for example when a topic is not explained well or the Workstudy is frequently absent. Supervisors can view this feedback.                             |
+| Comments about students   | Workstudy can leave a comment about a specific student. Only Supervisors can read these comments.                                                                                                               |
+| Automated email reminders | Reminders are sent automatically for student bookings as part of the booking workflow.                                                                                                                          |
+| Resource Library          | Supervisors and Workstudy can upload and manage documents, slides, links, and other useful resources for students to access.                                                                                    |
+| Mobile application        | Optional React Native application available to Supervisors, Workstudy, and students, with push notifications as an alternative to email and offline support for selected features such as the Resource Library. |
+
 ### 3.2 Nonfunctional Requirements
 
-| Requirement     | How the system addresses it                                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Security        | Role-aware access uses Supabase Auth and server-side Edge Functions for sensitive account actions.                             |
-| Performance     | TanStack React Query manages fetching and caching to reduce unnecessary requests.                                              |
-| Usability       | The interface uses accessible shadcn and Radix UI primitives with light and dark appearance support.                           |
-| Maintainability | Supabase services are separated from React Query hooks and database access is typed through generated schema types.            |
-| Reliability     | Edge Functions follow structured logging and consistent data and error response shapes.                                        |
-| Scalability     | Backend logic is isolated in Edge Functions so future workflows can be added without restructuring the core client data layer. |
+| Requirement     | How the system addresses it                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Security        | Role-aware access uses Supabase Auth and server-side Edge Functions for sensitive account actions.                                 |
+| Performance     | TanStack React Query manages fetching and caching to reduce unnecessary requests.                                                  |
+| Usability       | The interface uses accessible shadcn and Radix UI primitives with light and dark appearance support.                               |
+| Maintainability | Supabase services are separated from React Query hooks and database access is typed through generated schema types.                |
+| Reliability     | Edge Functions follow structured logging and consistent data and error response shapes.                                            |
+| Scalability     | Backend logic is isolated in Edge Functions so future workflows can be added without restructuring the core client data layer.     |
+| Privacy         | Planned: student feedback and comments about students are restricted to Supervisors through role-based access policies.            |
+| Timeliness      | Planned: analytics reflect new visits in near real time, and reminder emails are sent automatically by scheduled server-side jobs. |
+| Offline support | Planned: the optional mobile application keeps selected features, such as the Resource Library, available without a connection.    |
 
 ## 4. Literature Review
 
@@ -65,29 +89,29 @@ The system is organized around the Center's present staff roles and the future s
 
 ### 4.1 Users of the System
 
-| User             | Role in the system                                                                                                                           |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supervisor       | Administrative Learning Support Center staff member responsible for account management, workstudy coordination, and future applicant review. |
-| Workstudy Staff  | Student employee or tutor who delivers day-to-day Center support and records student visits.                                                 |
-| Student or Guest | Currently a visit-record subject; planned as a guest account holder who can register for workstudy or book a visit.                          |
-| Student Affairs  | Planned external stakeholder for workstudy paperwork and approval processes.                                                                 |
-| Finance Office   | Planned external stakeholder that receives payment transaction information.                                                                  |
+| User             | Role in the system                                                                                                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Supervisor       | Administrative Learning Support Center staff member responsible for account management, workstudy coordination, future applicant review, analytics monitoring, and review of student feedback. |
+| Workstudy Staff  | Student employee or tutor who delivers day-to-day Center support and records student visits.                                                                                                   |
+| Student or Guest | Currently a visit-record subject; planned as a guest account holder who can register for workstudy or book a visit.                                                                            |
+| Student Affairs  | Planned external stakeholder for workstudy paperwork and approval processes.                                                                                                                   |
+| Finance Office   | Planned external stakeholder that receives payment transaction information.                                                                                                                    |
 
 ### 4.2 Services Offered for Each User
 
-| User             | Services                                                                                                                                                                                                                                     |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supervisor       | Current: manage staff accounts, assign departments, courses, and time slots; access all workstudy functions; manage own settings. Future: review applications, adjust proposed schedules, accept or reject applicants, and monitor statuses. |
-| Workstudy Staff  | Current: log visits, search and export records, manage own settings, submit feedback, and view the dashboard. Future: view their calendar and decline a booking when an urgent conflict arises.                                              |
-| Student or Guest | Current: receives support as a recorded student. Future: view the website, register for workstudy, confirm or deny a proposed schedule, book or cancel tutoring visits, and view application or booking status.                              |
-| Student Affairs  | Future: work with the Center through a page or subdomain that supports workstudy paperwork.                                                                                                                                                  |
-| Finance Office   | Future: receive payment transaction notifications and the information required to process or prepare payment collection.                                                                                                                     |
+| User             | Services                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Supervisor       | Current: manage staff accounts, assign departments, courses, and time slots; access all workstudy functions; manage own settings. Future: review applications, adjust proposed schedules, accept or reject applicants, and monitor statuses; view the real-time analytics dashboard; review student feedback and Workstudy comments; upload and manage resources in the Resource Library; and use the optional mobile application. |
+| Workstudy Staff  | Current: log visits, search and export records, manage own settings, submit feedback, and view the dashboard. Future: view their calendar, decline a booking when an urgent conflict arises, receive automated booking reminders, upload and manage resources in the Resource Library, leave comments about students that only Supervisors can read, and use the optional mobile application.                                      |
+| Student or Guest | Current: receives support as a recorded student. Future: view the website, register for workstudy, confirm or deny a proposed schedule, book or cancel tutoring visits, view application or booking status, receive automated email reminders for bookings, leave reviews or comments about Workstudy, access shared learning resources, and use the optional mobile application.                                                  |
+| Student Affairs  | Future: work with the Center through a page or subdomain that supports workstudy paperwork.                                                                                                                                                                                                                                                                                                                                        |
+| Finance Office   | Future: receive payment transaction notifications and the information required to process or prepare payment collection.                                                                                                                                                                                                                                                                                                           |
 
 ## 5. Use Case Diagram
 
-![Use Case Diagram](./public/Images/LSC%20_Use_Case_daigram.png)
+![Use Case Diagram](./public/Images/LSC_Use_Case_daigram.png)
 
-**Figure 1.** Mermaid use case diagram source for the RHU Learning Support Center system.
+**Figure 1.** Use case diagram for the RHU Learning Support Center system. blue ellipses are implemented use cases and green ellipses are planned future use cases.
 
 ## 6. Future Ideas and Roadmap
 
@@ -101,7 +125,7 @@ The current website mainly supports data entry by Supervisors and Workstudy Staf
 
 **Idea 3 Calendar and workstudy search.** Replace the Home page with a calendar of workstudy time slots and their details, plus search by name, time slot, date, course, and related fields.
 
-**Idea 4 Student booking.** Allow guest accounts to book workstudy visits using the information normally entered by staff: name, ID, visit date, courses, and optional email. Booking creates the visit record automatically and emails both the guest and workstudy staff member. The workstudy can decline a booking when necessary and the guest can cancel it.
+**Idea 4 Student booking.** Allow guest accounts to book workstudy visits using the information normally entered by staff: name, ID, visit date, courses, and optional email. Booking creates the visit record automatically and emails both the guest and workstudy staff member. The workstudy can decline a booking when necessary and the guest can cancel it. Each booking also triggers automated email reminders (see Idea 11).
 
 **Idea 5 Student Affairs integration.** Integrate workstudy paperwork with Student Affairs after a joint process review. This may be delivered as a separate page or a dedicated subdomain.
 
@@ -113,13 +137,13 @@ The current website mainly supports data entry by Supervisors and Workstudy Staf
 
 **Idea 9 Analytics Dashboard.** Provide Supervisors with real-time analytics showing the most requested courses, the number of visits per semester and per Workstudy with average visit counts, peak visiting hours, student attendance trends, and Workstudy performance metrics such as sessions conducted, student feedback, and attendance.
 
-**Idea 10 Student feedback and Workstudy comments.** Allow students to leave reviews and comments about the Workstudy who supported them, including constructive or negative feedback about explanation quality, availability, or repeated absences. Workstudy Staff can also leave private comments about students after visits. A student comment should be associated with the relevant Workstudy, while a Workstudy comment should be visible only to the Workstudy who wrote it and to Supervisors.
+**Idea 10 Student feedback and Workstudy comments.** Allow students to leave reviews and comments about the Workstudy who supported them, including constructive or negative feedback about explanation quality, availability, or repeated absences. Workstudy Staff can also leave comments about specific students after visits. Feedback from students should be associated with the relevant Workstudy, while comments about students should be readable only by Supervisors.
 
 **Idea 11 Automated email reminders.** Extend the student booking workflow with automated email reminders for upcoming visits. This feature is considered part of the booking system and should notify students and Workstudy Staff before a scheduled session.
 
-**Idea 12 Resource Library.** Provide a shared library where Workstudy Staff and Supervisors can upload useful documents, lecture slides, study materials, and links that can support students and make frequently used resources easier to access.
+**Idea 12 Resource Library.** Provide a shared library where Workstudy Staff and Supervisors can upload and manage useful documents, lecture slides, study materials, and links that can support students and make frequently used resources easier to access. Resources should be organized by course so students can find them quickly.
 
-**Idea 13 Optional mobile application.** If development time remains, create a mobile version of the system using React Native. Possible features include push notifications as an alternative to email notifications, offline access to selected Resource Library content, and other mobile-focused features identified after the core web system is completed.
+**Idea 13 Optional mobile application.** If development time remains, create a mobile version of the system using React Native, available to all users of the project (Supervisors, Workstudy Staff, and students). Possible features include push notifications as an alternative to email notifications, offline access to selected Resource Library content, and other mobile-focused features identified after the core web system is completed.
 
 ## Implementation Considerations
 
@@ -127,6 +151,8 @@ The current website mainly supports data entry by Supervisors and Workstudy Staf
 - Build analytics from semester-scoped visit, booking, attendance, and feedback data so historical comparisons remain accurate.
 - Define upload permissions, file types, storage limits, and access rules before opening the Resource Library to staff.
 - Confirm database policies and role permissions before exposing student-facing workflows.
+- Run email reminders from scheduled server-side jobs so they are sent reliably without manual staff action.
 - Keep account provisioning, email dispatch, payment notifications, and other sensitive actions in protected server-side functions.
 - Define semester entities and status history before migrating visit records so data remains auditable.
 - Meet Student Affairs and the Finance Office before finalizing their workflows, data requirements, and notification channels.
+- Treat the mobile application as optional and reuse the existing backend so push notifications and offline features do not require a separate data layer.
