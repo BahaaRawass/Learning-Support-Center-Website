@@ -1,15 +1,21 @@
-import { Link, type Location } from "react-router-dom";
-import {
-  BugIcon,
-  HomeIcon,
-  SettingsIcon,
-  SquarePenIcon,
-  User2Icon,
-} from "lucide-react";
-import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
+import { Link, type Location, type To } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
+import { Fragment, type ReactNode } from "react";
+
+type SidebarLink = {
+  label: string;
+  to: To;
+  icon: ReactNode;
+  adminOnly?: boolean;
+};
+
+export type SidebarSection = {
+  title: string;
+  links: SidebarLink[];
+};
 
 type SideBarProps = {
+  Sections: SidebarSection[];
   onNavigate: () => void;
   isOpen: boolean;
   Session: Session;
@@ -21,72 +27,32 @@ export default function SideBar({
   isOpen,
   Session,
   location,
+  Sections,
 }: SideBarProps) {
-  const isAdmin = Session?.user.user_metadata.role === "admin" || false;
+  const isAdmin = Session?.user.user_metadata.role === "admin";
 
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-      <div className='sidebar-section-label'>Navigation</div>
-
-      <Link
-        to='/'
-        className={`sidebar-link ${location.pathname === "/" ? "active" : ""}`}
-        onClick={onNavigate}
-      >
-        <HomeIcon />
-        Home
-      </Link>
-
-      <Link
-        to='/student-records'
-        className={`sidebar-link ${location.pathname === "/student-records" ? "active" : ""}`}
-        onClick={onNavigate}
-      >
-        <SquarePenIcon />
-        Student Records
-      </Link>
-
-      {isAdmin && (
-        <Link
-          to='/support-center-staff'
-          className={`sidebar-link ${location.pathname === "/support-center-staff" ? "active" : ""}`}
-          onClick={onNavigate}
-        >
-          <User2Icon />
-          Support Center Staff
-        </Link>
-      )}
-
-      <hr className='sidebar-divider' />
-      <div className='sidebar-section-label'>Account</div>
-
-      <Link
-        to='/settings'
-        className={`sidebar-link ${location.pathname === "/settings" ? "active" : ""}`}
-        onClick={onNavigate}
-      >
-        <SettingsIcon />
-        Settings
-      </Link>
-
-      <hr className='sidebar-divider' />
-      <div className='sidebar-section-label'>Support</div>
-
-      <Link
-        to='/feedback'
-        className={`sidebar-link ${location.pathname === "/feedback" ? "active" : ""}`}
-        onClick={onNavigate}
-      >
-        <ChatBubbleBottomCenterTextIcon /> Submit Feedback
-      </Link>
-
-      <Link
-        to='/report'
-        className={`sidebar-link ${location.pathname === "/report" ? "active" : ""}`}
-        onClick={onNavigate}
-      >
-        <BugIcon /> Report an Issue
-      </Link>
+      {Sections.map((section, index) => (
+        <Fragment key={`${section}-${index}`}>
+          <p className="sidebar-section-label">{section.title}</p>
+          {section.links.map((link, index) => {
+            if (link.adminOnly && !isAdmin) return null;
+            return (
+              <Link
+                to={link.to}
+                key={`${link}-${index}`}
+                className={`sidebar-link ${location.pathname === link.to ? "active" : ""}`}
+                onClick={onNavigate}
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            );
+          })}
+          {index !== Sections.length - 1 && <hr className="sidebar-divider" />}
+        </Fragment>
+      ))}
     </aside>
   );
 }

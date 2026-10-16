@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import SideBar from "@/components/SideBar";
+import SideBar, { type SidebarSection } from "@/components/SideBar";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -16,7 +16,6 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import WarningDialog from "@/components/WarningDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useSettings } from "@/hooks/useSettings";
 import type {
@@ -31,14 +30,17 @@ import {
   ArrowBigRightIcon,
   BugIcon,
   DatabaseIcon,
+  HomeIcon,
   LockKeyholeIcon,
   LogOutIcon,
   Monitor,
   RefreshCw,
   SettingsIcon,
+  SquarePenIcon,
+  User2Icon,
   UserCircleIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function MainLayout() {
@@ -47,17 +49,45 @@ export default function MainLayout() {
   const { Session, Loading, SignOut } = useAuth();
   const { Settings, updateSetting } = useSettings();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [ShowWarningDialog, setShowWarningDialog] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!Session) return;
-    const warningDialogShown = sessionStorage.getItem("devwarningDialogShown");
-
-    if (!warningDialogShown) {
-      setShowWarningDialog(true);
-      sessionStorage.setItem("devwarningDialogShown", "true");
-    }
-  }, [Session]);
+  const SidebarSections: SidebarSection[] = [
+    {
+      title: "Navigation",
+      links: [
+        { label: "Home", to: "/", icon: <HomeIcon /> },
+        {
+          label: "Student Records",
+          to: "/student-records",
+          icon: <SquarePenIcon />,
+        },
+        {
+          label: "Support Center Staff",
+          to: "/support-center-staff",
+          icon: <User2Icon />,
+          adminOnly: true,
+        },
+      ],
+    },
+    {
+      title: "Account",
+      links: [{ label: "Settings", to: "/settings", icon: <SettingsIcon /> }],
+    },
+    {
+      title: "Support",
+      links: [
+        {
+          label: "Submit Feedback",
+          to: "/feedback",
+          icon: <ChatBubbleBottomCenterTextIcon />,
+        },
+        {
+          label: "Report an Issue",
+          to: "/report",
+          icon: <BugIcon />,
+        },
+      ],
+    },
+  ];
 
   return (
     <>
@@ -78,6 +108,7 @@ export default function MainLayout() {
                     isOpen={isMenuOpen}
                     Session={Session}
                     location={location}
+                    Sections={SidebarSections}
                   />
                   {isMenuOpen && (
                     <button
@@ -317,11 +348,6 @@ export default function MainLayout() {
           </ContextMenuGroup>
         </ContextMenuContent>
       </ContextMenu>
-
-      <WarningDialog
-        IsOpen={ShowWarningDialog}
-        setIsOpen={setShowWarningDialog}
-      />
     </>
   );
 }
