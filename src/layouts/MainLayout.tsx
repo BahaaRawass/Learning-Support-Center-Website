@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import SideBar, { type SidebarSection } from "@/components/SideBar";
+import SideBar from "@/components/SideBar";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -24,6 +24,7 @@ import type {
   SettingsPageSize,
   SettingsTheme,
 } from "@/types/settings";
+import type { SidebarSection } from "@/types/types";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import {
   ArrowBigLeftIcon,
@@ -65,6 +66,16 @@ export default function MainLayout() {
           to: "/support-center-staff",
           icon: <User2Icon />,
           adminOnly: true,
+        },
+      ],
+    },
+    {
+      title: "Registration",
+      links: [
+        {
+          label: "Register Workstudy",
+          to: "/student-affairs/register",
+          icon: <SquarePenIcon />,
         },
       ],
     },

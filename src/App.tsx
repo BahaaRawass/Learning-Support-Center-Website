@@ -3,6 +3,7 @@ import { Suspense, type ReactNode, lazy } from "react";
 import MainLayout from "./layouts/MainLayout.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import LoadingCard from "./components/loading-card.tsx";
+import RegisterWorkstudy from "./pages/StudentAffairs/Register.tsx";
 
 const Login = lazy(() => import("./pages/AuthPages/Login.tsx"));
 const WorkStudy = lazy(() => import("./pages/WorkStudy.tsx"));
@@ -14,8 +15,6 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage.tsx"));
 const AuthHome = lazy(() => import("./pages/AuthPages/AuthHome.tsx"));
 const ResetPassword = lazy(() => import("./pages/AuthPages/ResetPassword.tsx"));
 const Support = lazy(() => import("./pages/Support.tsx"));
-
-
 
 function SuspensePage({ children }: { children: ReactNode }) {
   return (
@@ -32,13 +31,63 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       // List all your individual pages here:
-      { index: true, element: <SuspensePage><Home /></SuspensePage> },
-      { path: "support-center-staff", element: <SuspensePage><WorkStudy /></SuspensePage> },
-      { path: "student-records", element: <SuspensePage><StudentRecords /></SuspensePage> },
-      { path: "settings", element: <SuspensePage><Settings /></SuspensePage> },
-      { path: "feedback", element: <SuspensePage><Support type="feedback" /></SuspensePage> },
-      { path: "report", element: <SuspensePage><Support type="report" /></SuspensePage> },
-      { path: "*", element: <SuspensePage><NotFound /></SuspensePage> },
+      {
+        index: true,
+        element: (
+          <SuspensePage>
+            <Home />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "support-center-staff",
+        element: (
+          <SuspensePage>
+            <WorkStudy />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "student-records",
+        element: (
+          <SuspensePage>
+            <StudentRecords />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "settings",
+        element: (
+          <SuspensePage>
+            <Settings />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "feedback",
+        element: (
+          <SuspensePage>
+            <Support type="feedback" />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "report",
+        element: (
+          <SuspensePage>
+            <Support type="report" />
+          </SuspensePage>
+        ),
+      },
+      { path: "student-affairs/register", element: <RegisterWorkstudy /> },
+      {
+        path: "*",
+        element: (
+          <SuspensePage>
+            <NotFound />
+          </SuspensePage>
+        ),
+      },
     ],
   },
   {
@@ -46,9 +95,31 @@ const router = createBrowserRouter([
     element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <SuspensePage><AuthHome /></SuspensePage> },
-      { path: "login", element: <SuspensePage><Login /></SuspensePage> },
-      { path: "reset-password", element: <SuspensePage><ResetPassword /></SuspensePage> },
+      {
+        index: true,
+        element: (
+          <SuspensePage>
+            <AuthHome />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "login",
+        element: (
+          <SuspensePage>
+            <Login />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "reset-password",
+        element: (
+          <SuspensePage>
+            <ResetPassword />
+          </SuspensePage>
+        ),
+      },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

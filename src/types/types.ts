@@ -1,5 +1,5 @@
 import type { AuthError, PostgrestError } from "@supabase/supabase-js";
-import type { Dispatch, SetStateAction, SubmitEvent } from "react";
+import type { Dispatch, ReactNode, SetStateAction, SubmitEvent } from "react";
 import type { Database } from "../../database.types";
 import type { UserMode } from "./users";
 import type { Department } from "./department";
@@ -7,6 +7,7 @@ import type { Student, StudentMode } from "./students";
 import type { EdgeFunctionError } from "@/lib/functions.types";
 import { StorageError } from "@supabase/storage-js";
 import type { MutationOptions as Mutationoptions } from "@tanstack/react-query";
+import type { To } from "react-router-dom";
 
 export type UpdaterFunction<T> = Dispatch<SetStateAction<T>>;
 
@@ -82,4 +83,16 @@ export type FilterInput = {
   asked_about: string[];
   role: boolean;
   time_slots: string[];
+};
+
+type SidebarLink = {
+  label: string;
+  to: To;
+  icon: ReactNode;
+  adminOnly?: boolean;
+};
+
+export type SidebarSection = {
+  title: string;
+  links: SidebarLink[];
 };

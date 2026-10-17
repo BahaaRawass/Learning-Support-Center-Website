@@ -1,18 +1,7 @@
-import { Link, type Location, type To } from "react-router-dom";
+import { Link, type Location } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
-import { Fragment, type ReactNode } from "react";
-
-type SidebarLink = {
-  label: string;
-  to: To;
-  icon: ReactNode;
-  adminOnly?: boolean;
-};
-
-export type SidebarSection = {
-  title: string;
-  links: SidebarLink[];
-};
+import { Fragment } from "react";
+import type { SidebarSection } from "@/types/types";
 
 type SideBarProps = {
   Sections: SidebarSection[];
