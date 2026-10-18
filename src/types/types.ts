@@ -90,6 +90,7 @@ type SidebarLink = {
   to: To;
   icon: ReactNode;
   adminOnly?: boolean;
+  visible?: boolean;
 };
 
 export type SidebarSection = {

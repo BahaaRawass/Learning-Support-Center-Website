@@ -26,7 +26,7 @@ export default function SideBar({
         <Fragment key={`${section}-${index}`}>
           <p className="sidebar-section-label">{section.title}</p>
           {section.links.map((link, index) => {
-            if (link.adminOnly && !isAdmin) return null;
+            if ((link.adminOnly && !isAdmin) || link.visible == false) return null;
             return (
               <Link
                 to={link.to}
