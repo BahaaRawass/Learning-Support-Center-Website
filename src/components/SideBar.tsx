@@ -178,281 +178,286 @@ export default function SideBar({
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <Avatar>
-                    <AvatarImage
-                      src={Session?.user.user_metadata.avatar_url}
-                      alt={Session?.user.user_metadata.display_name || "User"}
-                    />
-                    <AvatarFallback className="rounded-lg">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">
-                      {Session?.user.user_metadata.display_name || "N/A"}
-                    </span>
-                    <span className="truncate text-xs">
-                      {Session?.user.email}
-                    </span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                // className="w-full z-99999"
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage
-                          src={Session?.user.user_metadata.avatar_url}
-                          alt={
-                            Session?.user.user_metadata.display_name || "User"
-                          }
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-medium">
-                          {Session?.user.user_metadata.display_name || "N/A"}
-                        </span>
-                        <span className="truncate text-xs">
-                          {Session?.user.email}
-                        </span>
-                      </div>
+      {Session && (
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <Avatar>
+                      <AvatarImage
+                        src={Session.user.user_metadata.avatar_url}
+                        alt={Session.user.user_metadata.display_name || "User"}
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">
+                        {Session.user.user_metadata.display_name || "N/A"}
+                      </span>
+                      <span className="truncate text-xs">
+                        {Session.user.email}
+                      </span>
                     </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                </DropdownMenuGroup>
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="flex gap-2 w-full">
-                      <SettingsIcon />
-                      Settings
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent
-                      // side={isMobile ? "bottom" : "right"}
-                      align="end"
-                      sideOffset={4}
-                    >
-                      <DropdownMenuGroup>
-                        <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                          <Link to="/settings" className="flex gap-2 w-full">
-                            <UserCircleIcon /> Account
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Link to="/settings" className="flex gap-2 w-full">
-                            <LockKeyholeIcon /> Security
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSub>
-                          <DropdownMenuSubTrigger className="flex gap-2 w-full">
-                            <Monitor /> Appearance
-                          </DropdownMenuSubTrigger>
-                          <DropdownMenuSubContent>
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-                              <DropdownMenuRadioGroup
-                                value={Settings.theme}
-                                onValueChange={(value) =>
-                                  updateSetting("theme", value as SettingsTheme)
-                                }
-                              >
-                                <DropdownMenuRadioItem
-                                  value="system"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  System
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="light"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  Light
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="dark"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  Dark
-                                </DropdownMenuRadioItem>
-                              </DropdownMenuRadioGroup>
-                            </DropdownMenuGroup>
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>Font Size</DropdownMenuLabel>
-                              <DropdownMenuRadioGroup
-                                value={Settings.fontSize}
-                                onValueChange={(value) =>
-                                  updateSetting(
-                                    "fontSize",
-                                    value as SettingsFontSize,
-                                  )
-                                }
-                              >
-                                <DropdownMenuRadioItem
-                                  value="normal"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  Normal
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="large"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  Large
-                                </DropdownMenuRadioItem>
-                              </DropdownMenuRadioGroup>
-                            </DropdownMenuGroup>
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>
-                                Compact Mode
-                              </DropdownMenuLabel>
-                              <DropdownMenuCheckboxItem
-                                checked={Settings.compactMode}
-                                onCheckedChange={(checked) =>
-                                  updateSetting("compactMode", checked)
-                                }
-                                className="flex gap-2 w-full cursor-pointer"
-                              >
-                                Compact Mode
-                              </DropdownMenuCheckboxItem>
-                            </DropdownMenuGroup>
-                          </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                        <DropdownMenuSub>
-                          <DropdownMenuSubTrigger className="flex gap-2 w-full">
-                            <DatabaseIcon /> Data and Records
-                          </DropdownMenuSubTrigger>
-                          <DropdownMenuSubContent
-                            // side={isMobile ? "bottom" : "right"}
-                            align="end"
-                            sideOffset={4}
-                          >
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>Page Size</DropdownMenuLabel>
-                              <DropdownMenuRadioGroup
-                                value={String(Settings.pageSize)}
-                                onValueChange={(value) =>
-                                  updateSetting(
-                                    "pageSize",
-                                    Number(value) as SettingsPageSize,
-                                  )
-                                }
-                              >
-                                <DropdownMenuRadioItem
-                                  value="5"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  5 records per page
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="10"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  10 records per page
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="25"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  25 records per page
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="50"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  50 records per page
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="100"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  100 records per page
-                                </DropdownMenuRadioItem>
-                              </DropdownMenuRadioGroup>
-                            </DropdownMenuGroup>
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>
-                                Export Format
-                              </DropdownMenuLabel>
-                              <DropdownMenuRadioGroup
-                                value={Settings.exportFormat}
-                                onValueChange={(value) =>
-                                  updateSetting(
-                                    "exportFormat",
-                                    value as SettingsExportFormat,
-                                  )
-                                }
-                              >
-                                <DropdownMenuRadioItem
-                                  value="csv"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  CSV
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                  value="excel"
-                                  className="flex gap-2 w-full cursor-pointer"
-                                >
-                                  Excel
-                                </DropdownMenuRadioItem>
-                              </DropdownMenuRadioGroup>
-                            </DropdownMenuGroup>
-                          </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                      </DropdownMenuGroup>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuGroup>
-                        <DropdownMenuLabel>Log Out</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={LogOut}
-                          className="cursor-pointer"
-                        >
-                          <LogOutIcon /> Log out
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
-                  <DropdownMenuSeparator />
+                    <ChevronsUpDown className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  // className="w-full z-99999"
+                  className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                  side={isMobile ? "bottom" : "right"}
+                  align="end"
+                  sideOffset={4}
+                >
                   <DropdownMenuGroup>
-                    <DropdownMenuLabel>Support</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Link to="/feedback" className="flex gap-2 w-full">
-                        <ChatBubbleBottomCenterTextIcon /> Submit Feedback
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link to="/report" className="flex gap-2 w-full">
-                        <BugIcon /> Report An Issue
-                      </Link>
-                    </DropdownMenuItem>
+                    <DropdownMenuLabel className="p-0 font-normal">
+                      <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                        <Avatar className="h-8 w-8 rounded-lg">
+                          <AvatarImage
+                            src={Session.user.user_metadata.avatar_url}
+                            alt={
+                              Session.user.user_metadata.display_name || "User"
+                            }
+                          />
+                          <AvatarFallback className="rounded-lg">
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                          <span className="truncate font-medium">
+                            {Session.user.user_metadata.display_name || "N/A"}
+                          </span>
+                          <span className="truncate text-xs">
+                            {Session.user.email}
+                          </span>
+                        </div>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                   </DropdownMenuGroup>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Settings</DropdownMenuLabel>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="flex gap-2 w-full">
+                        <SettingsIcon />
+                        Settings
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent
+                        // side={isMobile ? "bottom" : "right"}
+                        align="end"
+                        sideOffset={4}
+                      >
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel>Settings</DropdownMenuLabel>
+                          <DropdownMenuItem>
+                            <Link to="/settings" className="flex gap-2 w-full">
+                              <UserCircleIcon /> Account
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Link to="/settings" className="flex gap-2 w-full">
+                              <LockKeyholeIcon /> Security
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger className="flex gap-2 w-full">
+                              <Monitor /> Appearance
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                                <DropdownMenuRadioGroup
+                                  value={Settings.theme}
+                                  onValueChange={(value) =>
+                                    updateSetting(
+                                      "theme",
+                                      value as SettingsTheme,
+                                    )
+                                  }
+                                >
+                                  <DropdownMenuRadioItem
+                                    value="system"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    System
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="light"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    Light
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="dark"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    Dark
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuGroup>
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>Font Size</DropdownMenuLabel>
+                                <DropdownMenuRadioGroup
+                                  value={Settings.fontSize}
+                                  onValueChange={(value) =>
+                                    updateSetting(
+                                      "fontSize",
+                                      value as SettingsFontSize,
+                                    )
+                                  }
+                                >
+                                  <DropdownMenuRadioItem
+                                    value="normal"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    Normal
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="large"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    Large
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuGroup>
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>
+                                  Compact Mode
+                                </DropdownMenuLabel>
+                                <DropdownMenuCheckboxItem
+                                  checked={Settings.compactMode}
+                                  onCheckedChange={(checked) =>
+                                    updateSetting("compactMode", checked)
+                                  }
+                                  className="flex gap-2 w-full cursor-pointer"
+                                >
+                                  Compact Mode
+                                </DropdownMenuCheckboxItem>
+                              </DropdownMenuGroup>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger className="flex gap-2 w-full">
+                              <DatabaseIcon /> Data and Records
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent
+                              // side={isMobile ? "bottom" : "right"}
+                              align="end"
+                              sideOffset={4}
+                            >
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>Page Size</DropdownMenuLabel>
+                                <DropdownMenuRadioGroup
+                                  value={String(Settings.pageSize)}
+                                  onValueChange={(value) =>
+                                    updateSetting(
+                                      "pageSize",
+                                      Number(value) as SettingsPageSize,
+                                    )
+                                  }
+                                >
+                                  <DropdownMenuRadioItem
+                                    value="5"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    5 records per page
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="10"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    10 records per page
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="25"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    25 records per page
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="50"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    50 records per page
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="100"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    100 records per page
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuGroup>
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>
+                                  Export Format
+                                </DropdownMenuLabel>
+                                <DropdownMenuRadioGroup
+                                  value={Settings.exportFormat}
+                                  onValueChange={(value) =>
+                                    updateSetting(
+                                      "exportFormat",
+                                      value as SettingsExportFormat,
+                                    )
+                                  }
+                                >
+                                  <DropdownMenuRadioItem
+                                    value="csv"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    CSV
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="excel"
+                                    className="flex gap-2 w-full cursor-pointer"
+                                  >
+                                    Excel
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuGroup>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel>Log Out</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={LogOut}
+                            className="cursor-pointer"
+                          >
+                            <LogOutIcon /> Log out
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel>Support</DropdownMenuLabel>
+                      <DropdownMenuItem>
+                        <Link to="/feedback" className="flex gap-2 w-full">
+                          <ChatBubbleBottomCenterTextIcon /> Submit Feedback
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link to="/report" className="flex gap-2 w-full">
+                          <BugIcon /> Report An Issue
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
       <SidebarRail />
     </Sidebar>
   );
