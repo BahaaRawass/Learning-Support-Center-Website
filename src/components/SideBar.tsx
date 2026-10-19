@@ -152,7 +152,7 @@ export default function SideBar({
             </SidebarGroup>
           </Collapsible>
         ))}
-        {SidebarState === "expanded" && (
+        {SidebarState === "expanded" && !isMobile && (
           <SidebarGroup className="mt-auto">
             <SidebarGroupContent>
               <SidebarMenu>
