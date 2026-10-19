@@ -16,6 +16,11 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useSettings } from "@/hooks/useSettings";
 import type {
@@ -41,7 +46,7 @@ import {
   User2Icon,
   UserCircleIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function MainLayout() {
@@ -49,7 +54,6 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const { Session, Loading, SignOut } = useAuth();
   const { Settings, updateSetting } = useSettings();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const SidebarSections: SidebarSection[] = [
     {
@@ -70,7 +74,7 @@ export default function MainLayout() {
       ],
     },
     {
-      title: "Registration",
+      title: "Student Affairs",
       links: [
         {
           label: "Register Workstudy",
@@ -100,42 +104,61 @@ export default function MainLayout() {
     },
   ];
 
+  useLayoutEffect(() => {
+    const header = document.querySelector<HTMLElement>(".site-header");
+
+    if (!header) return;
+
+    const updateHeaderHeight = () => {
+      const height = header.getBoundingClientRect().height;
+
+      document.documentElement.style.setProperty(
+        "--header-height",
+        `${height}px`,
+      );
+    };
+
+    // Set the initial height.
+    updateHeaderHeight();
+
+    // Automatically update whenever the header's size changes.
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(header);
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--header-height");
+    };
+  }, []);
+
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger asChild disabled={Loading}>
           <div className="app-shell">
-            <Header
-              onToggleMenu={() =>
-                setIsMenuOpen((currentValue) => !currentValue)
-              }
-              isMenuOpen={isMenuOpen}
-            />
-            <div className="layout">
-              {Session && (
-                <>
-                  <SideBar
-                    onNavigate={() => setIsMenuOpen(false)}
-                    isOpen={isMenuOpen}
-                    Session={Session}
-                    location={location}
-                    Sections={SidebarSections}
-                  />
-                  {isMenuOpen && (
-                    <button
-                      className="sidebar-overlay"
-                      onClick={() => setIsMenuOpen(false)}
-                      aria-label="Close menu"
-                      type="button"
-                    />
-                  )}
-                </>
-              )}
-              <main className="main">
-                <Outlet />
-              </main>
-            </div>
-            <Footer />
+            <SidebarProvider className="min-w-0 flex-1 flex-col">
+              <Header />
+
+              <div className="layout min-w-0">
+                <SideBar
+                  Session={Session}
+                  location={location}
+                  Sections={SidebarSections}
+                  LogOut={SignOut}
+                  Settings={Settings}
+                  updateSetting={updateSetting}
+                />
+
+                <SidebarInset className="min-w-0 flex-1">
+                  <main className="main">
+                    <SidebarTrigger className="text-primary" />
+                    <Outlet />
+                  </main>
+
+                  <Footer />
+                </SidebarInset>
+              </div>
+            </SidebarProvider>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="z-100000">
