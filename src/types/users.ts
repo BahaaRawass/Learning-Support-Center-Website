@@ -32,3 +32,5 @@ export type UserMode = {
 };
 
 export type TimeSlot = Pick<User, "time_slots">["time_slots"][number];
+
+export type Weekday = TimeSlot["weekday"];
