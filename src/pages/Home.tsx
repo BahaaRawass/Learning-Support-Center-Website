@@ -9,15 +9,12 @@ import type { EventClickInfo } from "@fullcalendar/react";
 import { useUsers } from "@/hooks/useUsers";
 import {
   CreateCalendarEvents,
-  type CalendarDialogInfo,
 } from "@/helper/calendar";
-import { useState } from "react";
 
 export default function Home() {
   useDocumentTitle("Home");
 
-  const [CalendarDialogInfo, setCalendarDialogInfo] =
-    useState<CalendarDialogInfo>({ Isopen: false });
+  // const [CalendarDialogInfo, setCalendarDialogInfo] = useState<CalendarDialogInfo>({ Isopen: false });
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
 
@@ -57,7 +54,8 @@ export default function Home() {
 
     const user = Users!.find((u) => u.id === userId);
 
-    setCalendarDialogInfo({ Isopen: true, user });
+    // setCalendarDialogInfo({ Isopen: true, user });
+    alert(user?.display_name);
   }
 
   return (
