@@ -170,6 +170,7 @@ export default function SideBar({
                       onCheckedChange={(checked) =>
                         setSidebarCollapsible(checked ? "icon" : "offcanvas")
                       }
+                      asChild
                     />
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -397,6 +397,8 @@ export default function StudentRecords() {
                           onValueChange={(value) =>
                             UpdateFields({ department_id: Number(value) })
                           }
+                          required
+                          disabled={IsSubmitting}
                         >
                           <SelectTrigger
                             className="w-full"

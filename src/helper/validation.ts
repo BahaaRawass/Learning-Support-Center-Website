@@ -1,5 +1,8 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
+import type { BookingInput } from "./calendar";
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export function validateStudentInput(input: StudentInput) {
   const {
@@ -10,8 +13,6 @@ export function validateStudentInput(input: StudentInput) {
     askedCourses,
     visitDateTime,
   } = input;
-
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!studentName || studentName.length === 0)
     return "Student name is required";
@@ -35,8 +36,6 @@ export function validateStudentInput(input: StudentInput) {
 
 export function validateUserInput(input: UserInput) {
   const { displayname, email, department_id, password, time_slots } = input;
-
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!displayname || displayname.length === 0)
     return "Display name is required";
@@ -64,4 +63,28 @@ export function validateDisplayName(displayname: string) {
 
 export function validateFileSize(file: File) {
   return file.size <= 1 * 1024 * 1024; // 1MB;
+}
+
+export function ValidateBooking(input: BookingInput) {
+  const { name, email, courses, department_id, rhuId } = input;
+
+  if (!name) return "name is required";
+
+  if (!email) return "email is required";
+
+  if (!emailRegex.test(email)) return "invalid email format";
+
+  if (!rhuId) return "RHU id is required";
+
+  if (isNaN(Number(rhuId)) || rhuId < 1) return "invalid RHU id";
+
+  if (!department_id) return "department is required";
+
+  if (isNaN(Number(department_id)) || department_id < 1)
+    return "invalid department selected";
+
+  if (!courses || courses.length === 0)
+    return "at least one course must be selected";
+
+  return null; // No validation errors
 }

@@ -20,6 +20,8 @@ type CoursesMenuProps = {
   onSelectionChange: (courseCodes: Course["Course Code"][]) => void;
   buttonLabel?: string;
   maxVisible?: number;
+  disabled?: boolean;
+  aria_invalid?: boolean;
 };
 
 export default function CoursesMenu({
@@ -27,6 +29,8 @@ export default function CoursesMenu({
   onSelectionChange,
   buttonLabel = "Open Menu",
   maxVisible = 3,
+  disabled = false,
+  aria_invalid = false,
 }: CoursesMenuProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -76,30 +80,32 @@ export default function CoursesMenu({
   }
 
   return (
-    <div className='flex flex-wrap items-start gap-3'>
+    <div className="flex flex-wrap items-start gap-3">
       <Button
-        type='button'
+        type="button"
         onClick={() => setOpen(true)}
-        variant='outline'
-        className='w-fit'
+        variant="outline"
+        className="w-fit"
+        disabled={disabled}
+        aria-invalid={aria_invalid}
       >
         {buttonLabel}
       </Button>
 
-      <div className='flex flex-col gap-1'>
+      <div className="flex flex-col gap-1">
         {resolvedCourses.length === 0 ? (
-          <span className='text-xs text-(--text-muted)'>
+          <span className="text-xs text-(--text-muted)">
             No courses selected yet.
           </span>
         ) : (
           <>
             {visibleCourses.map((course) => (
-              <span key={course["Course Code"]} className='text-sm'>
+              <span key={course["Course Code"]} className="text-sm">
                 {course["Course Code"]}: {course["Course Title"]}
               </span>
             ))}
             {hiddenCount > 0 && (
-              <span className='text-xs text-(--text-muted)'>
+              <span className="text-xs text-(--text-muted)">
                 +{hiddenCount} more
               </span>
             )}
@@ -109,10 +115,14 @@ export default function CoursesMenu({
 
       <CommandDialog open={open} onOpenChange={setOpen} className="z-305">
         <Command>
-          <CommandInput placeholder='Search for a course by its name or code...' />
+          <CommandInput
+            disabled={disabled}
+            placeholder="Search for a course by its name or code..."
+            aria-invalid={aria_invalid}
+          />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading='Courses'>
+            <CommandGroup heading="Courses">
               {CoursesLoading ? (
                 <CommandItem>Loading...</CommandItem>
               ) : (
@@ -129,6 +139,7 @@ export default function CoursesMenu({
                           setOpen(false);
                         }}
                         data-checked={isSelected}
+                        className="cursor-pointer"
                       >
                         {courseCode}:{course["Course Title"]}
                       </CommandItem>

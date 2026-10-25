@@ -1,9 +1,18 @@
+import type { Department } from "@/types/department";
 import type { User, Weekday } from "@/types/users";
 import type { EventSourceInput } from "@fullcalendar/react";
 
 export type CalendarDialogInfo =
-  | { Isopen: true; user: User | undefined }
-  | { Isopen: false; user?: never };
+  | { Isopen: true; user: User | undefined; timeslot: string }
+  | { Isopen: false; user?: never; timeslot?: never };
+
+export type BookingInput = {
+  name: string;
+  email: string;
+  department_id: Department["id"];
+  courses: string[];
+  rhuId: number;
+};
 
 const WEEKDAY_NUMBERS: Record<Weekday, number> = {
   Monday: 1,
