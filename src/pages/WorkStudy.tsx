@@ -338,9 +338,7 @@ export default function WorkStudy() {
                 >
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
-                      <FieldLabel>
-                        Display Name <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Display Name</FieldLabel>
                       <FieldContent>
                         <Input
                           type="text"
@@ -359,9 +357,6 @@ export default function WorkStudy() {
                             ? "supervisor's"
                             : "workstudy's"}{" "}
                           display name <br />
-                          {!UserInput.displayname && (
-                            <span className="text-destructive"> Required</span>
-                          )}
                         </FieldDescription>
                         {LocalError.includes("Display name") && (
                           <FieldError> {LocalError}</FieldError>
@@ -369,9 +364,7 @@ export default function WorkStudy() {
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Email <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Email</FieldLabel>
                       <FieldContent>
                         <Input
                           type="email"
@@ -390,19 +383,11 @@ export default function WorkStudy() {
                             ? "supervisor's"
                             : "workstudy's"}{" "}
                           email address
-                          {LocalError.includes("Email") && (
-                            <span className="text-destructive"> Required</span>
-                          )}
                         </FieldDescription>
-                        {!UserInput.email && (
-                          <span className="text-destructive"> Required</span>
-                        )}
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Password <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Password</FieldLabel>
                       <FieldContent>
                         <PasswordInput
                           value={UserInput.password}
@@ -420,19 +405,11 @@ export default function WorkStudy() {
                             ? "supervisor's"
                             : "workstudy's"}{" "}
                           account
-                          {LocalError.includes("Password") && (
-                            <span className="text-destructive"> Required</span>
-                          )}
                         </FieldDescription>
-                        {!UserInput.password && (
-                          <span className="text-destructive"> Required</span>
-                        )}
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Department <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Department</FieldLabel>
                       <FieldContent>
                         <Select
                           value={
@@ -522,9 +499,7 @@ export default function WorkStudy() {
                       </FieldDescription>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Time Slots <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Time Slots</FieldLabel>
                       <FieldContent>
                         <TimeSlots
                           userinput={UserInput}

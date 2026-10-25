@@ -1,5 +1,4 @@
 import CoursesComboboxMultiple from "@/components/CoursesComboboxMultiple";
-import { DateTimePicker } from "@/components/DateTimePicker";
 import ErrorCard from "@/components/error-card";
 import FormSection from "@/components/FormSection";
 import LoadingCard from "@/components/loading-card";
@@ -33,18 +32,14 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { SetErrorMessage } from "@/helper/errorhelpers";
+import { ValidateRegisteration } from "@/helper/validation";
 import { useCourses } from "@/hooks/useCourses";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import type { Department } from "@/types/department";
 import type { NewRegisteredStudent } from "@/types/student-affairs";
-import {
-  BookOpenIcon,
-  CalendarDaysIcon,
-  UserPlusIcon,
-  UserRoundIcon,
-} from "lucide-react";
+import { BookOpenIcon, UserPlusIcon, UserRoundIcon } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
+import { titleCase } from "title-case";
 
 export default function RegisterWorkstudy() {
   useDocumentTitle("Register for WorkStudy Program");
@@ -66,12 +61,34 @@ export default function RegisterWorkstudy() {
     useState<NewRegisteredStudent>(InitialInput);
   const [LocalError, setLocalError] = useState<string>("");
 
+  function updateLocalErorr(error: string) {
+    setLocalError(error);
+
+    setTimeout(() => {
+      setLocalError("");
+    }, 1500);
+  }
+
   function UpdateFields(fields: Partial<NewRegisteredStudent>) {
     setRegisterInput((prev) => ({ ...prev, ...fields }));
   }
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    //TODO: Implement the submission logic here
     event.preventDefault();
+
+    if (IsSubmitting) return;
+    setIsSubmitting(true);
+
+    const validationError = ValidateRegisteration(RegisterInput);
+
+    if (validationError) {
+      updateLocalErorr(validationError);
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
   }
 
   const {
@@ -88,12 +105,11 @@ export default function RegisterWorkstudy() {
 
   const loading = DepartmentsLoading || CoursesLoading;
   const error = DepartmentsError || CoursesError;
+  const data = Departments && Courses;
 
   if (loading) return <LoadingCard message="Loading data" />;
 
   if (error) return <ErrorCard message={SetErrorMessage(error)} />;
-
-  const data = Departments && Courses;
 
   if (!data) return <ErrorCard message="Failed to load required data." />;
 
@@ -128,11 +144,10 @@ export default function RegisterWorkstudy() {
                 >
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
-                      <FieldLabel>
-                        Full Name <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel htmlFor="name">Full Name</FieldLabel>
                       <FieldContent>
                         <Input
+                          id="name"
                           type="text"
                           value={RegisterInput.name}
                           onChange={(event) =>
@@ -144,78 +159,163 @@ export default function RegisterWorkstudy() {
                           placeholder="e.g John Doe"
                         />
                         <FieldDescription>
-                          Enter your full name <br />
-                          {!RegisterInput.name && (
-                            <span className="text-destructive">Required</span>
-                          )}
+                          Enter your full name
                         </FieldDescription>
                         {LocalError.includes("name") && (
-                          <FieldError>{LocalError}</FieldError>
+                          <FieldError>{titleCase(LocalError)}</FieldError>
                         )}
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        RHU ID <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
                       <FieldContent>
                         <Input
+                          id="phone"
+                          type="tel"
+                          value={
+                            isNaN(RegisterInput.mobile_number)
+                              ? ""
+                              : String(RegisterInput.mobile_number)
+                          }
+                          onChange={(event) =>
+                            UpdateFields({
+                              mobile_number: Number(event.target.value),
+                            })
+                          }
+                          required
+                          aria-invalid={LocalError.includes("mobile")}
+                          disabled={IsSubmitting}
+                          placeholder="e.g 123456"
+                        />
+                        <FieldDescription>
+                          Enter your personal mobile number. This will be used
+                          to contact you.
+                        </FieldDescription>
+                        {LocalError.includes("mobile") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="id">RHU ID</FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="id"
                           type="number"
-                          value={RegisterInput.rhu_id || ""}
+                          value={String(RegisterInput.rhu_id)}
                           onChange={(event) =>
                             UpdateFields({
                               rhu_id: Number(event.target.value),
                             })
                           }
                           required
-                          aria-invalid={LocalError.includes("ID")}
+                          aria-invalid={LocalError.includes("id")}
                           disabled={IsSubmitting}
                           placeholder="e.g 123456"
                         />
-                        <FieldDescription>
-                          Enter your RHU ID
-                          <br />
-                          {!RegisterInput.rhu_id && (
-                            <span className="text-destructive">Required</span>
-                          )}
-                        </FieldDescription>
-                        {LocalError.includes("ID") && (
-                          <FieldError>{LocalError}</FieldError>
+                        <FieldDescription>Enter your RHU ID</FieldDescription>
+                        {LocalError.includes("id") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
                         )}
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Email <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel htmlFor="email">Email</FieldLabel>
                       <FieldContent>
                         <Input
+                          id="email"
                           type="email"
-                          value={RegisterInput.email || ""}
+                          value={RegisterInput.email}
                           onChange={(event) =>
                             UpdateFields({ email: event.target.value })
                           }
                           required
-                          aria-invalid={LocalError.includes("Invalid email")}
+                          aria-invalid={LocalError.includes("email")}
                           disabled={IsSubmitting}
                           placeholder="e.g john.doe@students.rhu.edu.lb"
                         />
                         <FieldDescription>
                           Enter the Student's RHU email address
                           <br />
-                          {!RegisterInput.rhu_id && (
-                            <span className="text-destructive">Required</span>
-                          )}
                         </FieldDescription>
-                        {LocalError.includes("Invalid email") && (
-                          <FieldError>{LocalError}</FieldError>
+                        {LocalError.includes("email") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
                         )}
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Department <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel htmlFor="major">Major</FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="major"
+                          type="text"
+                          value={RegisterInput.major}
+                          onChange={(event) =>
+                            UpdateFields({ major: event.target.value })
+                          }
+                          required
+                          aria-invalid={LocalError.includes("major")}
+                          disabled={IsSubmitting}
+                          placeholder="e.g Computer Science"
+                        />
+                        <FieldDescription>Enter Your Major</FieldDescription>
+                        {LocalError.includes("major") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="gpa">GPA</FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="gpa"
+                          type="number"
+                          value={String(RegisterInput.gpa)}
+                          onChange={(event) =>
+                            UpdateFields({ gpa: Number(event.target.value) })
+                          }
+                          required
+                          aria-invalid={LocalError.includes("gpa")}
+                          disabled={IsSubmitting}
+                          placeholder="e.g 80"
+                        />
+                        <FieldDescription>
+                          Enter Your GPA as of last semister. GPA must be
+                          between 70 and 100.
+                        </FieldDescription>
+                        {LocalError.includes("gpa") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="ceridts">Credits Earned</FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="credits"
+                          type="number"
+                          value={String(RegisterInput.credits_earned)}
+                          onChange={(event) =>
+                            UpdateFields({
+                              credits_earned: Number(event.target.value),
+                            })
+                          }
+                          required
+                          aria-invalid={LocalError.includes("credits")}
+                          disabled={IsSubmitting}
+                          placeholder="e.g 62"
+                        />
+                        <FieldDescription>
+                          Enter The amount of credits you have earned so far.
+                          Credits must be at least 30.
+                        </FieldDescription>
+                        {LocalError.includes("credits") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                    <Field>
+                      <FieldLabel>Department</FieldLabel>
                       <FieldContent>
                         <Select
                           value={
@@ -226,21 +326,22 @@ export default function RegisterWorkstudy() {
                           onValueChange={(value) =>
                             UpdateFields({ department_id: Number(value) })
                           }
+                          required
+                          disabled={IsSubmitting}
                         >
                           <SelectTrigger
                             className="w-full"
-                            aria-invalid={LocalError.toLowerCase().includes(
-                              "department",
-                            )}
+                            aria-invalid={LocalError.includes("department")}
+                            disabled={IsSubmitting}
                           >
                             <SelectValue placeholder="Select a department" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Departments</SelectLabel>
-                              {Departments.map((department, index) => (
+                              {Departments.map((department) => (
                                 <SelectItem
-                                  key={index}
+                                  key={department.id}
                                   value={String(department.id)}
                                 >
                                   {department.name}
@@ -252,8 +353,8 @@ export default function RegisterWorkstudy() {
                         <FieldDescription>
                           Select the Student's department
                         </FieldDescription>
-                        {LocalError.toLowerCase().includes("department") && (
-                          <FieldError>{LocalError}</FieldError>
+                        {LocalError.includes("department") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
                         )}
                       </FieldContent>
                     </Field>
@@ -265,9 +366,7 @@ export default function RegisterWorkstudy() {
                   disableCollapse={IsSubmitting}
                 >
                   <Field>
-                    <FieldLabel>
-                      Courses <span className="text-destructive">*</span>
-                    </FieldLabel>
+                    <FieldLabel>Courses</FieldLabel>
                     <FieldContent>
                       <CoursesComboboxMultiple
                         courses={Courses}
@@ -275,12 +374,17 @@ export default function RegisterWorkstudy() {
                         onValueChange={(value) =>
                           UpdateFields({ courses: value })
                         }
-                        placeholder="Select courses"
+                        disabled={IsSubmitting}
+                        aria_invalid={LocalError.includes("course")}
+                        required
                       />
                       <FieldDescription>
                         Select the courses that you want to assist students
                         with. You can select multiple courses.
                       </FieldDescription>
+                      {LocalError.includes("course") && (
+                        <FieldError>{titleCase(LocalError)}</FieldError>
+                      )}
                     </FieldContent>
                   </Field>
                 </FormSection>

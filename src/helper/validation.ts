@@ -1,6 +1,7 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
 import type { BookingInput } from "./calendar";
+import type { NewRegisteredStudent } from "@/types/student-affairs";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -23,7 +24,7 @@ export function validateStudentInput(input: StudentInput) {
 
   if (!department_id) return "Department is required";
 
-  if (isNaN(Number(department_id)) || department_id < 1)
+  if (isNaN(department_id) || department_id < 1)
     return "Invalid department selected";
 
   if (!visitDateTime) return "Visit date and time is required";
@@ -49,7 +50,7 @@ export function validateUserInput(input: UserInput) {
 
   if (!department_id) return "Department is required";
 
-  if (isNaN(Number(department_id)) || department_id < 1)
+  if (isNaN(department_id) || department_id < 1)
     return "Invalid department selected";
 
   if (time_slots.length === 0) return "At least one time slot must be selected";
@@ -76,11 +77,60 @@ export function ValidateBooking(input: BookingInput) {
 
   if (!rhuId) return "RHU id is required";
 
-  if (isNaN(Number(rhuId)) || rhuId < 1) return "invalid RHU id";
+  if (isNaN(rhuId) || rhuId < 1) return "invalid RHU id";
 
   if (!department_id) return "department is required";
 
-  if (isNaN(Number(department_id)) || department_id < 1)
+  if (isNaN(department_id) || department_id < 1)
+    return "invalid department selected";
+
+  if (!courses || courses.length === 0)
+    return "at least one course must be selected";
+
+  return null; // No validation errors
+}
+
+export function ValidateRegisteration(input: NewRegisteredStudent) {
+  const {
+    name,
+    courses,
+    credits_earned,
+    department_id,
+    email,
+    gpa,
+    major,
+    mobile_number,
+    rhu_id,
+  } = input;
+
+  if (!name) return "name is required";
+
+  if (!mobile_number) return "mobile number is required";
+
+  if (isNaN(mobile_number) || mobile_number < 1) return "invalid mobile number";
+
+  if (!rhu_id) return "RHU id is required";
+
+  if (isNaN(rhu_id) || rhu_id < 1) return "invalid RHU id";
+
+  if (!email) return "email is required";
+
+  if (!emailRegex.test(email)) return "invalid email format";
+
+  if (!major) return "major is required";
+
+  if (!gpa) return "gpa is required";
+
+  if (isNaN(gpa) || gpa < 70 || gpa > 100) return "invalid gpa";
+
+  if (!credits_earned) return "credits earned is required";
+
+  if (isNaN(credits_earned) || credits_earned < 30)
+    return "insufficient credits earned";
+
+  if (!department_id) return "department is required";
+
+  if (isNaN(department_id) || department_id < 1)
     return "invalid department selected";
 
   if (!courses || courses.length === 0)

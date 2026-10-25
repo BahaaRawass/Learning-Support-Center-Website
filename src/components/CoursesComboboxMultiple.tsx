@@ -27,6 +27,8 @@ interface CoursesComboboxMultipleProps {
   emptyMessage?: string;
   disabled?: boolean;
   className?: string;
+  required?: boolean;
+  aria_invalid?: boolean;
 }
 
 export default function CoursesComboboxMultiple({
@@ -38,6 +40,8 @@ export default function CoursesComboboxMultiple({
   emptyMessage = "No courses found.",
   disabled,
   className,
+  required,
+  aria_invalid,
 }: CoursesComboboxMultipleProps) {
   const { contains } = ComboboxPrimitive.useFilter();
 
@@ -78,8 +82,14 @@ export default function CoursesComboboxMultiple({
           eventDetails.cancel();
         }
       }}
+      aria-invalid={aria_invalid}
+      required={required}
     >
-      <ComboboxChips className={className} aria-label="Selected courses">
+      <ComboboxChips
+        className={className}
+        aria-label="Selected courses"
+        aria-invalid={aria_invalid}
+      >
         <ComboboxValue>
           {(selected: string[]) =>
             selected.map((code) => (

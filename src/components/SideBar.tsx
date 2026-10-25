@@ -156,23 +156,17 @@ export default function SideBar({
           <SidebarGroup className="mt-auto">
             <SidebarGroupContent>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton className="flex justify-between">
-                    <Label
-                      htmlFor="sidebar-collapse"
-                      className="cursor-pointer"
-                    >
-                      Sidebar Collapses to: {SidebarCollapsible}
-                    </Label>
-                    <Switch
-                      id="sidebar-collapse"
-                      checked={SidebarCollapsible == "icon"}
-                      onCheckedChange={(checked) =>
-                        setSidebarCollapsible(checked ? "icon" : "offcanvas")
-                      }
-                      asChild
-                    />
-                  </SidebarMenuButton>
+                <SidebarMenuItem className="flex justify-between">
+                  <Label htmlFor="sidebar-collapse" className="cursor-pointer">
+                    Sidebar Collapses to: {SidebarCollapsible}
+                  </Label>
+                  <Switch
+                    id="sidebar-collapse"
+                    checked={SidebarCollapsible == "icon"}
+                    onCheckedChange={(checked) =>
+                      setSidebarCollapsible(checked ? "icon" : "offcanvas")
+                    }
+                  />
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>

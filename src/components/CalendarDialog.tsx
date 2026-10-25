@@ -83,6 +83,7 @@ export default function CalendarDialog({
   }
 
   async function AddBooking() {
+    if (IsSubmitting) return;
     setIsSubmitting(true);
 
     const validationError = ValidateBooking(BookingInput);
@@ -92,6 +93,8 @@ export default function CalendarDialog({
       setIsSubmitting(false);
       return;
     }
+
+    // TODO: Handle booking by sending email to the workstudy and if he/she accepts the booking, add it the the Student reacords table and send an email to the student with the booking status. if the booking is rejected, send an email to the student with the booking status.
 
     setIsSubmitting(false);
   }

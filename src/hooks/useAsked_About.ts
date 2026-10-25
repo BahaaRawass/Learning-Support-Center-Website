@@ -124,7 +124,6 @@ export default function useAskedAbout() {
   async function AddAskedAbout(AskedAbout: AskedAboutInsert) {
     const { mutateAsync, isSuccess, data } = AddMutation;
 
-    console.log("called add with AskedAbout: ", AskedAbout);
 
     await mutateAsync(AskedAbout, {
       onSuccess: () => {

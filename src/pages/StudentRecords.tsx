@@ -305,9 +305,7 @@ export default function StudentRecords() {
                 >
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
-                      <FieldLabel>
-                        Student Name <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Student Name</FieldLabel>
                       <FieldContent>
                         <Input
                           type="text"
@@ -322,9 +320,6 @@ export default function StudentRecords() {
                         />
                         <FieldDescription>
                           Enter the Student's full name <br />
-                          {!StudentInput.studentName && (
-                            <span className="text-destructive">Required</span>
-                          )}
                         </FieldDescription>
                         {LocalError.includes("Student name") && (
                           <FieldError>{LocalError}</FieldError>
@@ -332,9 +327,7 @@ export default function StudentRecords() {
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Student ID <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Student ID</FieldLabel>
                       <FieldContent>
                         <Input
                           type="number"
@@ -351,10 +344,6 @@ export default function StudentRecords() {
                         />
                         <FieldDescription>
                           Enter the Student's RHU ID
-                          <br />
-                          {!StudentInput.studentId && (
-                            <span className="text-destructive">Required</span>
-                          )}
                         </FieldDescription>
                         {LocalError.includes("Student ID") && (
                           <FieldError>{LocalError}</FieldError>
@@ -375,7 +364,7 @@ export default function StudentRecords() {
                           placeholder="e.g john.doe@students.rhu.edu.lb"
                         />
                         <FieldDescription>
-                          Enter the Student's RHU email address <br /> Optional
+                          Enter the Student's RHU email address
                         </FieldDescription>
                         {LocalError.includes("Invalid email") && (
                           <FieldError>{LocalError}</FieldError>
@@ -383,10 +372,7 @@ export default function StudentRecords() {
                       </FieldContent>
                     </Field>
                     <Field>
-                      <FieldLabel>
-                        Student Department{" "}
-                        <span className="text-destructive">*</span>
-                      </FieldLabel>
+                      <FieldLabel>Student Department</FieldLabel>
                       <FieldContent>
                         <Select
                           value={
