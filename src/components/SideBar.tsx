@@ -55,9 +55,6 @@ import type {
 } from "@/types/settings";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
-import { useState, type ComponentProps } from "react";
 
 type SideBarProps = {
   Sections: SidebarSection[];
@@ -92,9 +89,7 @@ export default function SideBar({
   })).filter((section) => section.links.length > 0);
   // Avoid displaying sections with no links.
 
-  const { setOpenMobile, isMobile, state: SidebarState } = useSidebar();
-  const [SidebarCollapsible, setSidebarCollapsible] =
-    useState<ComponentProps<typeof Sidebar>["collapsible"]>("offcanvas");
+  const { setOpenMobile, isMobile } = useSidebar();
 
   const email = Session?.user.email;
 
@@ -111,7 +106,7 @@ export default function SideBar({
       .slice(0, 2) || "";
 
   return (
-    <Sidebar className="app-sidebar" collapsible={SidebarCollapsible}>
+    <Sidebar className="app-sidebar" collapsible="icon">
       <SidebarContent>
         {visibleSections.map((section) => (
           <Collapsible key={section.title} defaultOpen={true}>
@@ -152,26 +147,6 @@ export default function SideBar({
             </SidebarGroup>
           </Collapsible>
         ))}
-        {SidebarState === "expanded" && !isMobile && (
-          <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem className="flex justify-between">
-                  <Label htmlFor="sidebar-collapse" className="cursor-pointer">
-                    Sidebar Collapses to: {SidebarCollapsible}
-                  </Label>
-                  <Switch
-                    id="sidebar-collapse"
-                    checked={SidebarCollapsible == "icon"}
-                    onCheckedChange={(checked) =>
-                      setSidebarCollapsible(checked ? "icon" : "offcanvas")
-                    }
-                  />
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
       {Session && (
         <SidebarFooter>
