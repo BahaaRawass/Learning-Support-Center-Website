@@ -58,35 +58,6 @@ export default function FooterModal({ IsOpen, setIsOpen }: FooterModal) {
         },
       ],
     },
-    {
-      name: "Rand Al Yaman",
-      // avatar: RandProfile,
-      description: "Contact with Github",
-      actions: [
-        {
-          name: "Github",
-          link: "https://github.com/Rand550",
-          icon: Github,
-        },
-        {
-          name: "LinkedIn",
-          link: "https://www.linkedin.com/in/rand-al-yaman-8391173a3/",
-          icon: LinkedIn,
-        },
-      ],
-    },
-    {
-      name: "Ali Algharable",
-      // avatar: AliProfile,
-      description: "Contact with Github",
-      actions: [
-        {
-          name: "Github",
-          link: "https://github.com/alialgharable",
-          icon: Github,
-        },
-      ],
-    },
   ];
 
   return (
