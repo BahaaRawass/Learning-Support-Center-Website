@@ -28,7 +28,7 @@ export default function FormSection({
         <span className="text-primary">{icon}</span>
 
         <h2 className="font-semibold text-primary">{title}</h2>
-        <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
+        <ChevronDownIcon className="text-primary ml-auto transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
 
       <CollapsibleContent className="p-5">{children}</CollapsibleContent>

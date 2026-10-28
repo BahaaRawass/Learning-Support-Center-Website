@@ -37,7 +37,12 @@ import { useCourses } from "@/hooks/useCourses";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { NewRegisteredStudent } from "@/types/student-affairs";
-import { BookOpenIcon, UserPlusIcon, UserRoundIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  InfoIcon,
+  UserPlusIcon,
+  UserRoundIcon,
+} from "lucide-react";
 import { useState, type SubmitEvent } from "react";
 import { titleCase } from "title-case";
 
@@ -243,6 +248,10 @@ export default function RegisterWorkstudy() {
                         )}
                       </FieldContent>
                     </Field>
+                  </FieldGroup>
+                </FormSection>
+                <FormSection title="College Information" icon={<InfoIcon />}>
+                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
                       <FieldLabel htmlFor="major">Major</FieldLabel>
                       <FieldContent>
