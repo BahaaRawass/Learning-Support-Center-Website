@@ -128,7 +128,7 @@ export function ValidateRegisteration(input: RegisteredStudentInput) {
 
   if (!credits_earned) return "credits earned is required";
 
-  if (isNaN(credits_earned) || credits_earned < 30)
+  if (isNaN(credits_earned) || credits_earned < 12)
     return "insufficient credits earned";
 
   if (!department_id) return "department is required";

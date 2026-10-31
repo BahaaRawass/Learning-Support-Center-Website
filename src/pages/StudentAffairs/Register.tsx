@@ -328,7 +328,7 @@ export default function RegisterWorkstudy() {
                         />
                         <FieldDescription>
                           Enter The amount of credits you have earned so far.
-                          Credits must be at least 30.
+                          Credits must be at least 12.
                         </FieldDescription>
                         {LocalError.includes("credits") && (
                           <FieldError>{titleCase(LocalError)}</FieldError>

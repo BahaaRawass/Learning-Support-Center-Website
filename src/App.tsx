@@ -4,6 +4,7 @@ import MainLayout from "./layouts/MainLayout.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import LoadingCard from "./components/loading-card.tsx";
 import RegisterWorkstudy from "./pages/StudentAffairs/Register.tsx";
+import About from "./pages/StudentAffairs/About.tsx";
 
 const Login = lazy(() => import("./pages/AuthPages/Login.tsx"));
 const WorkStudy = lazy(() => import("./pages/WorkStudy.tsx"));
@@ -79,7 +80,22 @@ const router = createBrowserRouter([
           </SuspensePage>
         ),
       },
-      { path: "student-affairs/register", element: <RegisterWorkstudy /> },
+      {
+        path: "student-affairs/register",
+        element: (
+          <SuspensePage>
+            <RegisterWorkstudy />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "student-affairs/about",
+        element: (
+          <SuspensePage>
+            <About />
+          </SuspensePage>
+        ),
+      },
       {
         path: "*",
         element: (
