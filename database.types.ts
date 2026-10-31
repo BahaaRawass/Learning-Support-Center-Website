@@ -93,6 +93,7 @@ export type Database = {
           mobile_number: number
           name: string
           rhu_id: number
+          timeslots: Database["public"]["CompositeTypes"]["time_slot"][]
         }
         Insert: {
           courses: string[]
@@ -106,6 +107,7 @@ export type Database = {
           mobile_number: number
           name: string
           rhu_id: number
+          timeslots: Database["public"]["CompositeTypes"]["time_slot"][]
         }
         Update: {
           courses?: string[]
@@ -119,6 +121,7 @@ export type Database = {
           mobile_number?: number
           name?: string
           rhu_id?: number
+          timeslots?: Database["public"]["CompositeTypes"]["time_slot"][]
         }
         Relationships: [
           {

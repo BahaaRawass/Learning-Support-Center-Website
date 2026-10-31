@@ -1,4 +1,5 @@
 import type { TimeSlot, UserInput } from "@/types/users";
+import type { RegisteredStudentInput } from "@/types/student-affairs";
 import {
   Select,
   SelectTrigger,
@@ -13,32 +14,51 @@ import { Button } from "./ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 
 type TimeSlotProps = {
-  userinput: UserInput;
-  updateFields: (fields: Partial<UserInput>) => void;
+  input: UserInput | RegisteredStudentInput;
+  updateFields: (fields: Partial<UserInput | RegisteredStudentInput>) => void;
   disabled?: boolean;
+  aria_invalid?: boolean;
 };
 
 type Row = {
   rowId: number;
 } & TimeSlot;
 
+function isUserInput(
+  input: UserInput | RegisteredStudentInput,
+): input is UserInput {
+  return "time_slots" in input;
+}
+
 export default function TimeSlots({
-  userinput,
+  input,
   updateFields,
   disabled,
+  aria_invalid
 }: TimeSlotProps) {
-  const Rows: Row[] = userinput.time_slots.map((slot) => ({
+  const Rows: Row[] = (
+    isUserInput(input) ? input.time_slots : input.timeslots
+  ).map((slot) => ({
     rowId: Math.random(),
     ...slot,
   }));
 
   function AddRow() {
-    updateFields({
-      time_slots: [
-        ...userinput.time_slots,
-        { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
-      ],
-    });
+    updateFields(
+      isUserInput(input)
+        ? {
+            time_slots: [
+              ...input.time_slots,
+              { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
+            ],
+          }
+        : {
+            timeslots: [
+              ...input.timeslots,
+              { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
+            ],
+          },
+    );
   }
 
   function UpdateRow(rowId: Row["rowId"], updatedSlot: Partial<TimeSlot>) {
@@ -46,17 +66,29 @@ export default function TimeSlots({
       row.rowId === rowId ? { ...row, ...updatedSlot } : row,
     );
 
-    updateFields({
-      time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-    });
+    updateFields(
+      isUserInput(input)
+        ? {
+            time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+          }
+        : {
+            timeslots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+          },
+    );
   }
 
   function RemoveRow(rowId: Row["rowId"]) {
     const UpdatedRows = Rows.filter((row) => row.rowId !== rowId);
 
-    updateFields({
-      time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-    });
+    updateFields(
+      isUserInput(input)
+        ? {
+            time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+          }
+        : {
+            timeslots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+          },
+    );
   }
 
   function ValidateRow(row: Row) {
@@ -68,17 +100,17 @@ export default function TimeSlots({
   }
 
   return (
-    <div className='space-y-3'>
+    <div className="space-y-3">
       {Rows.length === 0 && (
-        <div className='text-sm'>No time slots added yet.</div>
+        <div className="text-sm">No time slots added yet.</div>
       )}
 
       {Rows.map((row) => (
         <FieldGroup
-          className='grid grid-rows-[auto_16px] mb-0!'
+          className="grid grid-rows-[auto_16px] mb-0!"
           key={row.rowId}
         >
-          <div className='w-full flex gap-4 flex-wrap sm:flex-row! sm:flex-nowrap items-center justify-evenly'>
+          <div className="w-full flex gap-4 flex-wrap sm:flex-row! sm:flex-nowrap items-center justify-evenly">
             <Field>
               <FieldLabel>Weekday</FieldLabel>
               <Select
@@ -90,17 +122,17 @@ export default function TimeSlots({
                 }
                 disabled={disabled}
               >
-                <SelectTrigger size='sm'>
-                  <SelectValue placeholder='Select a weekday' />
+                <SelectTrigger size="sm" aria-invalid={aria_invalid}>
+                  <SelectValue placeholder="Select a weekday" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Weekday</SelectLabel>
-                    <SelectItem value='Monday'>Monday</SelectItem>
-                    <SelectItem value='Tuesday'>Tuesday</SelectItem>
-                    <SelectItem value='Wednesday'>Wednesday</SelectItem>
-                    <SelectItem value='Thursday'>Thursday</SelectItem>
-                    <SelectItem value='Friday'>Friday</SelectItem>
+                    <SelectItem value="Monday">Monday</SelectItem>
+                    <SelectItem value="Tuesday">Tuesday</SelectItem>
+                    <SelectItem value="Wednesday">Wednesday</SelectItem>
+                    <SelectItem value="Thursday">Thursday</SelectItem>
+                    <SelectItem value="Friday">Friday</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -108,32 +140,34 @@ export default function TimeSlots({
             <Field>
               <FieldLabel>Start Time</FieldLabel>
               <Input
-                type='time'
-                className='w-28'
+                type="time"
+                className="w-28"
                 value={row.start_time}
                 onChange={(event) =>
                   UpdateRow(row.rowId, { start_time: event.target.value })
                 }
                 disabled={disabled}
+                aria-invalid={aria_invalid}
               />
             </Field>
             <Field>
               <FieldLabel>End Time</FieldLabel>
               <Input
-                type='time'
-                className='w-28'
+                type="time"
+                className="w-28"
                 value={row.end_time}
                 onChange={(event) =>
                   UpdateRow(row.rowId, { end_time: event.target.value })
                 }
                 disabled={disabled}
+                aria-invalid={aria_invalid}
               />
             </Field>
             <Field>
               <Button
-                variant='outline'
-                size='sm'
-                type='button'
+                variant="outline"
+                size="sm"
+                type="button"
                 onClick={() => RemoveRow(row.rowId)}
                 disabled={disabled}
               >
@@ -142,7 +176,7 @@ export default function TimeSlots({
             </Field>
           </div>
 
-          <FieldError className='text-rose-600 w-full h-4 row-start-2'>
+          <FieldError className="text-rose-600 w-full h-4 row-start-2">
             {ValidateRow(row)}
           </FieldError>
         </FieldGroup>
@@ -150,9 +184,9 @@ export default function TimeSlots({
 
       <div>
         <Button
-          type='button'
-          variant='ghost'
-          className='text-(--navy) hover:text-(--navy)'
+          type="button"
+          variant="ghost"
+          className="text-(--navy) hover:text-(--navy)"
           onClick={AddRow}
           disabled={disabled}
         >

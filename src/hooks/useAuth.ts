@@ -11,10 +11,10 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { CustomError } from "@/types/types";
 import {
-  getUserPath,
   updateUserAvatarData,
   uploadProfilePicture,
 } from "@/services/ProfilePictureService";
+import { getUserProfilePicturePath } from "@/services/FileService";
 
 export function useAuth() {
   const [Session, setSession] = useState<Session | null>(null);
@@ -185,7 +185,7 @@ export function useAuth() {
       return false;
     }
 
-    const path = getUserPath(Session.user);
+    const path = getUserProfilePicturePath(Session.user.id);
 
     const UploadError = await uploadProfilePicture(bucketName, path, file);
 

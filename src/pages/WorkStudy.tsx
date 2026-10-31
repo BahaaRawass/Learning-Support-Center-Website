@@ -502,7 +502,7 @@ export default function WorkStudy() {
                       <FieldLabel>Time Slots</FieldLabel>
                       <FieldContent>
                         <TimeSlots
-                          userinput={UserInput}
+                          input={UserInput}
                           updateFields={updateFields}
                           disabled={IsSubmitting}
                         />

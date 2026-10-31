@@ -2,6 +2,7 @@ import CoursesComboboxMultiple from "@/components/CoursesComboboxMultiple";
 import ErrorCard from "@/components/error-card";
 import FormSection from "@/components/FormSection";
 import LoadingCard from "@/components/loading-card";
+import TimeSlots from "@/components/TimeSlots";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,10 +34,11 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { SetErrorMessage } from "@/helper/errorhelpers";
 import { ValidateRegisteration } from "@/helper/validation";
+import useRegister from "@/hooks/student_affairs/useRegister";
 import { useCourses } from "@/hooks/useCourses";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import type { NewRegisteredStudent } from "@/types/student-affairs";
+import type { RegisteredStudentInput } from "@/types/student-affairs";
 import {
   BookOpenIcon,
   InfoIcon,
@@ -49,7 +51,7 @@ import { titleCase } from "title-case";
 export default function RegisterWorkstudy() {
   useDocumentTitle("Register for WorkStudy Program");
 
-  const InitialInput: NewRegisteredStudent = {
+  const InitialInput: RegisteredStudentInput = {
     name: "",
     rhu_id: NaN,
     courses: [],
@@ -59,11 +61,14 @@ export default function RegisterWorkstudy() {
     gpa: NaN,
     major: "",
     mobile_number: NaN,
+    timeslots: [],
   };
+
+  const { AddRegisteredStudent } = useRegister();
 
   const [IsSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [RegisterInput, setRegisterInput] =
-    useState<NewRegisteredStudent>(InitialInput);
+    useState<RegisteredStudentInput>(InitialInput);
   const [LocalError, setLocalError] = useState<string>("");
 
   function updateLocalErorr(error: string) {
@@ -74,11 +79,11 @@ export default function RegisterWorkstudy() {
     }, 1500);
   }
 
-  function UpdateFields(fields: Partial<NewRegisteredStudent>) {
+  function UpdateFields(fields: Partial<RegisteredStudentInput>) {
     setRegisterInput((prev) => ({ ...prev, ...fields }));
   }
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     //TODO: Implement the submission logic here
     event.preventDefault();
 
@@ -93,7 +98,10 @@ export default function RegisterWorkstudy() {
       return;
     }
 
+    await AddRegisteredStudent(RegisterInput);
+
     setIsSubmitting(false);
+    setRegisterInput(InitialInput);
   }
 
   const {
@@ -250,7 +258,11 @@ export default function RegisterWorkstudy() {
                     </Field>
                   </FieldGroup>
                 </FormSection>
-                <FormSection title="College Information" icon={<InfoIcon />}>
+                <FormSection
+                  title="College Information"
+                  icon={<InfoIcon />}
+                  disableCollapse={IsSubmitting}
+                >
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
                       <FieldLabel htmlFor="major">Major</FieldLabel>
@@ -363,6 +375,24 @@ export default function RegisterWorkstudy() {
                           Select the Student's department
                         </FieldDescription>
                         {LocalError.includes("department") && (
+                          <FieldError>{titleCase(LocalError)}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                    <Field className="md:col-span-2">
+                      <FieldLabel>Time Slots</FieldLabel>
+                      <FieldContent>
+                        <TimeSlots
+                          input={RegisterInput}
+                          updateFields={UpdateFields}
+                          disabled={IsSubmitting}
+                          aria_invalid={LocalError.includes("time")}
+                        />
+                        <FieldDescription>
+                          Select the time slots That your are available to work
+                          in. You can add multiple time slots.
+                        </FieldDescription>
+                        {LocalError.includes("time") && (
                           <FieldError>{titleCase(LocalError)}</FieldError>
                         )}
                       </FieldContent>

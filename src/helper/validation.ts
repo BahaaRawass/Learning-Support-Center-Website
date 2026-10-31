@@ -1,9 +1,11 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
 import type { BookingInput } from "./calendar";
-import type { NewRegisteredStudent } from "@/types/student-affairs";
+import type { RegisteredStudentInput } from "@/types/student-affairs";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1MB
 
 export function validateStudentInput(input: StudentInput) {
   const {
@@ -63,7 +65,7 @@ export function validateDisplayName(displayname: string) {
 }
 
 export function validateFileSize(file: File) {
-  return file.size <= 1 * 1024 * 1024; // 1MB;
+  return file.size <= FILE_SIZE_LIMIT;
 }
 
 export function ValidateBooking(input: BookingInput) {
@@ -90,7 +92,7 @@ export function ValidateBooking(input: BookingInput) {
   return null; // No validation errors
 }
 
-export function ValidateRegisteration(input: NewRegisteredStudent) {
+export function ValidateRegisteration(input: RegisteredStudentInput) {
   const {
     name,
     courses,
@@ -101,6 +103,7 @@ export function ValidateRegisteration(input: NewRegisteredStudent) {
     major,
     mobile_number,
     rhu_id,
+    timeslots,
   } = input;
 
   if (!name) return "name is required";
@@ -135,6 +138,19 @@ export function ValidateRegisteration(input: NewRegisteredStudent) {
 
   if (!courses || courses.length === 0)
     return "at least one course must be selected";
+
+  if (!timeslots || timeslots.length === 0)
+    return "at least one time slot must be selected";
+
+  if (
+    timeslots.some(
+      (slot) => !slot.weekday || !slot.start_time || !slot.end_time,
+    )
+  )
+    return "all time slots must have a weekday, start time, and end time";
+
+  if (timeslots.some((slot) => slot.end_time <= slot.start_time))
+    return "end time must be after start time for all time slots";
 
   return null; // No validation errors
 }
