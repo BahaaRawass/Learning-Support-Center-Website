@@ -2,8 +2,8 @@ import { supabaseClient } from "@/supabase-client";
 import { StorageError } from "@supabase/storage-js";
 import { type User } from "@supabase/supabase-js";
 
-export function getUserPath(user: User) {
-  return `${user.id}/profile_picture`;
+export function getUserPath(userId: User["id"]) {
+  return `${userId}/profile_picture`;
 }
 
 export async function uploadProfilePicture(
