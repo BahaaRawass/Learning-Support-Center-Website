@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       /* 5 minutes default stale time so the data is kept fresh for 5 minutes unles it has been invalidated manually */
     },
-    // mutations: { throwOnError: true },
+    mutations: { throwOnError: true },
   },
 });
 

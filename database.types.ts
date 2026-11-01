@@ -47,6 +47,57 @@ export type Database = {
           },
         ]
       }
+      Bookings: {
+        Row: {
+          booked_at: string
+          courses: string[]
+          department_id: number
+          email: string
+          id: number
+          name: string
+          rhuId: number
+          status: Database["public"]["Enums"]["bookiing_status"]
+          user_id: string
+        }
+        Insert: {
+          booked_at?: string
+          courses: string[]
+          department_id: number
+          email: string
+          id?: number
+          name: string
+          rhuId: number
+          status?: Database["public"]["Enums"]["bookiing_status"]
+          user_id: string
+        }
+        Update: {
+          booked_at?: string
+          courses?: string[]
+          department_id?: number
+          email?: string
+          id?: number
+          name?: string
+          rhuId?: number
+          status?: Database["public"]["Enums"]["bookiing_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Bookings_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "Department"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "Users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Courses: {
         Row: {
           "Course Code": string
@@ -243,6 +294,7 @@ export type Database = {
       }
     }
     Enums: {
+      bookiing_status: "ACCEPTED" | "REJECTED" | "WAITING"
       user_role: "admin" | "workstudy"
       weekday: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
     }
@@ -376,6 +428,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bookiing_status: ["ACCEPTED", "REJECTED", "WAITING"],
       user_role: ["admin", "workstudy"],
       weekday: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     },

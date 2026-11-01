@@ -1,4 +1,3 @@
-import type { BookingInput, CalendarDialogInfo } from "@/helper/calendar";
 import type { UpdaterFunction } from "@/types/types";
 import type { User } from "@/types/users";
 import {
@@ -36,19 +35,23 @@ import {
 } from "./ui/select";
 import { useState } from "react";
 import type { Department } from "@/types/department";
-import type { Course } from "@/types/courses";
 import CoursesMenu from "./CoursesMenu";
 import { Button } from "./ui/button";
 import { ValidateBooking } from "@/helper/validation";
 import { titleCase } from "title-case";
-
+import type {
+  BookingInput,
+  BookingInsert,
+  CalendarDialogInfo,
+} from "@/types/booking";
+import useBooking from "@/hooks/useBooking";
+import { formatDate } from "@/helper/functions";
 type CalendarDialogProps = {
   Isopen: boolean;
   setIsopen: UpdaterFunction<CalendarDialogInfo>;
   user: User | undefined;
   timeslot: string | undefined;
   Departments: Department[];
-  Courses: Course[];
 };
 
 export default function CalendarDialog({
@@ -70,6 +73,8 @@ export default function CalendarDialog({
   const [LocalError, setLocalError] = useState<string>("");
   const [IsSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const { AddBooking } = useBooking();
+
   function updateLocalErorr(error: string) {
     setLocalError(error);
 
@@ -82,8 +87,8 @@ export default function CalendarDialog({
     setBookingInput((prev) => ({ ...prev, ...fields }));
   }
 
-  async function AddBooking() {
-    if (IsSubmitting) return;
+  async function handleBooking() {
+    if (IsSubmitting || !user) return;
     setIsSubmitting(true);
 
     const validationError = ValidateBooking(BookingInput);
@@ -94,9 +99,16 @@ export default function CalendarDialog({
       return;
     }
 
-    // TODO: Handle booking by sending email to the workstudy and if he/she accepts the booking, add it the the Student reacords table and send an email to the student with the booking status. if the booking is rejected, send an email to the student with the booking status.
+    const newBooking: BookingInsert = {
+      ...BookingInput,
+      user_id: user.id,
+      booked_at: formatDate(),
+    };
+
+    await AddBooking(newBooking);
 
     setIsSubmitting(false);
+    setBookingInput(InitialInput);
   }
 
   // TODO: Handle the case when user is undefined, maybe show an error message or a fallback UI.
@@ -265,15 +277,17 @@ export default function CalendarDialog({
               <CardFooter className="bg-transparent">
                 <CardAction className="size-full flex justify-center items-center gap-5">
                   <Button
-                    onClick={AddBooking}
+                    onClick={handleBooking}
                     className=" size-1/2 py-2 text-lg"
+                    disabled={IsSubmitting}
                   >
-                    Book Session
+                    {IsSubmitting ? "Booking Session..." : "Book Session"}
                   </Button>
                   <Button
                     variant="destructive"
                     onClick={() => setIsopen({ Isopen: false })}
                     className=" size-1/2 py-2 text-lg"
+                    disabled={IsSubmitting}
                   >
                     Close
                   </Button>

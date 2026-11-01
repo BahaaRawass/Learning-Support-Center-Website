@@ -1,7 +1,7 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
-import type { BookingInput } from "./calendar";
 import type { RegisteredStudentInput } from "@/types/student-affairs";
+import type { BookingInput } from "@/types/booking";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 

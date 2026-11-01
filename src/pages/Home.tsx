@@ -7,14 +7,12 @@ import NavigateToLogin from "@/components/NavigateToLogin";
 import { EventCalendar } from "@/components/event-calendar";
 import type { EventClickInfo } from "@fullcalendar/react";
 import { useUsers } from "@/hooks/useUsers";
-import {
-  CreateCalendarEvents,
-  type CalendarDialogInfo,
-} from "@/helper/calendar";
+import { CreateCalendarEvents } from "@/helper/calendar";
 import { useState } from "react";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useCourses } from "@/hooks/useCourses";
 import CalendarDialog from "@/components/CalendarDialog";
+import type { CalendarDialogInfo } from "@/types/booking";
 
 export default function Home() {
   useDocumentTitle("Home");
@@ -76,25 +74,27 @@ export default function Home() {
 
     if (!event.start) return;
 
-    const day = event.start.toLocaleDateString("en-LB", {
+    const date = event.start.toLocaleDateString("en-US", {
       weekday: "long",
+      month: "short",
+      day: "numeric",
     });
 
-    const startTime = event.start.toLocaleTimeString("en-LB", {
-      hour: "2-digit",
+    const startTime = event.start.toLocaleTimeString("en-US", {
+      hour: "numeric",
       minute: "2-digit",
+      hour12: true,
     });
 
     const endTime = event.end
-      ? event.end.toLocaleTimeString("en-LB", {
-          hour: "2-digit",
+      ? event.end.toLocaleTimeString("en-US", {
+          hour: "numeric",
           minute: "2-digit",
+          hour12: true,
         })
-      : null;
+      : "No end time";
 
-    const timeslot = endTime
-      ? `${day}: ${startTime} - ${endTime}`
-      : `${day}: ${startTime}`;
+    const timeslot = `${date}: ${startTime} - ${endTime}`;
 
     const user = Users?.find((user) => user.id === userId);
 
@@ -115,7 +115,6 @@ export default function Home() {
       />
 
       <CalendarDialog
-        Courses={Courses}
         Departments={Departments}
         Isopen={CalendarDialogInfo.Isopen}
         setIsopen={setCalendarDialogInfo}
