@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { CustomError } from "@/types/types";
+import type { StaffRole } from "@/lib/functions.types";
 import {
   getUserPath,
   updateUserAvatarData,
@@ -88,7 +89,7 @@ export function useAuth() {
     email: string,
     password: string,
     displayname: string,
-    isSupervisor: boolean,
+    role: StaffRole,
     department_id: Department["id"],
   ) {
     resetStates();
@@ -96,7 +97,7 @@ export function useAuth() {
     const { data, error: SignUpError } = await invokeFunction(
       supabaseClient,
       "createUser",
-      { email, password, displayname, isSupervisor, department_id },
+      { email, password, displayname, role, department_id },
     );
 
     if (SignUpError) {
@@ -136,6 +137,12 @@ export function useAuth() {
     if (error) {
       SetError(error);
       return false;
+    }
+    if (Session?.user.id === id) {
+      // Auth deletion has already revoked server sessions; clear this browser.
+      await supabaseClient.auth.signOut({ scope: "local" });
+      queryClient.clear();
+      setSession(null);
     }
     setLoading(false);
     queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -235,7 +242,9 @@ export function useAuth() {
     from: string,
     subject: string,
     message: string,
-    replyTo?: string,
+    replyto?: string,
+    buttontext?: string,
+    buttonAction?: string,
   ) {
     resetStates();
     const { error } = await invokeFunction(supabaseClient, "sendEmail", {
@@ -243,7 +252,9 @@ export function useAuth() {
       from,
       subject,
       message,
-      replyTo,
+      replyto,
+      buttontext,
+      buttonAction,
     });
 
     if (error) {

@@ -63,7 +63,10 @@ export default function DangerZone({
                 Delete your account and all associated data. This action cannot
                 be undone.
               </FieldDescription>
-              <Button variant='destructive' onClick={() => setIsDeletingAccount(true)}>
+              <Button
+                variant='destructive'
+                onClick={() => setIsDeletingAccount(true)}
+              >
                 <TrashIcon /> Delete Account
               </Button>
             </Field>

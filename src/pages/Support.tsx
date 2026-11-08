@@ -15,6 +15,7 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { FeedbackInput } from "@/types/Feedback";
 import { useState, type SubmitEvent } from "react";
 import { titleCase } from "title-case";
+import ErrorCard from "@/components/error-card";
 
 type SupportProps = {
   type: "feedback" | "report";
@@ -23,7 +24,7 @@ type SupportProps = {
 export default function Support({ type }: SupportProps) {
   useDocumentTitle("Support");
 
-  const { Session, Loading: AuthLoading, SendEmail } = useAuth();
+  const { Session, Loading: AuthLoading, Error: AuthError, SendEmail } = useAuth();
 
   const InitialValue: FeedbackInput = {
     message: "",
@@ -36,6 +37,8 @@ export default function Support({ type }: SupportProps) {
   if (AuthLoading) return <LoadingCard message="Checking Authentication..." />;
 
   if (!Session) return <NavigateToLogin />;
+
+  if (AuthError) return <ErrorCard message={AuthError.message} />;
 
   function updateFields(fields: Partial<FeedbackInput>) {
     setFeedbackInput((prev) => ({ ...prev, ...fields }));

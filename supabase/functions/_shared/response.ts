@@ -1,30 +1,72 @@
 import { corsHeaders } from "./cors.ts";
+import { AppError } from "./errors.ts";
+import type { FunctionResponse } from "./contracts.ts";
 
-/**
- * Builds a standard JSON response with CORS headers attached.
- * Having one place that constructs responses prevents inconsistencies
- * across functions (missing headers, wrong Content-Type, etc.)
- */
-export function jsonResponse(body: unknown, status = 200): Response {
+export function jsonResponse(
+  body: FunctionResponse<unknown>,
+  status = 200,
+  requestId?: string,
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       ...corsHeaders,
       "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      ...(requestId ? { "X-Request-ID": requestId } : {}),
     },
   });
 }
 
-/**
- * Parses and validates the JSON body from an incoming Request.
- * Returns a typed object or throws with a clear message.
- */
-export async function parseJsonBody<T = Record<string, unknown>>(
+export async function parseJsonBody(
   req: Request,
-): Promise<T> {
+): Promise<Record<string, unknown>> {
+  if (
+    req.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !==
+    "application/json"
+  ) {
+    throw new AppError(
+      "Content-Type must be application/json.",
+      415,
+      "unsupported_media_type",
+    );
+  }
+  // Bound the actual streamed body, not just the untrusted Content-Length header.
+  const reader = req.body?.getReader();
+  if (!reader)
+    throw new AppError("A JSON object is required.", 400, "invalid_json");
+  const chunks: Uint8Array[] = [];
+  let length = 0;
   try {
-    return (await req.json()) as T;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      length += value.byteLength;
+      if (length > 65_536) {
+        await reader.cancel();
+        throw new AppError(
+          "Request body is too large.",
+          413,
+          "payload_too_large",
+        );
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  try {
+    const body: unknown = JSON.parse(new TextDecoder().decode(bytes));
+    if (!body || typeof body !== "object" || Array.isArray(body))
+      throw new Error();
+    return body as Record<string, unknown>;
   } catch {
-    throw new Error("Invalid or missing JSON body");
+    throw new AppError("A valid JSON object is required.", 400, "invalid_json");
   }
 }

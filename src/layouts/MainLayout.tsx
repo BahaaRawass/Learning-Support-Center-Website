@@ -148,7 +148,7 @@ export default function MainLayout() {
               <div className="layout min-w-0">
                 <SideBar
                   Session={Session}
-                  location={location}
+                  location={location} 
                   Sections={SidebarSections}
                   LogOut={SignOut}
                   Settings={Settings}

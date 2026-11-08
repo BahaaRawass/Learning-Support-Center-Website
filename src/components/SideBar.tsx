@@ -73,7 +73,7 @@ export default function SideBar({
   Settings,
   updateSetting,
 }: SideBarProps) {
-  const isAdmin = Session?.user.user_metadata.role === "admin";
+  const isAdmin = Session?.user.app_metadata.role === "admin";
 
   const visibleSections = Sections.map((section) => ({
     ...section,

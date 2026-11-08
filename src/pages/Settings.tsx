@@ -51,8 +51,7 @@ export default function Settings() {
 
   async function handleDeleteAccount() {
     if (!Session) return;
-    const ok = await DeleteUser(Session.user.id);
-    if (ok) await SignOut();
+    await DeleteUser(Session.user.id);
   }
 
   return (

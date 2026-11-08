@@ -7,5 +7,5 @@ const database_key: string = import.meta.env.VITE_DATABASE_KEY;
 export const supabaseClient = createClient<Database>(
   project_url,
   database_key,
-  { auth: { experimental: { passkey: true } } },
+  { auth: { experimental: { passkey: true }, autoRefreshToken: false } },
 );

@@ -1,29 +1,26 @@
-import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { AppError } from "./errors.ts";
 
-/**
- * Creates a Supabase admin client using the service role key.
- *
- * WHY: The service role key bypasses Row Level Security and has full
- * access to auth.users. It must ONLY exist inside Edge Functions —
- * never in frontend code. Using createClient here (server-side)
- * instead of the frontend client ensures the key stays secret.
- */
+let adminClient: SupabaseClient | undefined;
+
+// One server-only client per isolate. Never set a caller's session on this client.
 export function getAdminClient(): SupabaseClient {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      "Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
+  if (adminClient) return adminClient;
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) {
+    throw new AppError(
+      "Server configuration is incomplete.",
+      500,
+      "configuration_error",
     );
   }
-
-  return createClient(supabaseUrl, serviceRoleKey, {
+  adminClient = createClient(url, key, {
     auth: {
-      // Disable auto session persistence — Edge Functions are stateless.
-      // Each invocation is a fresh execution context.
       autoRefreshToken: false,
       persistSession: false,
+      detectSessionInUrl: false,
     },
   });
+  return adminClient;
 }

@@ -143,7 +143,7 @@ export default function WorkStudy() {
       UserInput.email,
       UserInput.password,
       UserInput.displayname,
-      UserInput.isSupervisor,
+      UserInput.isSupervisor ? "admin" : "workstudy",
       UserInput.department_id,
     );
 
@@ -196,7 +196,7 @@ export default function WorkStudy() {
     return <NavigateToLogin />;
   }
 
-  if (Session.user.user_metadata.role !== "admin")
+  if (Session.user.app_metadata.role !== "admin")
     return (
       <ErrorCard
         message="You do not have permission to view this page."

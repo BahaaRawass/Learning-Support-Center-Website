@@ -1,7 +1,6 @@
 # RHU Learning Support Center Website
 
 **Rafik Hariri University**
-**Final Year Project**
 **Progress Report**
 
 ## Group Members
