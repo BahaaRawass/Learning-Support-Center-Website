@@ -11,9 +11,11 @@ import DataAndRecordsSection from "@/components/Settings/DataAndRecordsSection";
 import DangerZone from "@/components/Settings/DangerZone";
 import NavigateToLogin from "@/components/NavigateToLogin";
 import { useUsers } from "@/hooks/useUsers";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   useDocumentTitle("Settings");
+  const navigate = useNavigate();
 
   const {
     Session,
@@ -48,6 +50,15 @@ export default function Settings() {
   if (!Session) {
     return <NavigateToLogin />;
   }
+
+  if (Session.user.is_anonymous)
+    return (
+      <ErrorCard
+        message="You do not have permission to view this page."
+        actionLabel="Go to Home"
+        onAction={() => navigate("/")}
+      />
+    );
 
   async function handleDeleteAccount() {
     if (!Session) return;

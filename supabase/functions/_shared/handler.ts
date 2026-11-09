@@ -15,7 +15,8 @@ export interface FunctionContext {
 
 export interface FunctionDefinition {
   name: string;
-  roles: readonly StaffRole[];
+  roles: readonly StaffRole[] | "anonymous";
+  allowAnonymous?: boolean;
   status?: number;
   execute: (body: Record<string, unknown>, context: FunctionContext) => Promise<unknown>;
 }
@@ -49,7 +50,10 @@ export function createEdgeHandler(definition: FunctionDefinition, getClient = ge
         throw new AppError("Your session is invalid or expired.", 401, "unauthenticated");
       }
       const caller = data.user;
-      if (!caller || caller.is_anonymous || !caller.email_confirmed_at) {
+      if (!caller) throw new AppError("Authentication is required.", 401, "unauthenticated");
+      const anonymous = caller.is_anonymous === true;
+      const acceptsAnonymous = definition.roles === "anonymous" || definition.allowAnonymous === true;
+      if (definition.roles !== "anonymous" && (anonymous ? !acceptsAnonymous : !caller.email_confirmed_at)) {
         throw new AppError("A confirmed staff account is required.", 401, "unauthenticated");
       }
       log.info("authentication.completed", { actorId: caller.id });
@@ -57,8 +61,10 @@ export function createEdgeHandler(definition: FunctionDefinition, getClient = ge
       if (caller.banned_until && Date.parse(caller.banned_until) > Date.now()) {
         throw new AppError("This account is suspended.", 403, "account_suspended");
       }
-      const role = caller.app_metadata?.role;
-      if (!definition.roles.includes(role)) throw new AppError("You are not authorized to perform this action.", 403, "forbidden");
+      const allowed = anonymous
+        ? acceptsAnonymous
+        : definition.roles !== "anonymous" && definition.roles.includes(caller.app_metadata?.role);
+      if (!allowed) throw new AppError("You are not authorized to perform this action.", 403, "forbidden");
       log.info("authorization.completed");
       log.info("body.parsing");
       const body = await parseJsonBody(req);

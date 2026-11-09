@@ -24,7 +24,12 @@ type SupportProps = {
 export default function Support({ type }: SupportProps) {
   useDocumentTitle("Support");
 
-  const { Session, Loading: AuthLoading, Error: AuthError, SendEmail } = useAuth();
+  const {
+    Session,
+    Loading: AuthLoading,
+    Error: AuthError,
+    SendEmail,
+  } = useAuth();
 
   const InitialValue: FeedbackInput = {
     message: "",
@@ -47,18 +52,20 @@ export default function Support({ type }: SupportProps) {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (AuthLoading || !Session?.user.email) return;
+    if (AuthLoading || !Session) return;
+
+    const isAnon = Session.user.is_anonymous;
 
     const subject = `[${type.toUpperCase()}] ${FeedbackInput.subject}`;
 
-    const message = `${titleCase(type)} from ${Session.user.email}:\n\n${FeedbackInput.message}`;
+    const message = `${titleCase(type)} from ${isAnon ? "Anonymous" : Session.user.email}:\n\nMessage: ${FeedbackInput.message}`;
 
     const ok = await SendEmail(
       "brawass6@gmail.com",
-      import.meta.env.VITE_RESEND_SUPPORT_EMAIL,
+      import.meta.env.VITE_RESEND_FROM_EMAIL,
       subject,
       message,
-      Session.user.email,
+      !Session.user.is_anonymous ? Session.user.email : undefined,
     );
 
     if (ok) setFeedbackInput(InitialValue);

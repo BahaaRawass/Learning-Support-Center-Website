@@ -17,6 +17,10 @@ import {
   uploadProfilePicture,
 } from "@/services/ProfilePictureService";
 
+type SignInParams =
+  | { anon: true; email?: never; passowrd?: never }
+  | { anon: false; email: string; password: string };
+
 export function useAuth() {
   const [Session, setSession] = useState<Session | null>(null);
   const [Loading, setLoading] = useState<boolean>(true);
@@ -66,23 +70,35 @@ export function useAuth() {
     };
   }, []);
 
-  async function SignInWithPassword(email: string, password: string) {
+  async function SignIn(params: SignInParams) {
     resetStates();
 
-    const { error: SignInError } = await supabaseClient.auth.signInWithPassword(
-      {
-        email,
-        password,
-      },
-    );
+    if (params.anon) {
+      const { error: AnonSignInError } =
+        await supabaseClient.auth.signInAnonymously();
 
-    if (SignInError) {
-      SetError(SignInError);
-      return false;
+      if (AnonSignInError) {
+        SetError(AnonSignInError);
+        return false;
+      }
+
+      setLoading(false);
+      return true;
+    } else {
+      const { error: SignInError } =
+        await supabaseClient.auth.signInWithPassword({
+          email: params.email,
+          password: params.password,
+        });
+
+      if (SignInError) {
+        SetError(SignInError);
+        return false;
+      }
+
+      setLoading(false);
+      return true;
     }
-
-    setLoading(false);
-    return true;
   }
 
   async function SignUp(
@@ -114,7 +130,23 @@ export function useAuth() {
   async function SignOut() {
     resetStates();
 
-    const { error: SignOutError } = await supabaseClient.auth.signOut();
+    const isAnonymous = Session?.user.is_anonymous;
+
+    if (isAnonymous) {
+      const { error } = await invokeFunction(
+        supabaseClient,
+        "signOutAnonymous",
+        {},
+      );
+      if (error) {
+        SetError(error);
+        return false;
+      }
+    }
+
+    const { error: SignOutError } = await supabaseClient.auth.signOut({
+      scope: isAnonymous ? "local" : "global",
+    });
 
     if (SignOutError) {
       SetError(SignOutError);
@@ -373,7 +405,7 @@ export function useAuth() {
     Session,
     Error,
     Loading,
-    SignInWithPassword,
+    SignIn,
     SignUp,
     SignOut,
     DeleteUser,

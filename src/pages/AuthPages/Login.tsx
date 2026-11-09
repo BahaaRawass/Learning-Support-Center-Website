@@ -24,7 +24,7 @@ export default function Login() {
     Session,
     Loading: AuthLoading,
     Error: AuthError,
-    SignInWithPassword,
+    SignIn,
     ResetPassword,
   } = useAuth();
 
@@ -46,17 +46,18 @@ export default function Login() {
     event.preventDefault();
 
     if (isFirstStep)
-      return await SignInWithPassword(
-        LoginFormdata.email,
-        LoginFormdata.password,
-      );
+      return await SignIn({
+        anon: false,
+        email: LoginFormdata.email,
+        password: LoginFormdata.password,
+      });
 
     const ok = await ResetPassword(LoginFormdata.email);
     if (ok) return updateFields({ email_sent: true });
   }
 
   if (Session) {
-    return <Navigate to='/' replace />;
+    return <Navigate to="/" replace />;
   }
 
   function updateFields(fields: Partial<LoginFormData>) {
@@ -65,26 +66,21 @@ export default function Login() {
 
   return (
     <>
-      {/* <div className='login-card-header'>
-        <h2>Login</h2>
-        <p>Use your Support Center account credentials to continue.</p>
-      </div> */}
-
-      <form onSubmit={handleSubmit} className='login-form'>
+      <form onSubmit={handleSubmit} className="login-form">
         {step}
       </form>
 
       {isFirstStep ? (
-        <div className='login-footer-note'>
+        <div className="login-footer-note">
           Forgot Password?
-          <Button type='button' className='p-2' variant='link' onClick={next}>
+          <Button type="button" className="p-2" variant="link" onClick={next}>
             reset password
           </Button>
         </div>
       ) : (
-        <div className='login-footer-note'>
+        <div className="login-footer-note">
           Remembered your password?
-          <Button type='button' className='p-2' variant='link' onClick={back}>
+          <Button type="button" className="p-2" variant="link" onClick={back}>
             login
           </Button>
         </div>

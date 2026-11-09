@@ -65,6 +65,7 @@ export default function MainLayout() {
           label: "Student Records",
           to: "/student-records",
           icon: <SquarePenIcon />,
+          visible: !Session?.user.is_anonymous,
         },
         {
           label: "Support Center Staff",
@@ -91,7 +92,14 @@ export default function MainLayout() {
     },
     {
       title: "Account",
-      links: [{ label: "Settings", to: "/settings", icon: <SettingsIcon /> }],
+      links: [
+        {
+          label: "Settings",
+          to: "/settings",
+          icon: <SettingsIcon />,
+          visible: !Session?.user.is_anonymous,
+        },
+      ],
     },
     {
       title: "Support",
@@ -148,7 +156,7 @@ export default function MainLayout() {
               <div className="layout min-w-0">
                 <SideBar
                   Session={Session}
-                  location={location} 
+                  location={location}
                   Sections={SidebarSections}
                   LogOut={SignOut}
                   Settings={Settings}

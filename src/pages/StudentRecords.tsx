@@ -9,7 +9,7 @@ import { useUsers } from "@/hooks/useUsers";
 import { exportData } from "@/lib/exportUtils";
 import type { NewStudent, Student, StudentInput } from "@/types/students";
 import { useState, type SubmitEvent } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import LoadingCard from "@/components/loading-card";
 import ErrorCard from "@/components/error-card";
 import { SetErrorMessage } from "@/helper/errorhelpers";
@@ -81,6 +81,7 @@ export default function StudentRecords() {
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
   const { Settings } = useSettings();
+  const navigate = useNavigate();
 
   const {
     Students,
@@ -129,27 +130,29 @@ export default function StudentRecords() {
     AskedAboutError ||
     CoursesError;
 
-  if (loading) {
+  if (loading)
     return (
       <LoadingCard
         message={AuthLoading ? "Checking authentication" : "Loading data"}
       />
     );
-  }
 
-  if (!Session) {
-    return <NavigateToLogin />;
-  }
+  if (!Session) return <NavigateToLogin />;
 
-  if (error) {
-    return <ErrorCard message={SetErrorMessage(error)} />;
-  }
+  if (Session.user.is_anonymous)
+    return (
+      <ErrorCard
+        message="You do not have permission to view this page."
+        actionLabel="Go to Home"
+        onAction={() => navigate("/")}
+      />
+    );
+
+  if (error) return <ErrorCard message={SetErrorMessage(error)} />;
 
   const data = Students && Users && Departments && AskedAbout && Courses;
 
-  if (!data) {
-    return <ErrorCard message="Failed to load required data." />;
-  }
+  if (!data) return <ErrorCard message="Failed to load required data." />;
 
   const IsFilterActive = SearchParams.toString() !== "";
 

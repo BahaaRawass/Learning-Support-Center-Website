@@ -196,7 +196,7 @@ export default function WorkStudy() {
     return <NavigateToLogin />;
   }
 
-  if (Session.user.app_metadata.role !== "admin")
+  if (Session.user.app_metadata.role !== "admin" || Session.user.is_anonymous)
     return (
       <ErrorCard
         message="You do not have permission to view this page."

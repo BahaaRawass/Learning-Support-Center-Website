@@ -50,5 +50,9 @@ export type SendEmailResponse = FunctionResponse<{ id: string }>;
 export interface EdgeFunctionMap {
   createUser: { body: CreateUserRequest; response: CreateUserResponse };
   deleteUser: { body: DeleteUserRequest; response: DeleteUserResponse };
+  signOutAnonymous: {
+    body: Record<string, never>;
+    response: FunctionResponse<{ signedOut: true }>;
+  };
   sendEmail: { body: SendEmailRequest; response: SendEmailResponse };
 }

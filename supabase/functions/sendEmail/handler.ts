@@ -9,10 +9,12 @@ import {
 export const definition: FunctionDefinition = {
   name: "sendEmail",
   roles: ["admin", "workstudy"],
+  allowAnonymous: true,
   async execute(body, { log }) {
     log.info("input.validation.started");
     const email = validateEmail(body);
     log.info("input.validation.completed");
+
     const config = emailConfiguration();
     if (!config.allowed.includes(email.from)) {
       throw new AppError(

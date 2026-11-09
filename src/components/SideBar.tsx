@@ -148,7 +148,7 @@ export default function SideBar({
           </Collapsible>
         ))}
       </SidebarContent>
-      {Session && (
+      {Session && !Session.user.is_anonymous && (
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
