@@ -55,6 +55,7 @@ import type {
 } from "@/types/settings";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { GetInitials } from "@/helper/functions";
 
 type SideBarProps = {
   Sections: SidebarSection[];
@@ -97,13 +98,6 @@ export default function SideBar({
     Session?.user.user_metadata?.display_name?.trim() ||
     email?.slice(0, email.indexOf("@")) ||
     "";
-
-  const initials =
-    DisplayName.split(" ")
-      .map((name) => name[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "";
 
   return (
     <Sidebar className="app-sidebar" collapsible="icon">
@@ -164,7 +158,7 @@ export default function SideBar({
                         alt={Session.user.user_metadata.display_name || "User"}
                       />
                       <AvatarFallback className="rounded-lg">
-                        {initials}
+                        {GetInitials(DisplayName)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
@@ -196,7 +190,7 @@ export default function SideBar({
                             }
                           />
                           <AvatarFallback className="rounded-lg">
-                            {initials}
+                            {GetInitials(DisplayName)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">

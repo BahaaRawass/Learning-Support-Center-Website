@@ -18,6 +18,7 @@ import {
 } from "../ui/card";
 import { TrashIcon, UserCircle } from "lucide-react";
 import { validateDisplayName, validateFileSize } from "@/helper/validation";
+import { GetInitials } from "@/helper/functions";
 
 type AccountSectionProps = {
   session: Session;
@@ -98,13 +99,6 @@ export default function AccountSection({
     email?.slice(0, email.indexOf("@")) ||
     "";
 
-  const initials =
-    DisplayName.split(" ")
-      .map((name) => name[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "";
-
   return (
     <Card className="settings-section" id="account">
       <CardHeader className="settings-section-title flex flex-wrap items-center gap-4 pl-0">
@@ -130,7 +124,7 @@ export default function AccountSection({
               />
             ) : (
               <span className="text-(--gold-light) text-5xl font-semibold text-center">
-                {initials}
+                {GetInitials(DisplayName)}
               </span>
             )}
           </div>

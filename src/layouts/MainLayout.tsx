@@ -34,6 +34,7 @@ import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import {
   ArrowBigLeftIcon,
   ArrowBigRightIcon,
+  BookOpenIcon,
   BugIcon,
   DatabaseIcon,
   HomeIcon,
@@ -72,6 +73,12 @@ export default function MainLayout() {
           to: "/support-center-staff",
           icon: <User2Icon />,
           adminOnly: true,
+        },
+        {
+          label: "Student Bookings",
+          to: "/bookings",
+          icon: <BookOpenIcon />,
+          visible: !Session?.user.is_anonymous,
         },
       ],
     },

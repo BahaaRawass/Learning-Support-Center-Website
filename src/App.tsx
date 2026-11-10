@@ -5,6 +5,7 @@ import AuthLayout from "./layouts/AuthLayout.tsx";
 import LoadingCard from "./components/loading-card.tsx";
 import RegisterWorkstudy from "./pages/StudentAffairs/Register.tsx";
 import About from "./pages/StudentAffairs/About.tsx";
+import Bookings from "./pages/Bookings.tsx";
 
 const Login = lazy(() => import("./pages/AuthPages/Login.tsx"));
 const WorkStudy = lazy(() => import("./pages/WorkStudy.tsx"));
@@ -61,6 +62,14 @@ const router = createBrowserRouter([
         element: (
           <SuspensePage>
             <Settings />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "bookings",
+        element: (
+          <SuspensePage>
+            <Bookings />
           </SuspensePage>
         ),
       },

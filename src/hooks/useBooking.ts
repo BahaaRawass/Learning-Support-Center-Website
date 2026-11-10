@@ -17,7 +17,7 @@ export default function useBooking() {
   const [Error, setError] = useState<PostgrestError | null>(null);
 
   const {
-    data: Booking,
+    data: Bookings,
     isLoading,
     error: QueryError,
   } = useQuery<Booking[], PostgrestError>({
@@ -111,7 +111,7 @@ export default function useBooking() {
   }
 
   return {
-    Booking,
+    Bookings,
     Loading: isLoading || Loading,
     Error: QueryError || Error,
     AddBooking,

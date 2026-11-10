@@ -1,5 +1,3 @@
-import type { Student, StudentInput } from "@/types/students";
-
 // Formatting the Date to this format: Day, Month, Year at HH:MM AM/PM
 export function formatDate(_date?: string) {
   const date = _date ? new Date(_date) : new Date();
@@ -16,18 +14,13 @@ export function formatDate(_date?: string) {
   });
 }
 
-// Preventing duplication in the Table
-export function checkDupes(
-  students: Student[],
-  studentInput: StudentInput,
-): boolean {
-  students.forEach((student) => {
-    if (
-      student.studentId === studentInput.studentId ||
-      student.email === studentInput.email
-    ) {
-      return true;
-    }
-  });
-  return false;
+export function GetInitials(name: string) {
+  return (
+    name
+      .split(" ")
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || ""
+  );
 }
