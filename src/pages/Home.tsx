@@ -20,7 +20,7 @@ export default function Home() {
   const [CalendarDialogInfo, setCalendarDialogInfo] =
     useState<CalendarDialogInfo>({ Isopen: false });
 
-  const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
+  const { Session, Loading: AuthLoading, Error: AuthError, SendEmail } = useAuth();
 
   const {
     Users,
@@ -120,6 +120,7 @@ export default function Home() {
         setIsopen={setCalendarDialogInfo}
         user={CalendarDialogInfo.user}
         timeslot={CalendarDialogInfo.timeslot}
+        sendEmail={SendEmail}
       />
     </>
   );

@@ -52,6 +52,15 @@ type CalendarDialogProps = {
   user: User | undefined;
   timeslot: string | undefined;
   Departments: Department[];
+  sendEmail: (
+    to: string,
+    from: string,
+    subject: string,
+    message: string,
+    replyto?: string,
+    buttontext?: string,
+    buttonAction?: string,
+  ) => Promise<boolean>;
 };
 
 export default function CalendarDialog({
@@ -60,6 +69,7 @@ export default function CalendarDialog({
   user,
   timeslot,
   Departments,
+  sendEmail,
 }: CalendarDialogProps) {
   const InitialInput: BookingInput = {
     name: "",
@@ -105,7 +115,27 @@ export default function CalendarDialog({
       booked_at: formatDate(),
     };
 
-    await AddBooking(newBooking);
+    await AddBooking(newBooking, {
+      onSuccess: async () => {
+        await sendEmail(
+          user.email,
+          import.meta.env.VITE_RESEND_FROM_EMAIL,
+          "New Booking Request",
+          `You have a new booking request from ${BookingInput.name} (${BookingInput.email}). Please check the bookings page for more details.`,
+          BookingInput.email,
+          "View Bookings",
+          `${window.location.origin}/bookings`,
+        );
+
+        await sendEmail(
+          BookingInput.email,
+          import.meta.env.VITE_RESEND_FROM_EMAIL,
+          "Booking Request Received",
+          `Your booking request has been received. You will be notified once it is approved or rejected.`,
+          user.email,
+        );
+      },
+    });
 
     setIsSubmitting(false);
     setBookingInput(InitialInput);

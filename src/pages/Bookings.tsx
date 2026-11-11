@@ -71,6 +71,7 @@ export default function Bookings() {
 
     const ok = await UpdateBookingStatus(bookingId, status);
     if (!ok) return alert("Failed to update booking status.");
+
     setIsSubmiting(false);
   }
 
