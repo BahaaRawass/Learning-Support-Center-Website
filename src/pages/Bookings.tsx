@@ -17,7 +17,12 @@ import { useNavigate } from "react-router-dom";
 export default function Bookings() {
   useDocumentTitle("Bookings");
 
-  const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
+  const {
+    Session,
+    Loading: AuthLoading,
+    Error: AuthError,
+    SendEmail,
+  } = useAuth();
   const {
     Bookings,
     Loading: BookingsLoading,
@@ -69,8 +74,17 @@ export default function Bookings() {
         "Booking status can only be updated if it is in WAITING status.",
       );
 
-    const ok = await UpdateBookingStatus(bookingId, status);
-    if (!ok) return alert("Failed to update booking status.");
+    await UpdateBookingStatus(bookingId, status, {
+      onSuccess: async () =>
+        await SendEmail(
+          booking.email,
+          import.meta.env.VITE_RESEND_FROM_EMAIL,
+          "Booking Status Updated",
+          `Your booking status has been updated to ${status.toLowerCase()}`
+        ),
+      onError: (error) =>
+        alert(`Failed to update booking status: ${SetErrorMessage(error)}`),
+    });
 
     setIsSubmiting(false);
   }
