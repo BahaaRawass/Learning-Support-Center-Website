@@ -90,7 +90,7 @@ export default function FooterModal({ IsOpen, setIsOpen }: FooterModal) {
                 <CardAction className="size-full">
                   <Button
                     onClick={() => setIsOpen(false)}
-                    className="size-full py-2 text-lg"
+                    className="size-full py-2 text-lg btn-primary"
                   >
                     Close
                   </Button>

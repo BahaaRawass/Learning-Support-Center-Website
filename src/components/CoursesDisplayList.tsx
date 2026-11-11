@@ -63,7 +63,7 @@ export default function CoursesDisplayList({
         View Courses ({displayCount})
       </Button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={setOpen} className="z-999999999999">
         <Command>
           <CommandInput placeholder='Search for a course by its name or code...' />
           <CommandList>

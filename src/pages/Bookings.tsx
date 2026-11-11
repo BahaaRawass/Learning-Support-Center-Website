@@ -1,29 +1,11 @@
-import CoursesDisplayList from "@/components/CoursesDisplayList";
+import BookingGrid from "@/components/Bookings/BookingGrid";
+import BookingList from "@/components/Bookings/BookingList";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
 import NavigateToLogin from "@/components/NavigateToLogin";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
-import { Separator } from "@/components/ui/separator";
 import { SetErrorMessage } from "@/helper/errorhelpers";
-import { formatDate, GetInitials } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import useBooking from "@/hooks/useBooking";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -80,20 +62,16 @@ export default function Bookings() {
     if (IsSubmiting) return;
     setIsSubmiting(true);
 
-    const ok = await UpdateBookingStatus(bookingId, status);
-    if (!ok) alert("Failed to update booking status.");
-    setIsSubmiting(false);
-  }
+    const booking = Bookings!.find((booking) => booking.id === bookingId);
 
-  function GetStatusColor(status: Booking["status"]) {
-    switch (status) {
-      case "WAITING":
-        return "text-gray-600";
-      case "ACCEPTED":
-        return "text-green-500";
-      case "REJECTED":
-        return "text-red-500";
-    }
+    if (booking?.status !== "WAITING")
+      return alert(
+        "Booking status can only be updated if it is in WAITING status.",
+      );
+
+    const ok = await UpdateBookingStatus(bookingId, status);
+    if (!ok) return alert("Failed to update booking status.");
+    setIsSubmiting(false);
   }
 
   return (
@@ -114,7 +92,7 @@ export default function Bookings() {
           </Button>
           <Button
             variant={DisplayStyle === "list" ? "default" : "outline"}
-            className={`${DisplayStyle === "list" ? "btn-primary text-white" : ""}`}
+            className={`${DisplayStyle === "list" ? "btn-primary text-white" : ""} `}
             onClick={() => setDisplayStyle("list")}
           >
             <LayoutListIcon />
@@ -122,90 +100,19 @@ export default function Bookings() {
         </ButtonGroup>
       </div>
 
-      <div
-        className={`grid ${DisplayStyle === "grid" ? "grid-cols-1 lg:grid-cols-4 grid-rows-4" : "grid-cols-1 grid-rows-[auto]"} gap-4`}
-      >
-        {Bookings.map((booking) => {
-          if (DisplayStyle === "list")
-            return (
-              <Item variant="muted">
-                <ItemMedia>
-                  <Avatar size="lg" className="size-10">
-                    <AvatarFallback>{GetInitials(booking.name)}</AvatarFallback>
-                  </Avatar>
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle>{booking.name}</ItemTitle>
-                  <ItemDescription>
-                    booked at:{" "}
-                    <span className="font-semibold">
-                      {formatDate(booking.booked_at)}
-                    </span>
-                  </ItemDescription>
-                </ItemContent>
-                <ItemActions>
-                  <Button className="btn-primary">View</Button>
-                </ItemActions>
-              </Item>
-            );
-
-          return (
-            <Card>
-              <CardHeader>
-                <Avatar size="lg">
-                  <AvatarFallback>{GetInitials(booking.name)}</AvatarFallback>
-                </Avatar>
-                <CardTitle>{booking.name}</CardTitle>
-                <CardDescription>
-                  Booked at:{" "}
-                  <span className="font-semibold">
-                    {formatDate(booking.booked_at)}
-                  </span>
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>RHU ID: {booking.rhuId}</p>
-                <Separator className="mt-2 mb-2" />
-                <p>Email: {booking.email}</p>
-                <Separator className="mt-2 mb-2" />
-                <p>
-                  Booking Status:{" "}
-                  <span className={`${GetStatusColor(booking.status)}`}>
-                    {booking.status}
-                  </span>
-                </p>
-                <Separator className="mt-2 mb-2" />
-                <div className="flex items-center">
-                  <p>Courses:</p>
-                  <CoursesDisplayList
-                    selectedCourseCodes={booking.courses}
-                    maxVisible={5}
-                  />
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col justify-center items-center gap-5 border-t border-(--navy-light)">
-                <Button
-                  className="btn-primary w-full"
-                  onClick={async () =>
-                    await handleUpdateBookingStatus(booking.id, "ACCEPTED")
-                  }
-                >
-                  Accept Booking
-                </Button>
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={async () =>
-                    await handleUpdateBookingStatus(booking.id, "REJECTED")
-                  }
-                >
-                  Reject Booking
-                </Button>
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
+      {DisplayStyle === "grid" ? (
+        <BookingGrid
+          Bookings={Bookings}
+          IsSubmiting={IsSubmiting}
+          handleUpdateBookingStatus={handleUpdateBookingStatus}
+        />
+      ) : (
+        <BookingList
+          Bookings={Bookings}
+          IsSubmiting={IsSubmiting}
+          handleUpdateBookingStatus={handleUpdateBookingStatus}
+        />
+      )}
     </>
   );
 }
