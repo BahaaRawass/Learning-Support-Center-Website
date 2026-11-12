@@ -1,4 +1,3 @@
-import NavigateToLogin from "@/components/NavigateToLogin";
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel, FieldSet } from "@/components/ui/field";
@@ -10,12 +9,7 @@ import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ResetPassword() {
-  const {
-    Session,
-    Loading: AuthLoading,
-    Error: AuthError,
-    UpdatePassword,
-  } = useAuth();
+  const { Loading: AuthLoading, Error: AuthError, UpdatePassword } = useAuth();
 
   const navigate = useNavigate();
 
@@ -44,8 +38,6 @@ export default function ResetPassword() {
     });
   }
 
-  if (!Session) return <NavigateToLogin />;
-
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (AuthLoading) return;
@@ -67,27 +59,27 @@ export default function ResetPassword() {
   const error = (AuthError && SetErrorMessage(AuthError)) || ErrorMessage;
 
   return (
-    <div className='login-card'>
-      <div className='login-card-header'>
+    <div className="w-full!">
+      <div className="login-card-header">
         <h2>Reset Password</h2>
         <p>Enter your new password below.</p>
       </div>
 
       {Success && (
-        <div className='mb-5 rounded-xl border border-primary bg-emerald-500/30 px-4 py-3 text-slate-900 shadow-sm'>
+        <div className="mb-5 rounded-xl border border-primary bg-emerald-500/30 px-4 py-3 text-slate-900 shadow-sm">
           Your Password has been updated successfully.
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className='login-form'>
+      <form onSubmit={handleSubmit} className="login-form">
         <FieldSet>
-          <Field className='login-field'>
-            <FieldLabel htmlFor='email'>Password</FieldLabel>
+          <Field className="login-field">
+            <FieldLabel htmlFor="email">Password</FieldLabel>
             <PasswordInput
               required
-              id='password'
-              className='login-input'
-              placeholder='Enter your new password'
+              id="password"
+              className="login-input"
+              placeholder="Enter your new password"
               value={ResetPasswordInput.password}
               onChange={(event) =>
                 updateFields({ password: event.target.value })
@@ -96,13 +88,13 @@ export default function ResetPassword() {
             />
             {error && <FieldError>{error}</FieldError>}
           </Field>
-          <Field className='login-field'>
-            <FieldLabel htmlFor='confirm_password'>Confirm Password</FieldLabel>
+          <Field className="login-field">
+            <FieldLabel htmlFor="confirm_password">Confirm Password</FieldLabel>
             <PasswordInput
               required
-              id='confirm_password'
-              className='login-input login-password-input'
-              placeholder='Confirm your new password'
+              id="confirm_password"
+              className="login-input login-password-input"
+              placeholder="Confirm your new password"
               value={ResetPasswordInput.confirm_password}
               onChange={(event) =>
                 updateFields({ confirm_password: event.target.value })
@@ -113,8 +105,8 @@ export default function ResetPassword() {
           </Field>
           <Field>
             <Button
-              type='submit'
-              className='login-submit btn btn-primary'
+              type="submit"
+              className="login-submit btn-primary"
               disabled={AuthLoading}
             >
               {AuthLoading ? (
