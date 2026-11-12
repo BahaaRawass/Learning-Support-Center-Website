@@ -5,13 +5,26 @@ import LoadingCard from "@/components/loading-card";
 import NavigateToLogin from "@/components/NavigateToLogin";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SetErrorMessage } from "@/helper/errorhelpers";
 import { useAuth } from "@/hooks/useAuth";
 import useBooking from "@/hooks/useBooking";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import type { Booking } from "@/types/booking";
+import type { Booking, CategorySelectType } from "@/types/booking";
 import { GridIcon, LayoutListIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Bookings() {
@@ -33,6 +46,59 @@ export default function Bookings() {
 
   const [DisplayStyle, setDisplayStyle] = useState<"grid" | "list">("grid");
   const [IsSubmiting, setIsSubmiting] = useState<boolean>(false);
+  const [CategorySelect, setCategorySelect] =
+    useState<CategorySelectType>("name");
+  const [FilterValue, setFilterValue] = useState<string>("");
+  const [FilteredBookings, setFilteredBookings] = useState<
+    Booking[] | undefined
+  >(Bookings);
+  const [Results, setResults] = useState<number>(0);
+
+  useEffect(() => {
+    if (!FilterValue && Bookings) {
+      setFilteredBookings(Bookings);
+      setResults(Bookings.length);
+      return;
+    }
+
+    let filtered: Booking[] | undefined;
+
+    switch (CategorySelect) {
+      case "name":
+        filtered = Bookings?.filter((booking) =>
+          booking.name.toLowerCase().includes(FilterValue.toLowerCase()),
+        );
+        break;
+      case "id":
+        filtered = Bookings?.filter(
+          (booking) => booking.rhuId === Number(FilterValue),
+        );
+        break;
+
+      case "email":
+        filtered = Bookings?.filter((booking) =>
+          booking.email.toLowerCase().includes(FilterValue.toLowerCase()),
+        );
+        break;
+
+      case "courses":
+        filtered = Bookings?.filter((booking) =>
+          booking.courses.some((course) =>
+            course.toLowerCase().includes(FilterValue.toLowerCase()),
+          ),
+        );
+        break;
+
+      case "status":
+        filtered = Bookings?.filter((booking) =>
+          booking.status.toLowerCase().includes(FilterValue.toLowerCase()),
+        );
+        break;
+    }
+
+    setResults(filtered?.length || 0);
+    setFilteredBookings(filtered);
+  }, [CategorySelect, FilterValue, Bookings]);
 
   const loading = AuthLoading || BookingsLoading;
   const error = AuthError || BookingsError;
@@ -80,7 +146,7 @@ export default function Bookings() {
           booking.email,
           import.meta.env.VITE_RESEND_FROM_EMAIL,
           "Booking Status Updated",
-          `Your booking status has been updated to ${status.toLowerCase()}`
+          `Your booking status has been updated to ${status.toLowerCase()}`,
         ),
       onError: (error) =>
         alert(`Failed to update booking status: ${SetErrorMessage(error)}`),
@@ -96,7 +162,40 @@ export default function Bookings() {
         View All Student Bookings here. You can filter by name, RHU ID, email,
         booking status, and courses.
       </p>
-      <div className="flex justify-end mb-5">
+      <div className="flex justify-center items-center gap-5 mb-5">
+        <InputGroup>
+          <InputGroupInput
+            type="text"
+            value={FilterValue}
+            onChange={(event) => setFilterValue(event.target.value)}
+            placeholder="Filter by name, RHU ID, email, or courses"
+          />
+          <InputGroupAddon>
+            <Select
+              defaultValue="name"
+              value={CategorySelect}
+              onValueChange={(value: CategorySelectType) =>
+                setCategorySelect(value)
+              }
+            >
+              <SelectTrigger className="border-none">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="name">Name: </SelectItem>
+                  <SelectItem value="email">Email: </SelectItem>
+                  <SelectItem value="id">RHU ID: </SelectItem>
+                  <SelectItem value="courses">Courses: </SelectItem>
+                  <SelectItem value="status">Status: </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </InputGroupAddon>
+          <InputGroupAddon align="inline-end">
+            {Results} results
+          </InputGroupAddon>
+        </InputGroup>
         <ButtonGroup>
           <Button
             variant={DisplayStyle === "grid" ? "default" : "outline"}
@@ -117,13 +216,13 @@ export default function Bookings() {
 
       {DisplayStyle === "grid" ? (
         <BookingGrid
-          Bookings={Bookings}
+          Bookings={FilteredBookings ?? Bookings}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
         />
       ) : (
         <BookingList
-          Bookings={Bookings}
+          Bookings={FilteredBookings ?? Bookings}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
         />
