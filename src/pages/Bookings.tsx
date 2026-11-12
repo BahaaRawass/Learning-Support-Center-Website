@@ -1,29 +1,19 @@
 import BookingGrid from "@/components/Bookings/BookingGrid";
 import BookingList from "@/components/Bookings/BookingList";
+import BookingsFilter from "@/components/Bookings/BookingsFilter";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
 import NavigateToLogin from "@/components/NavigateToLogin";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { SetErrorMessage } from "@/helper/errorhelpers";
 import { useAuth } from "@/hooks/useAuth";
 import useBooking from "@/hooks/useBooking";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import type { Booking, CategorySelectType } from "@/types/booking";
-import { GridIcon, LayoutListIcon } from "lucide-react";
+import type {
+  Booking,
+  CategorySelectType,
+  DisplayStyle,
+} from "@/types/booking";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +34,7 @@ export default function Bookings() {
   } = useBooking();
   const navigate = useNavigate();
 
-  const [DisplayStyle, setDisplayStyle] = useState<"grid" | "list">("grid");
+  const [DisplayStyle, setDisplayStyle] = useState<DisplayStyle>("grid");
   const [IsSubmiting, setIsSubmiting] = useState<boolean>(false);
   const [CategorySelect, setCategorySelect] =
     useState<CategorySelectType>("name");
@@ -70,8 +60,8 @@ export default function Bookings() {
         );
         break;
       case "id":
-        filtered = Bookings?.filter(
-          (booking) => booking.rhuId === Number(FilterValue),
+        filtered = Bookings?.filter((booking) =>
+          booking.rhuId.toString().includes(FilterValue),
         );
         break;
 
@@ -162,57 +152,16 @@ export default function Bookings() {
         View All Student Bookings here. You can filter by name, RHU ID, email,
         booking status, and courses.
       </p>
-      <div className="flex justify-center items-center gap-5 mb-5">
-        <InputGroup>
-          <InputGroupInput
-            type="text"
-            value={FilterValue}
-            onChange={(event) => setFilterValue(event.target.value)}
-            placeholder="Filter by name, RHU ID, email, or courses"
-          />
-          <InputGroupAddon>
-            <Select
-              defaultValue="name"
-              value={CategorySelect}
-              onValueChange={(value: CategorySelectType) =>
-                setCategorySelect(value)
-              }
-            >
-              <SelectTrigger className="border-none">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="name">Name: </SelectItem>
-                  <SelectItem value="email">Email: </SelectItem>
-                  <SelectItem value="id">RHU ID: </SelectItem>
-                  <SelectItem value="courses">Courses: </SelectItem>
-                  <SelectItem value="status">Status: </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </InputGroupAddon>
-          <InputGroupAddon align="inline-end">
-            {Results} results
-          </InputGroupAddon>
-        </InputGroup>
-        <ButtonGroup>
-          <Button
-            variant={DisplayStyle === "grid" ? "default" : "outline"}
-            className={`${DisplayStyle === "grid" ? "btn-primary text-white" : ""}`}
-            onClick={() => setDisplayStyle("grid")}
-          >
-            <GridIcon />
-          </Button>
-          <Button
-            variant={DisplayStyle === "list" ? "default" : "outline"}
-            className={`${DisplayStyle === "list" ? "btn-primary text-white" : ""} `}
-            onClick={() => setDisplayStyle("list")}
-          >
-            <LayoutListIcon />
-          </Button>
-        </ButtonGroup>
-      </div>
+
+      <BookingsFilter
+        DisplayStyle={DisplayStyle}
+        setDisplayStyle={setDisplayStyle}
+        CategorySelect={CategorySelect}
+        setCategorySelect={setCategorySelect}
+        FilterValue={FilterValue}
+        setFilterValue={setFilterValue}
+        Results={Results}
+      />
 
       {DisplayStyle === "grid" ? (
         <BookingGrid
