@@ -58,27 +58,29 @@ export default function BookingListCard({
 
   return (
     <>
-      <Item variant="muted">
-        <ItemMedia>
-          <Avatar size="lg" className="size-10">
-            <AvatarFallback>{GetInitials(booking.name)}</AvatarFallback>
-          </Avatar>
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>{booking.name}</ItemTitle>
-          <ItemDescription>
-            booked at:{" "}
-            <span className="font-semibold">
-              {formatDate(booking.booked_at)}
-            </span>
-          </ItemDescription>
-        </ItemContent>
-        <ItemActions>
-          <Button className="btn-primary" onClick={() => setIsOpen(true)}>
-            View
-          </Button>
-        </ItemActions>
-      </Item>
+      <li>
+        <Item variant="muted">
+          <ItemMedia>
+            <Avatar size="lg" className="size-10">
+              <AvatarFallback>{GetInitials(booking.name)}</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>{booking.name}</ItemTitle>
+            <ItemDescription>
+              booked at:{" "}
+              <span className="font-semibold">
+                {formatDate(booking.booked_at)}
+              </span>
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <Button className="btn-primary" onClick={() => setIsOpen(true)}>
+              View
+            </Button>
+          </ItemActions>
+        </Item>
+      </li>
 
       <Dialog
         open={IsOpen}

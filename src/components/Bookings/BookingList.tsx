@@ -16,7 +16,7 @@ export default function BookingList({
   handleUpdateBookingStatus,
 }: BookingListProps) {
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <ul className="space-y-4">
       {Bookings.map((booking) => (
         <BookingListCard
           key={booking.id}
@@ -25,6 +25,6 @@ export default function BookingList({
           handleUpdateBookingStatus={handleUpdateBookingStatus}
         />
       ))}
-    </div>
+    </ul>
   );
 }
