@@ -1,9 +1,11 @@
 import type { Booking } from "@/types/booking";
 import BookingGridCard from "./BookingGridCard";
+import type { Department } from "@/types/department";
 
 type BookingGridProps = {
   Bookings: Booking[];
   IsSubmiting: boolean;
+  Departments: Department[];
   handleUpdateBookingStatus: (
     bookingId: Booking["id"],
     status: Booking["status"],
@@ -13,6 +15,7 @@ type BookingGridProps = {
 export default function BookingGrid({
   Bookings,
   IsSubmiting,
+  Departments,
   handleUpdateBookingStatus,
 }: BookingGridProps) {
   return (
@@ -23,6 +26,7 @@ export default function BookingGrid({
           booking={booking}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
+          Departments={Departments}
         />
       ))}
     </div>

@@ -8,6 +8,7 @@ import NavigateToLogin from "@/components/NavigateToLogin";
 import { SetErrorMessage } from "@/helper/errorhelpers";
 import { useAuth } from "@/hooks/useAuth";
 import useBooking from "@/hooks/useBooking";
+import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type {
   Booking,
@@ -26,12 +27,20 @@ export default function Bookings() {
     Error: AuthError,
     SendEmail,
   } = useAuth();
+
   const {
     Bookings,
     Loading: BookingsLoading,
     Error: BookingsError,
     UpdateBookingStatus,
   } = useBooking();
+
+  const {
+    Departments,
+    Error: DepartmentsError,
+    Loading: DepartmentsLoading,
+  } = useDepartments();
+
   const navigate = useNavigate();
 
   const [DisplayStyle, setDisplayStyle] = useState<DisplayStyle>("grid");
@@ -84,14 +93,26 @@ export default function Bookings() {
           booking.status.toLowerCase().includes(FilterValue.toLowerCase()),
         );
         break;
+
+      case "department": {
+        const filterDepartmentId = Departments?.find(
+          (department) =>
+            department.name.toLowerCase() === FilterValue.toLowerCase(),
+        )?.id;
+        filtered = Bookings?.filter(
+          (booking) => booking.department_id === filterDepartmentId,
+        );
+        break;
+      }
     }
 
     setResults(filtered?.length || 0);
     setFilteredBookings(filtered);
   }, [CategorySelect, FilterValue, Bookings]);
 
-  const loading = AuthLoading || BookingsLoading;
-  const error = AuthError || BookingsError;
+  const loading = AuthLoading || BookingsLoading || DepartmentsLoading;
+  const error = AuthError || BookingsError || DepartmentsError;
+  const data = Bookings && Departments;
 
   if (loading)
     return (
@@ -113,8 +134,7 @@ export default function Bookings() {
 
   if (error) return <ErrorCard message={SetErrorMessage(error)} />;
 
-  if (!Bookings)
-    return <ErrorCard message="Failed to load student bookings." />;
+  if (!data) return <ErrorCard message="Failed to load student bookings." />;
 
   async function handleUpdateBookingStatus(
     bookingId: Booking["id"],
@@ -161,6 +181,7 @@ export default function Bookings() {
         FilterValue={FilterValue}
         setFilterValue={setFilterValue}
         Results={Results}
+        Departments={Departments}
       />
 
       {DisplayStyle === "grid" ? (
@@ -168,12 +189,14 @@ export default function Bookings() {
           Bookings={FilteredBookings ?? Bookings}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
+          Departments={Departments}
         />
       ) : (
         <BookingList
           Bookings={FilteredBookings ?? Bookings}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
+          Departments={Departments}
         />
       )}
     </>

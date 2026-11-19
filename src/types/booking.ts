@@ -24,6 +24,12 @@ export type BookingInput = {
 
 export type BookingStatus = Booking["status"];
 
-export type CategorySelectType = "name" | "id" | "email" | "courses" | "status";
+export type CategorySelectType =
+  | "name"
+  | "id"
+  | "email"
+  | "department"
+  | "courses"
+  | "status";
 
 export type DisplayStyle = "grid" | "list";

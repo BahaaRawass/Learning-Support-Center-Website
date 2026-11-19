@@ -13,10 +13,12 @@ import type { Booking } from "@/types/booking";
 import CoursesDisplayList from "../CoursesDisplayList";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
+import type { Department } from "@/types/department";
 
 type BookingGridCardProps = {
   booking: Booking;
   IsSubmiting: boolean;
+  Departments: Department[];
   handleUpdateBookingStatus: (
     bookingId: Booking["id"],
     status: Booking["status"],
@@ -26,6 +28,7 @@ type BookingGridCardProps = {
 export default function BookingGridCard({
   booking,
   IsSubmiting,
+  Departments,
   handleUpdateBookingStatus,
 }: BookingGridCardProps) {
   function GetStatusColor(status: Booking["status"]) {
@@ -38,6 +41,10 @@ export default function BookingGridCard({
         return "text-red-500";
     }
   }
+
+  const Department = Departments.find(
+    (dept) => dept.id === booking.department_id,
+  );
 
   return (
     <Card>
@@ -55,6 +62,8 @@ export default function BookingGridCard({
         <p>RHU ID: {booking.rhuId}</p>
         <Separator className="mt-2 mb-2" />
         <p>Email: {booking.email}</p>
+        <Separator className="mt-2 mb-2" />
+        <p>Department: {Department?.name ?? "Unknown"}</p>
         <Separator className="mt-2 mb-2" />
         <p>
           Booking Status:{" "}

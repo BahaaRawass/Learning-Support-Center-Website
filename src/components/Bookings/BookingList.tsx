@@ -1,9 +1,11 @@
 import type { Booking } from "@/types/booking";
 import BookingListCard from "./BookingListCard";
+import type { Department } from "@/types/department";
 
 type BookingListProps = {
   Bookings: Booking[];
   IsSubmiting: boolean;
+  Departments: Department[];
   handleUpdateBookingStatus: (
     bookingId: Booking["id"],
     status: Booking["status"],
@@ -13,6 +15,7 @@ type BookingListProps = {
 export default function BookingList({
   Bookings,
   IsSubmiting,
+  Departments,
   handleUpdateBookingStatus,
 }: BookingListProps) {
   return (
@@ -23,6 +26,7 @@ export default function BookingList({
           booking={booking}
           IsSubmiting={IsSubmiting}
           handleUpdateBookingStatus={handleUpdateBookingStatus}
+          Departments={Departments}
         />
       ))}
     </ul>

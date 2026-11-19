@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CategorySelectType, DisplayStyle } from "@/types/booking";
+import type { Department } from "@/types/department";
 import type { UpdaterFunction } from "@/types/types";
 import { GridIcon, LayoutListIcon } from "lucide-react";
 import { titleCase } from "title-case";
@@ -34,6 +35,7 @@ type BookingsFilterProps = {
   FilterValue: string;
   setFilterValue: UpdaterFunction<string>;
   Results: number;
+  Departments: Department[];
 };
 
 export default function BookingsFilter({
@@ -41,6 +43,7 @@ export default function BookingsFilter({
   DisplayStyle,
   FilterValue,
   Results,
+  Departments,
   setCategorySelect,
   setDisplayStyle,
   setFilterValue,
@@ -55,6 +58,10 @@ export default function BookingsFilter({
         return "Filter bookings by email";
       case "courses":
         return "Filter bookings by courses";
+      case "department":
+        return "Filter bookings by department";
+      case "status":
+        return "Filter bookings by status";
     }
   }
 
@@ -62,6 +69,7 @@ export default function BookingsFilter({
     switch (CategorySelect) {
       case "name":
       case "courses":
+      case "department":
         return "text";
       case "id":
         return "number";
@@ -73,11 +81,17 @@ export default function BookingsFilter({
   return (
     <div className="flex justify-center items-center gap-5 mb-5">
       <InputGroup>
-        {CategorySelect === "status" ? (
-          <Combobox items={["All", "WAITING", "ACCEPTED", "REJECTED"]}>
+        {["status", "department"].includes(CategorySelect) ? (
+          <Combobox
+            items={
+              CategorySelect === "status"
+                ? ["All", "WAITING", "ACCEPTED", "REJECTED"]
+                : ["All", ...Departments.map((department) => department.name)]
+            }
+          >
             <ComboboxInput
               className="w-[85%] border-none! ring-0! focus:ring-0! outline-none!"
-              placeholder="Filter bookings by status"
+              placeholder={GetPlaceholderText()}
               value={FilterValue}
               onChange={(event) => setFilterValue(event.target.value)}
             />
@@ -120,6 +134,7 @@ export default function BookingsFilter({
                 <SelectItem value="name">Name: </SelectItem>
                 <SelectItem value="email">Email: </SelectItem>
                 <SelectItem value="id">RHU ID: </SelectItem>
+                <SelectItem value="department">Department: </SelectItem>
                 <SelectItem value="courses">Courses: </SelectItem>
                 <SelectItem value="status">Status: </SelectItem>
               </SelectGroup>

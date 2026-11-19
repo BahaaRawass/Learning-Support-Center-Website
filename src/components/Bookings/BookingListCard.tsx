@@ -28,10 +28,12 @@ import { Separator } from "../ui/separator";
 import CoursesDisplayList from "../CoursesDisplayList";
 import { useState } from "react";
 import { Spinner } from "../ui/spinner";
+import type { Department } from "@/types/department";
 
 type BookingListCardProps = {
   booking: Booking;
   IsSubmiting: boolean;
+  Departments: Department[];
   handleUpdateBookingStatus: (
     bookingId: Booking["id"],
     status: Booking["status"],
@@ -41,6 +43,7 @@ type BookingListCardProps = {
 export default function BookingListCard({
   booking,
   IsSubmiting,
+  Departments,
   handleUpdateBookingStatus,
 }: BookingListCardProps) {
   const [IsOpen, setIsOpen] = useState<boolean>(false);
@@ -55,6 +58,10 @@ export default function BookingListCard({
         return "text-red-500";
     }
   }
+
+  const Department = Departments.find(
+    (dept) => dept.id === booking.department_id,
+  );
 
   return (
     <>
@@ -116,6 +123,8 @@ export default function BookingListCard({
                   <p>RHU ID: {booking.rhuId}</p>
                   <Separator className="mt-2 mb-2" />
                   <p>Email: {booking.email}</p>
+                  <Separator className="mt-2 mb-2" />
+                  <p>Department: {Department?.name ?? "Unknown"}</p>
                   <Separator className="mt-2 mb-2" />
                   <p>
                     Booking Status:{" "}
