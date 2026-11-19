@@ -4,31 +4,18 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
-import type {
-  SettingsFontSize,
-  SettingsTheme,
-  UpdateSettingsFunction,
-} from "@/types/settings";
+import type { SettingsFontSize, SettingsSidebarCollapse, SettingsTheme } from "@/types/settings";
+import { useSettingsContext } from "@/context/SettingsContext";
 
-type AppearanceSectionProps = {
-  Theme: SettingsTheme;
-  FontSize: SettingsFontSize;
-  CompactMode: boolean;
-  UpdateSetting: UpdateSettingsFunction;
-};
+export default function AppearanceSection() {
+  const { Settings, updateSetting } = useSettingsContext();
 
-export default function AppearanceSection({
-  Theme,
-  FontSize,
-  CompactMode,
-  UpdateSetting,
-}: AppearanceSectionProps) {
   return (
-    <Card className='settings-section' id='appearance'>
-      <CardHeader className='settings-section-title flex flex-wrap items-center gap-4 pl-0'>
+    <Card className="settings-section" id="appearance">
+      <CardHeader className="settings-section-title flex flex-wrap items-center gap-4 pl-0">
         <Monitor size={30} />
-        <div className='flex flex-col'>
-          <CardTitle className='font-extrabold text-[1.25rem]'>
+        <div className="flex flex-col">
+          <CardTitle className="font-extrabold text-[1.25rem]">
             Appearance
           </CardTitle>
           <CardDescription>
@@ -42,38 +29,38 @@ export default function AppearanceSection({
         <FieldGroup>
           <FieldLabel>Theme</FieldLabel>
           <RadioGroup
-            value={Theme}
+            value={Settings.theme}
             onValueChange={(value) =>
-              UpdateSetting("theme", value as SettingsTheme)
+              updateSetting("theme", value as SettingsTheme)
             }
           >
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <RadioGroupItem
-                value='system'
-                id='system-theme'
-                className={`${Theme === "system" ? "btn-primary" : ""}`}
+                value="system"
+                id="system-theme"
+                className={`${Settings.theme === "system" ? "btn-primary" : ""}`}
               />
-              <Label htmlFor='system-theme' className='cursor-pointer'>
+              <Label htmlFor="system-theme" className="cursor-pointer">
                 System
               </Label>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <RadioGroupItem
-                value='light'
-                id='light-theme'
-                className={`${Theme === "light" ? "btn-primary" : ""}`}
+                value="light"
+                id="light-theme"
+                className={`${Settings.theme === "light" ? "btn-primary" : ""}`}
               />
-              <Label htmlFor='light-theme' className='cursor-pointer'>
+              <Label htmlFor="light-theme" className="cursor-pointer">
                 Light
               </Label>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <RadioGroupItem
-                value='dark'
-                id='dark-theme'
-                className={`${Theme === "dark" ? "btn-primary" : ""}`}
+                value="dark"
+                id="dark-theme"
+                className={`${Settings.theme === "dark" ? "btn-primary" : ""}`}
               />
-              <Label htmlFor='dark-theme' className='cursor-pointer'>
+              <Label htmlFor="dark-theme" className="cursor-pointer">
                 Dark
               </Label>
             </div>
@@ -83,28 +70,28 @@ export default function AppearanceSection({
         <FieldGroup>
           <FieldLabel>Font Size</FieldLabel>
           <RadioGroup
-            value={FontSize}
+            value={Settings.fontSize}
             onValueChange={(value) =>
-              UpdateSetting("fontSize", value as SettingsFontSize)
+              updateSetting("fontSize", value as SettingsFontSize)
             }
           >
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <RadioGroupItem
-                value='normal'
-                id='normal-font'
-                className={`${FontSize === "normal" ? "btn-primary" : ""}`}
+                value="normal"
+                id="normal-font"
+                className={`${Settings.fontSize === "normal" ? "btn-primary" : ""}`}
               />
-              <Label htmlFor='normal-font' className='cursor-pointer'>
+              <Label htmlFor="normal-font" className="cursor-pointer">
                 Normal
               </Label>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <RadioGroupItem
-                value='large'
-                id='large-font'
-                className={`${FontSize === "large" ? "btn-primary" : ""}`}
+                value="large"
+                id="large-font"
+                className={`${Settings.fontSize === "large" ? "btn-primary" : ""}`}
               />
-              <Label htmlFor='large-font' className='cursor-pointer'>
+              <Label htmlFor="large-font" className="cursor-pointer">
                 Large
               </Label>
             </div>
@@ -112,17 +99,48 @@ export default function AppearanceSection({
         </FieldGroup>
 
         <FieldGroup>
-          <Field orientation='horizontal'>
+          <FieldLabel>Sidebar Collapse</FieldLabel>
+          <RadioGroup
+            value={Settings.sidebarCollapse}
+            onValueChange={(value) =>
+              updateSetting("sidebarCollapse", value as SettingsSidebarCollapse)
+            }
+          >
+            <div className="flex items-center gap-3">
+              <RadioGroupItem
+                value="icon"
+                id="icon-sidebar"
+                className={`${Settings.sidebarCollapse === "icon" ? "btn-primary" : ""}`}
+              />
+              <Label htmlFor="icon-sidebar" className="cursor-pointer">
+                Icons
+              </Label>
+            </div>
+            <div className="flex items-center gap-3">
+              <RadioGroupItem
+                value="offcanvas"
+                id="offcanvas-sidebar"
+                className={`${Settings.sidebarCollapse === "offcanvas" ? "btn-primary" : ""}`}
+              />
+              <Label htmlFor="large-font" className="cursor-pointer">
+                Full
+              </Label>
+            </div>
+          </RadioGroup>
+        </FieldGroup>
+
+        <FieldGroup>
+          <Field orientation="horizontal">
             <Checkbox
-              id='compactMode'
-              name='compactMode'
-              checked={CompactMode}
+              id="compactMode"
+              name="compactMode"
+              checked={Settings.compactMode}
               onCheckedChange={(checked) =>
-                UpdateSetting("compactMode", checked as boolean)
+                updateSetting("compactMode", checked as boolean)
               }
-              className={`${CompactMode ? "btn-primary" : ""}`}
+              className={`${Settings.compactMode ? "btn-primary" : ""}`}
             />
-            <FieldLabel htmlFor='compactMode'>
+            <FieldLabel htmlFor="compactMode">
               Compact Mode - Reduce spacing in betweem elements and tables for a
               denser layout.
             </FieldLabel>

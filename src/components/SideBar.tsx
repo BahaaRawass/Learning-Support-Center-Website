@@ -46,23 +46,23 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import type {
-  AppSettings,
   SettingsExportFormat,
   SettingsFontSize,
   SettingsPageSize,
+  SettingsSidebarCollapse,
   SettingsTheme,
   UpdateSettingsFunction,
 } from "@/types/settings";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { GetInitials } from "@/helper/functions";
+import { useSettingsContext } from "@/context/SettingsContext";
 
 type SideBarProps = {
   Sections: SidebarSection[];
   Session: Session | null;
   location: Location;
   LogOut: () => Promise<boolean>;
-  Settings: AppSettings;
   updateSetting: UpdateSettingsFunction;
 };
 
@@ -71,7 +71,6 @@ export default function SideBar({
   location,
   Sections,
   LogOut,
-  Settings,
   updateSetting,
 }: SideBarProps) {
   const isAdmin = Session?.user.app_metadata.role === "admin";
@@ -91,6 +90,7 @@ export default function SideBar({
   // Avoid displaying sections with no links.
 
   const { setOpenMobile, isMobile } = useSidebar();
+  const { Settings } = useSettingsContext();
 
   const email = Session?.user.email;
 
@@ -100,7 +100,7 @@ export default function SideBar({
     "";
 
   return (
-    <Sidebar className="app-sidebar" collapsible="icon">
+    <Sidebar className="app-sidebar" collapsible={Settings.sidebarCollapse}>
       <SidebarContent>
         {visibleSections.map((section) => (
           <Collapsible key={section.title} defaultOpen={true}>
@@ -287,6 +287,33 @@ export default function SideBar({
                                     className="flex gap-2 w-full cursor-pointer"
                                   >
                                     Large
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuGroup>
+                              <DropdownMenuGroup>
+                                <DropdownMenuLabel>
+                                  Sidebar Collapse
+                                </DropdownMenuLabel>
+                                <DropdownMenuRadioGroup
+                                  value={Settings.sidebarCollapse}
+                                  onValueChange={(value) =>
+                                    updateSetting(
+                                      "sidebarCollapse",
+                                      value as SettingsSidebarCollapse,
+                                    )
+                                  }
+                                >
+                                  <DropdownMenuRadioItem
+                                    value="icon"
+                                    className="cursor-pointer"
+                                  >
+                                    Icons
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem
+                                    value="offcanvas"
+                                    className="cursor-pointer"
+                                  >
+                                    Full
                                   </DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                               </DropdownMenuGroup>

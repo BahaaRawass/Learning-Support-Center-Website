@@ -2,6 +2,7 @@ export type SettingsTheme = "system" | "light" | "dark";
 export type SettingsFontSize = "normal" | "large";
 export type SettingsPageSize = 5 | 10 | 25 | 50 | 100;
 export type SettingsExportFormat = "csv" | "excel";
+export type SettingsSidebarCollapse = "icon" | "offcanvas";
 
 export type AppSettings = {
   theme: SettingsTheme;
@@ -10,6 +11,7 @@ export type AppSettings = {
   pageSize: SettingsPageSize;
   exportFormat: SettingsExportFormat;
   archiveRetention: number;
+  sidebarCollapse: SettingsSidebarCollapse;
 };
 
 export type AccountInput = {

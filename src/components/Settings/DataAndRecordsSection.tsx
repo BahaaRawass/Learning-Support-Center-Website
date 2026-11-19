@@ -17,31 +17,18 @@ import {
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import type {
-  SettingsExportFormat,
-  SettingsPageSize,
-  UpdateSettingsFunction,
-} from "@/types/settings";
+import type { SettingsExportFormat, SettingsPageSize } from "@/types/settings";
+import { useSettingsContext } from "@/context/SettingsContext";
 
-type DataAndRecordsSectionProps = {
-  PageSize: SettingsPageSize;
-  ExportFormat: SettingsExportFormat;
-  ArchiveRetention: number;
-  UpdateSetting: UpdateSettingsFunction;
-};
+export default function DataAndRecordsSection() {
+  const { Settings, updateSetting } = useSettingsContext();
 
-export default function DataAndRecordsSection({
-  PageSize,
-  ExportFormat,
-  ArchiveRetention,
-  UpdateSetting,
-}: DataAndRecordsSectionProps) {
   return (
-    <Card className='settings-section' id='data-records'>
-      <CardHeader className='settings-section-title flex flex-wrap items-center gap-4 pl-0'>
+    <Card className="settings-section" id="data-records">
+      <CardHeader className="settings-section-title flex flex-wrap items-center gap-4 pl-0">
         <DatabaseIcon size={30} />
-        <div className='flex flex-col'>
-          <CardTitle className='font-extrabold text-[1.25rem]'>
+        <div className="flex flex-col">
+          <CardTitle className="font-extrabold text-[1.25rem]">
             Data & Records
           </CardTitle>
           <CardDescription>
@@ -54,22 +41,22 @@ export default function DataAndRecordsSection({
       <FieldSet>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor='pageSize'>Default Page Size</FieldLabel>
+            <FieldLabel htmlFor="pageSize">Default Page Size</FieldLabel>
             <Select
-              value={String(PageSize)}
+              value={String(Settings.pageSize)}
               onValueChange={(value) =>
-                UpdateSetting("pageSize", Number(value) as SettingsPageSize)
+                updateSetting("pageSize", Number(value) as SettingsPageSize)
               }
             >
-              <SelectTrigger id='pageSize'>
-                <SelectValue placeholder='Select page size' />
+              <SelectTrigger id="pageSize">
+                <SelectValue placeholder="Select page size" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='5'>5 records per page</SelectItem>
-                <SelectItem value='10'>10 records per page</SelectItem>
-                <SelectItem value='25'>25 records per page</SelectItem>
-                <SelectItem value='50'>50 records per page</SelectItem>
-                <SelectItem value='100'>100 records per page</SelectItem>
+                <SelectItem value="5">5 records per page</SelectItem>
+                <SelectItem value="10">10 records per page</SelectItem>
+                <SelectItem value="25">25 records per page</SelectItem>
+                <SelectItem value="50">50 records per page</SelectItem>
+                <SelectItem value="100">100 records per page</SelectItem>
               </SelectContent>
             </Select>
             <FieldDescription>
@@ -80,28 +67,28 @@ export default function DataAndRecordsSection({
           <Field>
             <FieldLabel>Export Format</FieldLabel>
             <RadioGroup
-              value={ExportFormat}
+              value={Settings.exportFormat}
               onValueChange={(value) =>
-                UpdateSetting("exportFormat", value as SettingsExportFormat)
+                updateSetting("exportFormat", value as SettingsExportFormat)
               }
             >
-              <div className='flex items-center gap-3'>
+              <div className="flex items-center gap-3">
                 <RadioGroupItem
-                  value='csv'
-                  id='csv-export'
-                  className={`${ExportFormat === "csv" ? "btn-primary" : ""}`}
+                  value="csv"
+                  id="csv-export"
+                  className={`${Settings.exportFormat === "csv" ? "btn-primary" : ""}`}
                 />
-                <Label htmlFor='csv-export' className='cursor-pointer'>
+                <Label htmlFor="csv-export" className="cursor-pointer">
                   CSV
                 </Label>
               </div>
-              <div className='flex items-center gap-3'>
+              <div className="flex items-center gap-3">
                 <RadioGroupItem
-                  value='excel'
-                  id='excel-export'
-                  className={`${ExportFormat === "excel" ? "btn-primary" : ""}`}
+                  value="excel"
+                  id="excel-export"
+                  className={`${Settings.exportFormat === "excel" ? "btn-primary" : ""}`}
                 />
-                <Label htmlFor='excel-export' className='cursor-pointer'>
+                <Label htmlFor="excel-export" className="cursor-pointer">
                   Excel
                 </Label>
               </div>
@@ -112,23 +99,23 @@ export default function DataAndRecordsSection({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor='archiveRetention'>
+            <FieldLabel htmlFor="archiveRetention">
               Archive Retention
             </FieldLabel>
             <Input
-              id='archiveRetention'
-              type='number'
-              min='30'
-              max='730'
-              step='30'
-              value={String(ArchiveRetention)}
+              id="archiveRetention"
+              type="number"
+              min="30"
+              max="730"
+              step="30"
+              value={String(Settings.archiveRetention)}
               onChange={(e) =>
-                UpdateSetting("archiveRetention", Number(e.target.value))
+                updateSetting("archiveRetention", Number(e.target.value))
               }
             />
             <FieldDescription>
               Days to keep archived records before deletion (
-              {ArchiveRetention} days).
+              {Settings.archiveRetention} days).
             </FieldDescription>
           </Field>
         </FieldGroup>

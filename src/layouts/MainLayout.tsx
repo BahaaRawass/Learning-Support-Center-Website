@@ -21,12 +21,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useSettingsContext } from "@/context/SettingsContext";
 import { useAuth } from "@/hooks/useAuth";
-import { useSettings } from "@/hooks/useSettings";
 import type {
   SettingsExportFormat,
   SettingsFontSize,
   SettingsPageSize,
+  SettingsSidebarCollapse,
   SettingsTheme,
 } from "@/types/settings";
 import type { SidebarSection } from "@/types/types";
@@ -55,7 +56,8 @@ export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { Session, Loading, SignOut } = useAuth();
-  const { Settings, updateSetting } = useSettings();
+
+  const { Settings, updateSetting } = useSettingsContext();
 
   const SidebarSections: SidebarSection[] = [
     {
@@ -166,7 +168,6 @@ export default function MainLayout() {
                   location={location}
                   Sections={SidebarSections}
                   LogOut={SignOut}
-                  Settings={Settings}
                   updateSetting={updateSetting}
                 />
 
@@ -281,6 +282,31 @@ export default function MainLayout() {
                           className="cursor-pointer"
                         >
                           Large
+                        </ContextMenuRadioItem>
+                      </ContextMenuRadioGroup>
+                    </ContextMenuGroup>
+                    <ContextMenuGroup>
+                      <ContextMenuLabel>Sidebar Collapse</ContextMenuLabel>
+                      <ContextMenuRadioGroup
+                        value={Settings.sidebarCollapse}
+                        onValueChange={(value) =>
+                          updateSetting(
+                            "sidebarCollapse",
+                            value as SettingsSidebarCollapse,
+                          )
+                        }
+                      >
+                        <ContextMenuRadioItem
+                          value="icon"
+                          className="cursor-pointer"
+                        >
+                          Icons
+                        </ContextMenuRadioItem>
+                        <ContextMenuRadioItem
+                          value="offcanvas"
+                          className="cursor-pointer"
+                        >
+                          Full
                         </ContextMenuRadioItem>
                       </ContextMenuRadioGroup>
                     </ContextMenuGroup>

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import "./index.css";
+import { SettingsProvider } from "./context/SettingsContext.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,8 +22,10 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <App />
-        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+        <SettingsProvider>
+          <App />
+          {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+        </SettingsProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </StrictMode>,

@@ -7,6 +7,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   pageSize: 5,
   exportFormat: "csv",
   archiveRetention: 30,
+  sidebarCollapse: "icon",
 };
 
 export function isAppSettings(value: any): value is AppSettings {
@@ -28,7 +29,9 @@ export function isAppSettings(value: any): value is AppSettings {
     (candidate.exportFormat === "csv" || candidate.exportFormat === "excel") &&
     typeof candidate.archiveRetention === "number" &&
     candidate.archiveRetention >= 30 &&
-    candidate.archiveRetention <= 730
+    candidate.archiveRetention <= 730 &&
+    (candidate.sidebarCollapse === "icon" ||
+      candidate.sidebarCollapse === "offcanvas")
   );
 }
 

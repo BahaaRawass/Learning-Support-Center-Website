@@ -3,7 +3,6 @@ import { formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { useSettings } from "@/hooks/useSettings";
 import { useStudents } from "@/hooks/useStudents";
 import { useUsers } from "@/hooks/useUsers";
 import { exportData } from "@/lib/exportUtils";
@@ -59,6 +58,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { useCourses } from "@/hooks/useCourses";
 import CoursesComboboxMultiple from "@/components/CoursesComboboxMultiple";
+import { useSettingsContext } from "@/context/SettingsContext";
 
 export default function StudentRecords() {
   useDocumentTitle("Student Records");
@@ -80,7 +80,7 @@ export default function StudentRecords() {
   const [SearchParams, setSearchParams] = useSearchParams();
 
   const { Session, Loading: AuthLoading, Error: AuthError } = useAuth();
-  const { Settings } = useSettings();
+  const { Settings } = useSettingsContext();
   const navigate = useNavigate();
 
   const {

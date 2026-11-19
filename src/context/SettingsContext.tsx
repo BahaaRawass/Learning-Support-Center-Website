@@ -1,15 +1,46 @@
 import { readSettings } from "@/helper/settings";
-import type { AppSettings } from "@/types/settings";
-import { useEffect, useState } from "react";
+import type { AppSettings, UpdateSettingsFunction } from "@/types/settings";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
-export function useSettings() {
-  const SETTINGS_KEY = "Settings";
-  // Initialize with validated settings from storage, or defaults if storage is empty/corrupted
+const SETTINGS_KEY = "Settings";
+
+type SettingsContextType = {
+  Settings: AppSettings;
+  updateSetting: UpdateSettingsFunction;
+};
+
+// Create the context
+const SettingsContext = createContext<SettingsContextType | undefined>(
+  undefined,
+);
+
+// Custom hook to access the context
+export function useSettingsContext() {
+  const context = useContext(SettingsContext);
+
+  if (!context) {
+    throw new Error(
+      "useSettingsContext must be used within a SettingsProvider",
+    );
+  }
+
+  return context;
+}
+
+// Provider component
+export function SettingsProvider({ children }: { children: ReactNode }) {
+  // Initialize settings from localStorage
   const [Settings, setSettings] = useState<AppSettings>(() =>
     readSettings(SETTINGS_KEY),
   );
 
-  // helper function to update one setting
+  // Update a setting
   function updateSetting<Setting extends keyof AppSettings>(
     setting: Setting,
     value: AppSettings[Setting],
@@ -17,16 +48,16 @@ export function useSettings() {
     setSettings((prev) => ({ ...prev, [setting]: value }));
   }
 
+  // Save settings to localStorage
   useEffect(() => {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(Settings));
+  }, [Settings]);
 
-    // Getting the OS theme preference
+  // Apply theme and listen for operating system theme changes
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     function ApplyTheme() {
-      // checking if the theme is set to system
-      // If yes, check the OS theme preference and set the theme accordingly
-      // If not, set the theme to the selected theme
       const actualTheme =
         Settings.theme === "system"
           ? mediaQuery.matches
@@ -40,14 +71,16 @@ export function useSettings() {
     ApplyTheme();
 
     if (Settings.theme === "system") {
-      // Listen for changes in the OS theme preference
       mediaQuery.addEventListener("change", ApplyTheme);
 
       return () => {
         mediaQuery.removeEventListener("change", ApplyTheme);
       };
     }
+  }, [Settings.theme]);
 
+  // Apply font size and compact mode
+  useEffect(() => {
     document.documentElement.setAttribute("data-font-size", Settings.fontSize);
 
     if (Settings.compactMode) {
@@ -55,10 +88,16 @@ export function useSettings() {
     } else {
       document.documentElement.removeAttribute("data-compact");
     }
-  }, [Settings]);
+  }, [Settings.fontSize, Settings.compactMode]);
 
-  return {
+  const value = {
     Settings,
     updateSetting,
   };
+
+  return (
+    <SettingsContext.Provider value={value}>
+      {children}
+    </SettingsContext.Provider>
+  );
 }

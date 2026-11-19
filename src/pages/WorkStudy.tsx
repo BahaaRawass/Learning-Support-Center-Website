@@ -17,7 +17,6 @@ import { formatDate } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { useSettings } from "@/hooks/useSettings";
 import { useUsers } from "@/hooks/useUsers";
 import { exportData } from "@/lib/exportUtils";
 import type { NewUser, User, UserInput } from "@/types/users";
@@ -76,6 +75,7 @@ import {
 } from "@/components/ui/select";
 import TimeSlots from "@/components/TimeSlots";
 import { Spinner } from "@/components/ui/spinner";
+import { useSettingsContext } from "@/context/SettingsContext";
 
 export default function WorkStudy() {
   useDocumentTitle("Support Center Staff");
@@ -120,7 +120,7 @@ export default function WorkStudy() {
     Error: DepartmentsError,
   } = useDepartments();
 
-  const { Settings } = useSettings();
+  const { Settings } = useSettingsContext();
 
   const loading = AuthLoading || DepartmentsLoading;
 

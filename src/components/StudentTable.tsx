@@ -2,7 +2,6 @@ import type { Department } from "@/types/department";
 import type { Student, StudentInput, UpdatedStudent } from "@/types/students";
 import type { ErrorNotice, MutationOptions } from "@/types/types";
 import type { User } from "@/types/users";
-import { useSettings } from "@/hooks/useSettings";
 import { LightbulbIcon, MoreHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -49,6 +48,7 @@ import {
   ContextMenuTrigger,
 } from "./ui/context-menu";
 import { validateStudentInput } from "@/helper/validation";
+import { useSettingsContext } from "@/context/SettingsContext";
 
 export type TableProps = {
   Students: Student[];
@@ -91,6 +91,9 @@ export default function StudentTable({
   AskedAbout,
   syncStudentCourses,
 }: TableProps) {
+
+  const { Settings } = useSettingsContext();
+
   const InitialValue: StudentInput = {
     studentId: NaN,
     studentName: "",
@@ -105,10 +108,7 @@ export default function StudentTable({
     message: "",
   };
 
-  const { Settings } = useSettings();
-
   const [currentPage, setCurrentPage] = useState<number>(1);
-
   const [EditId, setEditId] = useState<Student["studentId"] | null>(null);
   const [EditValues, setEditValues] = useState<StudentInput>(InitialValue);
   const [EditAskedCourses, setEditAskedCourses] = useState<string[]>([]);

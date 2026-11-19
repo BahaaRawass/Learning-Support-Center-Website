@@ -1,6 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { useSettings } from "@/hooks/useSettings";
 import AccountSection from "@/components/Settings/AccountSection";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
@@ -31,7 +30,6 @@ export default function Settings() {
     DeletePasskeys,
   } = useAuth();
 
-  const { Settings, updateSetting } = useSettings();
   const { UpdateUser } = useUsers(Session?.user, false);
 
   async function handleUpdateUserName(display_name: string) {
@@ -84,20 +82,10 @@ export default function Settings() {
         />
 
         {/* Appearance Section */}
-        <AppearanceSection
-          Theme={Settings.theme}
-          FontSize={Settings.fontSize}
-          CompactMode={Settings.compactMode}
-          UpdateSetting={updateSetting}
-        />
+        <AppearanceSection />
 
         {/* Data and Records Section */}
-        <DataAndRecordsSection
-          PageSize={Settings.pageSize}
-          ExportFormat={Settings.exportFormat}
-          ArchiveRetention={Settings.archiveRetention}
-          UpdateSetting={updateSetting}
-        />
+        <DataAndRecordsSection />
 
         <DangerZone
           LogOut={async () => await SignOut()}
