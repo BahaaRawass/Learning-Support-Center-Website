@@ -1,5 +1,4 @@
 import type { TimeSlot, UserInput } from "@/types/users";
-import type { RegisteredStudentInput } from "@/types/student-affairs";
 import {
   Select,
   SelectTrigger,
@@ -14,8 +13,8 @@ import { Button } from "./ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 
 type TimeSlotProps = {
-  input: UserInput | RegisteredStudentInput;
-  updateFields: (fields: Partial<UserInput | RegisteredStudentInput>) => void;
+  input: UserInput;
+  updateFields: (fields: Partial<UserInput>) => void;
   disabled?: boolean;
   aria_invalid?: boolean;
 };
@@ -24,41 +23,24 @@ type Row = {
   rowId: number;
 } & TimeSlot;
 
-function isUserInput(
-  input: UserInput | RegisteredStudentInput,
-): input is UserInput {
-  return "time_slots" in input;
-}
-
 export default function TimeSlots({
   input,
   updateFields,
   disabled,
-  aria_invalid
+  aria_invalid,
 }: TimeSlotProps) {
-  const Rows: Row[] = (
-    isUserInput(input) ? input.time_slots : input.timeslots
-  ).map((slot) => ({
+  const Rows: Row[] = input.time_slots.map((slot) => ({
     rowId: Math.random(),
     ...slot,
   }));
 
   function AddRow() {
-    updateFields(
-      isUserInput(input)
-        ? {
-            time_slots: [
-              ...input.time_slots,
-              { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
-            ],
-          }
-        : {
-            timeslots: [
-              ...input.timeslots,
-              { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
-            ],
-          },
-    );
+    updateFields({
+      time_slots: [
+        ...input.time_slots,
+        { weekday: "Monday", start_time: "09:00", end_time: "10:00" },
+      ],
+    });
   }
 
   function UpdateRow(rowId: Row["rowId"], updatedSlot: Partial<TimeSlot>) {
@@ -66,29 +48,17 @@ export default function TimeSlots({
       row.rowId === rowId ? { ...row, ...updatedSlot } : row,
     );
 
-    updateFields(
-      isUserInput(input)
-        ? {
-            time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-          }
-        : {
-            timeslots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-          },
-    );
+    updateFields({
+      time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+    });
   }
 
   function RemoveRow(rowId: Row["rowId"]) {
     const UpdatedRows = Rows.filter((row) => row.rowId !== rowId);
 
-    updateFields(
-      isUserInput(input)
-        ? {
-            time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-          }
-        : {
-            timeslots: UpdatedRows.map(({ rowId, ...slot }) => slot),
-          },
-    );
+    updateFields({
+      time_slots: UpdatedRows.map(({ rowId, ...slot }) => slot),
+    });
   }
 
   function ValidateRow(row: Row) {

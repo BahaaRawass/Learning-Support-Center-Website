@@ -131,59 +131,6 @@ export type Database = {
         }
         Relationships: []
       }
-      Registered_Students: {
-        Row: {
-          courses: string[]
-          created_at: string
-          credits_earned: number
-          department_id: number
-          email: string
-          gpa: number
-          id: number
-          major: string
-          mobile_number: number
-          name: string
-          rhu_id: number
-          timeslots: Database["public"]["CompositeTypes"]["time_slot"][]
-        }
-        Insert: {
-          courses: string[]
-          created_at?: string
-          credits_earned: number
-          department_id: number
-          email: string
-          gpa: number
-          id?: number
-          major: string
-          mobile_number: number
-          name: string
-          rhu_id: number
-          timeslots: Database["public"]["CompositeTypes"]["time_slot"][]
-        }
-        Update: {
-          courses?: string[]
-          created_at?: string
-          credits_earned?: number
-          department_id?: number
-          email?: string
-          gpa?: number
-          id?: number
-          major?: string
-          mobile_number?: number
-          name?: string
-          rhu_id?: number
-          timeslots?: Database["public"]["CompositeTypes"]["time_slot"][]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Registered_Students_department_id_fkey"
-            columns: ["department_id"]
-            isOneToOne: false
-            referencedRelation: "Department"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       Students: {
         Row: {
           added_at: string

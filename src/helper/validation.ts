@@ -1,6 +1,5 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
-import type { RegisteredStudentInput } from "@/types/student-affairs";
 import type { BookingInput } from "@/types/booking";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -88,69 +87,6 @@ export function ValidateBooking(input: BookingInput) {
 
   if (!courses || courses.length === 0)
     return "at least one course must be selected";
-
-  return null; // No validation errors
-}
-
-export function ValidateRegisteration(input: RegisteredStudentInput) {
-  const {
-    name,
-    courses,
-    credits_earned,
-    department_id,
-    email,
-    gpa,
-    major,
-    mobile_number,
-    rhu_id,
-    timeslots,
-  } = input;
-
-  if (!name) return "name is required";
-
-  if (!mobile_number) return "mobile number is required";
-
-  if (isNaN(mobile_number) || mobile_number < 1) return "invalid mobile number";
-
-  if (!rhu_id) return "RHU id is required";
-
-  if (isNaN(rhu_id) || rhu_id < 1) return "invalid RHU id";
-
-  if (!email) return "email is required";
-
-  if (!emailRegex.test(email)) return "invalid email format";
-
-  if (!major) return "major is required";
-
-  if (!gpa) return "gpa is required";
-
-  if (isNaN(gpa) || gpa < 70 || gpa > 100) return "invalid gpa";
-
-  if (!credits_earned) return "credits earned is required";
-
-  if (isNaN(credits_earned) || credits_earned < 12)
-    return "insufficient credits earned";
-
-  if (!department_id) return "department is required";
-
-  if (isNaN(department_id) || department_id < 1)
-    return "invalid department selected";
-
-  if (!courses || courses.length === 0)
-    return "at least one course must be selected";
-
-  if (!timeslots || timeslots.length === 0)
-    return "at least one time slot must be selected";
-
-  if (
-    timeslots.some(
-      (slot) => !slot.weekday || !slot.start_time || !slot.end_time,
-    )
-  )
-    return "all time slots must have a weekday, start time, and end time";
-
-  if (timeslots.some((slot) => slot.end_time <= slot.start_time))
-    return "end time must be after start time for all time slots";
 
   return null; // No validation errors
 }

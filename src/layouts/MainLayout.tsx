@@ -88,11 +88,6 @@ export default function MainLayout() {
       title: "Student Affairs",
       links: [
         {
-          label: "Register Workstudy",
-          to: "/student-affairs/register",
-          icon: <SquarePenIcon />,
-        },
-        {
           label: "About Program",
           to: "/student-affairs/about",
           icon: <InfoIcon />,

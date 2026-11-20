@@ -3,9 +3,6 @@ import { Suspense, type ReactNode, lazy } from "react";
 import MainLayout from "./layouts/MainLayout.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import LoadingCard from "./components/loading-card.tsx";
-import RegisterWorkstudy from "./pages/StudentAffairs/Register.tsx";
-import About from "./pages/StudentAffairs/About.tsx";
-import Bookings from "./pages/Bookings.tsx";
 
 const Login = lazy(() => import("./pages/AuthPages/Login.tsx"));
 const WorkStudy = lazy(() => import("./pages/WorkStudy.tsx"));
@@ -17,6 +14,8 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage.tsx"));
 const AuthHome = lazy(() => import("./pages/AuthPages/AuthHome.tsx"));
 const ResetPassword = lazy(() => import("./pages/AuthPages/ResetPassword.tsx"));
 const Support = lazy(() => import("./pages/Support.tsx"));
+const About = lazy(() => import("./pages/StudentAffairs/About.tsx"));
+const Bookings = lazy(() => import("./pages/Bookings.tsx"));
 
 function SuspensePage({ children }: { children: ReactNode }) {
   return (
@@ -86,14 +85,6 @@ const router = createBrowserRouter([
         element: (
           <SuspensePage>
             <Support type="report" />
-          </SuspensePage>
-        ),
-      },
-      {
-        path: "student-affairs/register",
-        element: (
-          <SuspensePage>
-            <RegisterWorkstudy />
           </SuspensePage>
         ),
       },
