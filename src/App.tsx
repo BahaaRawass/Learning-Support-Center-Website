@@ -16,6 +16,9 @@ const ResetPassword = lazy(() => import("./pages/AuthPages/ResetPassword.tsx"));
 const Support = lazy(() => import("./pages/Support.tsx"));
 const About = lazy(() => import("./pages/StudentAffairs/About.tsx"));
 const Bookings = lazy(() => import("./pages/Bookings.tsx"));
+const Attendance = lazy(
+  () => import("./components/Student Affairs/Attendance.tsx"),
+);
 
 function SuspensePage({ children }: { children: ReactNode }) {
   return (
@@ -85,6 +88,14 @@ const router = createBrowserRouter([
         element: (
           <SuspensePage>
             <Support type="report" />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "student-affairs/attendance",
+        element: (
+          <SuspensePage>
+            <Attendance />
           </SuspensePage>
         ),
       },

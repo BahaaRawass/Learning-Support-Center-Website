@@ -48,6 +48,7 @@ import {
   SquarePenIcon,
   User2Icon,
   UserCircleIcon,
+  UserRoundCheckIcon,
 } from "lucide-react";
 import { useLayoutEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -87,6 +88,11 @@ export default function MainLayout() {
     {
       title: "Student Affairs",
       links: [
+        {
+          label: "Workstudy Attendance",
+          to: "/student-affairs/attendance",
+          icon: <UserRoundCheckIcon />,
+        },
         {
           label: "About Program",
           to: "/student-affairs/about",
