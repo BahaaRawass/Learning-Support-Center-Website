@@ -4,7 +4,8 @@ import { invalid, stringField } from "../_shared/validation.ts";
 
 export const definition: FunctionDefinition = {
   name: "deleteUser",
-  roles: ["admin", "workstudy"],
+  roles: ["student_affairs", "admin", "workstudy"],
+  allowAnonymous: true,
   async execute(body, { admin, caller, log }) {
     log.info("input.validation.started");
     const userId = stringField(body, "userId", 36).toLowerCase();
@@ -18,17 +19,17 @@ export const definition: FunctionDefinition = {
     // Check ownership before looking up the target or touching their files.
     // Only the verified caller's ID and protected role grant access.
     log.info("target.authorization_started");
-    if (
-      caller.app_metadata.role !== "admin" &&
-      userId !== caller.id.toLowerCase()
-    ) {
+    const isSelf = userId === caller.id.toLowerCase();
+    const callerRole = caller.app_metadata.role;
+    const canDeleteOthers = !caller.is_anonymous &&
+      (callerRole === "student_affairs" || callerRole === "admin");
+    if (!isSelf && !canDeleteOthers) {
       throw new AppError(
         "You can only delete your own account.",
         403,
         "forbidden",
       );
     }
-    log.info("target.authorization_completed");
     log.info("user.lookup_started", { targetId: userId });
     const { data, error } = await admin.auth.admin.getUserById(userId);
     if (error) {
@@ -43,6 +44,15 @@ export const definition: FunctionDefinition = {
     if (!data.user)
       throw new AppError("User not found.", 404, "user_not_found");
     log.info("user.found");
+    if (!isSelf) {
+      const targetRole = data.user.app_metadata?.role;
+      const allowedRole = targetRole === "workstudy" ||
+        (targetRole === "admin" && callerRole === "student_affairs");
+      if (data.user.is_anonymous || !allowedRole) {
+        throw new AppError("You cannot delete this account.", 403, "forbidden");
+      }
+    }
+    log.info("target.authorization_completed");
 
     // Storage ownership can prevent Auth deletion. Keep the existing profile
     // cleanup, but paginate it and fail explicitly instead of swallowing errors.

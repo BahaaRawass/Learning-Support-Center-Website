@@ -11,15 +11,18 @@ import type { SendEmailResponse } from "../_shared/contracts.ts";
 
 export const definition: FunctionDefinition = {
   name: "createUser",
-  roles: ["admin"],
+  roles: ["student_affairs", "admin"],
   status: 201,
-  async execute(body, { admin, token, requestId, log }) {
+  async execute(body, { admin, caller, token, requestId, log }) {
     log.info("input.validation.started");
     const email = emailField(body, "email");
     const password = stringField(body, "password", 1024, false);
     const displayname = stringField(body, "displayname", 200);
     const { role, department_id } = body;
     if (role !== "admin" && role !== "workstudy") invalid("role");
+    if (role === "admin" && caller.app_metadata.role !== "student_affairs") {
+      throw new AppError("Only Student Affairs can create admin accounts.", 403, "forbidden");
+    }
     if (
       typeof department_id !== "number" ||
       !Number.isSafeInteger(department_id) ||
@@ -96,7 +99,7 @@ export const definition: FunctionDefinition = {
       }
       log.info("confirmation.generated");
       log.info("confirmation.email_invoking");
-      // Forward the authenticated admin's JWT, never the service role as an
+      // Forward the authenticated caller's JWT, never the service role as an
       // authorization shortcut. sendEmail repeats the same live caller checks.
       const { data: sent, error: sendError } =
         await admin.functions.invoke<SendEmailResponse>("sendEmail", {

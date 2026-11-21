@@ -242,7 +242,7 @@ export type Database = {
     }
     Enums: {
       bookiing_status: "ACCEPTED" | "REJECTED" | "WAITING"
-      user_role: "admin" | "workstudy"
+      user_role: "admin" | "workstudy" | "student_affairs"
       weekday: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
     }
     CompositeTypes: {
@@ -376,7 +376,7 @@ export const Constants = {
   public: {
     Enums: {
       bookiing_status: ["ACCEPTED", "REJECTED", "WAITING"],
-      user_role: ["admin", "workstudy"],
+      user_role: ["admin", "workstudy", "student_affairs"],
       weekday: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     },
   },

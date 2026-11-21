@@ -1,4 +1,4 @@
-export type StaffRole = "admin" | "workstudy";
+export type StaffRole = "student_affairs" | "admin" | "workstudy";
 
 export interface EdgeFunctionError {
   message: string;
@@ -15,7 +15,7 @@ export interface CreateUserRequest {
   email: string;
   password: string;
   displayname: string;
-  role: StaffRole;
+  role: "admin" | "workstudy";
   department_id: number;
 }
 

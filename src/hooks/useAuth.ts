@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { CustomError } from "@/types/types";
-import type { StaffRole } from "@/lib/functions.types";
+import type { CreateUserRequest } from "@/lib/functions.types";
 import {
   getUserPath,
   updateUserAvatarData,
@@ -105,7 +105,7 @@ export function useAuth() {
     email: string,
     password: string,
     displayname: string,
-    role: StaffRole,
+    role: CreateUserRequest["role"],
     department_id: Department["id"],
   ) {
     resetStates();

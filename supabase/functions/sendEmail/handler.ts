@@ -8,7 +8,7 @@ import {
 
 export const definition: FunctionDefinition = {
   name: "sendEmail",
-  roles: ["admin", "workstudy"],
+  roles: ["student_affairs", "admin", "workstudy"],
   allowAnonymous: true,
   async execute(body, { log }) {
     log.info("input.validation.started");
