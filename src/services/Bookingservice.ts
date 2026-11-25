@@ -16,7 +16,7 @@ export async function addBooking(booking: BookingInsert) {
   const { data, error } = (await supabaseClient
     .from("Bookings")
     .insert(booking)
-    .select()
+    .select("*")
     .single()) as Data<Booking>;
 
   if (error) throw error;

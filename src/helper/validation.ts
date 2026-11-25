@@ -1,6 +1,8 @@
 import type { StudentInput } from "@/types/students";
 import type { UserInput } from "@/types/users";
 import type { BookingInput } from "@/types/booking";
+import type { StaffInput } from "@/types/Student Affiars/support_center_staff";
+import type { SemesterInput } from "@/types/Student Affiars/semesters";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -37,7 +39,14 @@ export function validateStudentInput(input: StudentInput) {
 }
 
 export function validateUserInput(input: UserInput) {
-  const { displayname, email, department_id, password, time_slots } = input;
+  const {
+    displayname,
+    email,
+    department_id,
+    password,
+    time_slots,
+    Semester_id,
+  } = input;
 
   if (!displayname || displayname.length === 0)
     return "Display name is required";
@@ -54,7 +63,12 @@ export function validateUserInput(input: UserInput) {
   if (isNaN(department_id) || department_id < 1)
     return "Invalid department selected";
 
-  if (time_slots.length === 0) return "At least one time slot must be selected";
+  if (!Semester_id) return "Semester is required";
+
+  if (isNaN(Semester_id) || Semester_id < 1) return "Invalid semester selected";
+
+  if (!time_slots || time_slots.length < 1)
+    return "At least one time slot must be selected";
 
   return null; // No validation errors
 }
@@ -87,6 +101,43 @@ export function ValidateBooking(input: BookingInput) {
 
   if (!courses || courses.length === 0)
     return "at least one course must be selected";
+
+  return null; // No validation errors
+}
+
+export function ValidateStaffInput(input: StaffInput) {
+  const { displayname, email, password, department_id } = input;
+
+  if (!displayname || displayname.length === 0)
+    return "Display name is required";
+
+  if (!email || email.length === 0) return "Email is required";
+
+  if (!emailRegex.test(email)) return "Invalid email format";
+
+  if (!password || password.length < 6)
+    return "Password must be at least 6 characters long";
+
+  if (!department_id) return "Department is required";
+
+  if (isNaN(department_id) || department_id < 1)
+    return "Invalid department selected";
+
+  return null; // No validation errors
+}
+
+export function ValidateSemesterInput(input: SemesterInput) {
+  const { term, year } = input;
+
+  const CurrentYear = new Date().getFullYear();
+
+  if (!term) return "Semester term is required";
+
+  if (!year) return "Semester year is required";
+
+  if (isNaN(year) || year < 1) return "Invalid semester year";
+
+  if (year < CurrentYear) return "Semester year cannot be in the past";
 
   return null; // No validation errors
 }

@@ -1,3 +1,4 @@
+import type { Semester } from "./Student Affiars/semesters";
 import type {
   AsyncSubmitFunction,
   DeepNonNullable,
@@ -18,8 +19,8 @@ export type UserInput = {
   email: User["email"];
   password: string;
   department_id: User["department_id"];
-  isSupervisor: boolean;
   time_slots: TimeSlot[];
+  Semester_id: Semester["id"];
 };
 
 export type UserMode = {

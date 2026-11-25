@@ -131,6 +131,24 @@ export type Database = {
         }
         Relationships: []
       }
+      Semesters: {
+        Row: {
+          id: number
+          term: Database["public"]["Enums"]["term_type"]
+          year: number
+        }
+        Insert: {
+          id?: number
+          term: Database["public"]["Enums"]["term_type"]
+          year: number
+        }
+        Update: {
+          id?: number
+          term?: Database["public"]["Enums"]["term_type"]
+          year?: number
+        }
+        Relationships: []
+      }
       Students: {
         Row: {
           added_at: string
@@ -139,6 +157,7 @@ export type Database = {
           email: string | null
           id: string
           nb_visits: number
+          semester_id: number
           studentId: number
           studentName: string
         }
@@ -149,6 +168,7 @@ export type Database = {
           email?: string | null
           id?: string
           nb_visits?: number
+          semester_id: number
           studentId: number
           studentName: string
         }
@@ -159,6 +179,7 @@ export type Database = {
           email?: string | null
           id?: string
           nb_visits?: number
+          semester_id?: number
           studentId?: number
           studentName?: string
         }
@@ -168,6 +189,13 @@ export type Database = {
             columns: ["department_id"]
             isOneToOne: false
             referencedRelation: "Department"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Students_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "Semesters"
             referencedColumns: ["id"]
           },
         ]
@@ -210,6 +238,42 @@ export type Database = {
           },
         ]
       }
+      "Workstudy Assigments": {
+        Row: {
+          created_at: string
+          id: number
+          semester_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          semester_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          semester_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Workstudy Assigments_semester_id_fkey"
+            columns: ["semester_id"]
+            isOneToOne: false
+            referencedRelation: "Semesters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Workstudy Assigments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "Users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -224,6 +288,7 @@ export type Database = {
           email: string | null
           id: string
           nb_visits: number
+          semester_id: number
           studentId: number
           studentName: string
         }
@@ -235,6 +300,7 @@ export type Database = {
         }
       }
       is_admin: { Args: never; Returns: boolean }
+      is_student_affairs: { Args: never; Returns: boolean }
       validate_time_slots: {
         Args: { slots: Database["public"]["CompositeTypes"]["time_slot"][] }
         Returns: boolean
@@ -242,6 +308,7 @@ export type Database = {
     }
     Enums: {
       bookiing_status: "ACCEPTED" | "REJECTED" | "WAITING"
+      term_type: "Fall" | "Summer" | "Spring"
       user_role: "admin" | "workstudy" | "student_affairs"
       weekday: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
     }
@@ -376,6 +443,7 @@ export const Constants = {
   public: {
     Enums: {
       bookiing_status: ["ACCEPTED", "REJECTED", "WAITING"],
+      term_type: ["Fall", "Summer", "Spring"],
       user_role: ["admin", "workstudy", "student_affairs"],
       weekday: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     },

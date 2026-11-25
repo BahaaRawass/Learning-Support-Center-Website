@@ -49,6 +49,7 @@ import {
   User2Icon,
   UserCircleIcon,
   UserRoundCheckIcon,
+  UserRoundPenIcon,
 } from "lucide-react";
 import { useLayoutEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -72,9 +73,9 @@ export default function MainLayout() {
           visible: !Session?.user.is_anonymous,
         },
         {
-          label: "Support Center Staff",
-          to: "/support-center-staff",
-          icon: <User2Icon />,
+          label: "Manage Workstudy",
+          to: "/workstudy",
+          icon: <UserRoundPenIcon />,
           adminOnly: true,
         },
         {
@@ -88,6 +89,13 @@ export default function MainLayout() {
     {
       title: "Student Affairs",
       links: [
+        {
+          label: "Support Center Staff",
+          to: "/student-affairs/support-center-staff",
+          icon: <User2Icon />,
+          adminOnly: true,
+          visible: Session?.user.app_metadata.role === "student_affairs",
+        },
         {
           label: "Workstudy Attendance",
           to: "/student-affairs/attendance",

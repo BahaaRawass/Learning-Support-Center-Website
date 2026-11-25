@@ -3,6 +3,7 @@ import { Suspense, type ReactNode, lazy } from "react";
 import MainLayout from "./layouts/MainLayout.tsx";
 import AuthLayout from "./layouts/AuthLayout.tsx";
 import LoadingCard from "./components/loading-card.tsx";
+import SupportCenterStaff from "./pages/StudentAffairs/SupportCenterStaff.tsx";
 
 const Login = lazy(() => import("./pages/AuthPages/Login.tsx"));
 const WorkStudy = lazy(() => import("./pages/WorkStudy.tsx"));
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "support-center-staff",
+        path: "workstudy",
         element: (
           <SuspensePage>
             <WorkStudy />
@@ -96,6 +97,14 @@ const router = createBrowserRouter([
         element: (
           <SuspensePage>
             <Attendance />
+          </SuspensePage>
+        ),
+      },
+      {
+        path: "student-affairs/support-center-staff",
+        element: (
+          <SuspensePage>
+            <SupportCenterStaff />
           </SuspensePage>
         ),
       },

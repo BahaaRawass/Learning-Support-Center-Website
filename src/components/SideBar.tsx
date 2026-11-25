@@ -55,7 +55,7 @@ import type {
 } from "@/types/settings";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { GetInitials } from "@/helper/functions";
+import { GetInitials, IsAdmin } from "@/helper/functions";
 import { useSettingsContext } from "@/context/SettingsContext";
 
 type SideBarProps = {
@@ -73,7 +73,8 @@ export default function SideBar({
   LogOut,
   updateSetting,
 }: SideBarProps) {
-  const isAdmin = Session?.user.app_metadata.role === "admin";
+
+  const isAdmin = IsAdmin(Session);
 
   const visibleSections = Sections.map((section) => ({
     ...section,

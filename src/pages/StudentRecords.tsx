@@ -59,6 +59,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCourses } from "@/hooks/useCourses";
 import CoursesComboboxMultiple from "@/components/CoursesComboboxMultiple";
 import { useSettingsContext } from "@/context/SettingsContext";
+import { useSemesters } from "@/hooks/student_affairs/useSemesters";
 
 export default function StudentRecords() {
   useDocumentTitle("Student Records");
@@ -70,6 +71,7 @@ export default function StudentRecords() {
     department_id: NaN,
     askedCourses: [],
     visitDateTime: new Date().toISOString(),
+    semester_id: NaN,
   };
 
   const [StudentInput, setStudentInput] = useState<StudentInput>(InitialValue);
@@ -119,8 +121,18 @@ export default function StudentRecords() {
     Error: CoursesError,
   } = useCourses();
 
+  const {
+    Semesters,
+    Loading: SemestersLoading,
+    Error: SemestersError,
+  } = useSemesters();
+
   const loading =
-    AuthLoading || DepartmentsLoading || UsersLoading || CoursesLoading;
+    AuthLoading ||
+    DepartmentsLoading ||
+    UsersLoading ||
+    CoursesLoading ||
+    SemestersLoading;
 
   const error =
     AuthError ||
@@ -128,6 +140,7 @@ export default function StudentRecords() {
     DepartmentsError ||
     UsersError ||
     AskedAboutError ||
+    SemestersError ||
     CoursesError;
 
   if (loading)
@@ -150,7 +163,8 @@ export default function StudentRecords() {
 
   if (error) return <ErrorCard message={SetErrorMessage(error)} />;
 
-  const data = Students && Users && Departments && AskedAbout && Courses;
+  const data =
+    Students && Users && Departments && AskedAbout && Courses && Semesters;
 
   if (!data) return <ErrorCard message="Failed to load required data." />;
 
@@ -216,6 +230,7 @@ export default function StudentRecords() {
       added_at: formatDate(StudentInput.visitDateTime),
       added_by: Session!.user.id,
       nb_visits: 1,
+      semester_id: StudentInput.semester_id,
     };
 
     const ExistingStudent = Students?.find(
@@ -251,21 +266,28 @@ export default function StudentRecords() {
   }
 
   function handleExport() {
-    const exportData_formatted = filteredStudents.map((student) => ({
-      "Student ID": student.studentId,
-      "Student Name": student.studentName,
-      Email: student.email,
-      Department:
-        Departments!.find((d) => d.id === student.department_id)?.name || "—",
-      "Added By":
-        Users!.find((u) => u.id === student.added_by)?.display_name || "—",
-      "Added At": student.added_at,
-      "Courses Asked About": AskedAbout!
-        .filter((course) => course.student_Id === student.id)
-        .map((course) => course.course_code)
-        .join(", "),
-      Visits: student.nb_visits,
-    }));
+    const exportData_formatted = filteredStudents.map((student) => {
+      const Semster = Semesters!.find(
+        (semester) => semester.id === student.semester_id,
+      );
+
+      return {
+        "Student ID": student.studentId,
+        "Student Name": student.studentName,
+        Email: student.email,
+        Department:
+          Departments!.find((d) => d.id === student.department_id)?.name || "—",
+        "Added By":
+          Users!.find((u) => u.id === student.added_by)?.display_name || "—",
+        "Added At": student.added_at,
+        "Courses Asked About": AskedAbout!
+          .filter((course) => course.student_Id === student.id)
+          .map((course) => course.course_code)
+          .join(", "),
+        Visits: student.nb_visits,
+        Semester: Semster ? `${Semster.term} ${Semster.year}` : "—",
+      };
+    });
 
     exportData(exportData_formatted, Settings.exportFormat, "Student Records");
   }
@@ -426,24 +448,69 @@ export default function StudentRecords() {
                   title="Visit Details"
                   disableCollapse={IsSubmitting}
                 >
-                  <Field>
-                    <FieldLabel>Date And Time</FieldLabel>
-                    <FieldContent>
-                      <DateTimePicker
-                        value={StudentInput.visitDateTime}
-                        onChange={(value) =>
-                          UpdateFields({ visitDateTime: value })
-                        }
-                      />
-                      <FieldDescription>
-                        Date and Time of the student's visit <br />
-                        Defaults to the current date and time
-                      </FieldDescription>
-                      {LocalError.includes("date and time") && (
-                        <FieldError>{LocalError}</FieldError>
-                      )}
-                    </FieldContent>
-                  </Field>
+                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-1">
+                    <Field>
+                      <FieldLabel>Semester</FieldLabel>
+                      <FieldContent>
+                        <Select
+                          value={
+                            StudentInput.semester_id
+                              ? String(StudentInput.semester_id)
+                              : ""
+                          }
+                          onValueChange={(value) =>
+                            UpdateFields({ semester_id: Number(value) })
+                          }
+                          disabled={IsSubmitting}
+                        >
+                          <SelectTrigger
+                            className="w-full"
+                            aria-invalid={LocalError.toLowerCase().includes(
+                              "semester",
+                            )}
+                            disabled={IsSubmitting}
+                          >
+                            <SelectValue placeholder="Select a semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Semesters</SelectLabel>
+                              {Semesters.map((semester) => (
+                                <SelectItem
+                                  key={semester.id}
+                                  value={String(semester.id)}
+                                >
+                                  {`${semester.term} ${semester.year}`}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FieldDescription>
+                          Select the semester during which the student visited
+                          the support center
+                        </FieldDescription>
+                      </FieldContent>
+                    </Field>
+                    <Field>
+                      <FieldLabel>Date And Time</FieldLabel>
+                      <FieldContent>
+                        <DateTimePicker
+                          value={StudentInput.visitDateTime}
+                          onChange={(value) =>
+                            UpdateFields({ visitDateTime: value })
+                          }
+                        />
+                        <FieldDescription>
+                          Date and Time of the student's visit <br />
+                          Defaults to the current date and time
+                        </FieldDescription>
+                        {LocalError.includes("date and time") && (
+                          <FieldError>{LocalError}</FieldError>
+                        )}
+                      </FieldContent>
+                    </Field>
+                  </FieldGroup>
                 </FormSection>
                 <FormSection
                   icon={<BookOpenIcon />}

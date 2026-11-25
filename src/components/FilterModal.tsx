@@ -285,7 +285,7 @@ export function FilterModal({
                 <CardAction className='size-full flex justify-center items-center gap-5'>
                   <Button
                     onClick={handleFilter}
-                    className=' size-1/2 py-2 text-lg'
+                    className='btn-primary size-1/2 py-2 text-lg'
                   >
                     Apply Filters
                   </Button>

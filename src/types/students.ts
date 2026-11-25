@@ -15,6 +15,7 @@ export type StudentInput = {
   email?: Student["email"];
   askedCourses: string[];
   visitDateTime: string;
+  semester_id: Student["semester_id"];
 };
 
 export type StudentMode = {

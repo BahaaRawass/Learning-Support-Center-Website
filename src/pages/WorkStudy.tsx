@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatDate } from "@/helper/functions";
+import { formatDate, IsAdmin, updateFields } from "@/helper/functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useDepartments } from "@/hooks/useDepartments";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -27,7 +27,7 @@ import {
   MoreHorizontalIcon,
   UserRoundIcon,
 } from "lucide-react";
-import { useState, type SubmitEvent } from "react";
+import { Fragment, useState, type SubmitEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ErrorCard from "@/components/error-card";
 import LoadingCard from "@/components/loading-card";
@@ -70,23 +70,27 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import TimeSlots from "@/components/TimeSlots";
 import { Spinner } from "@/components/ui/spinner";
 import { useSettingsContext } from "@/context/SettingsContext";
+import { useSemesters } from "@/hooks/student_affairs/useSemesters";
+import useWorkstudyAssigment from "@/hooks/student_affairs/useWorkstudyAssigment";
+import type { NewWorkstudyAssignment } from "@/types/Student Affiars/workstudy_assigment";
 
 export default function WorkStudy() {
-  useDocumentTitle("Support Center Staff");
+  useDocumentTitle("Manage Workstudy");
 
   const InitialValue: UserInput = {
     displayname: "",
     email: "",
     password: "",
     department_id: NaN,
-    isSupervisor: false,
     time_slots: [],
+    Semester_id: NaN,
   };
 
   const [UserInput, setUserInput] = useState<UserInput>(InitialValue);
@@ -120,11 +124,30 @@ export default function WorkStudy() {
     Error: DepartmentsError,
   } = useDepartments();
 
+  const {
+    Semesters,
+    Loading: SemestersLoading,
+    Error: SemestersError,
+  } = useSemesters();
+
+  const {
+    WorkstudyAssignments,
+    AddWorkstudyAssignment,
+    Loading: AssignmentLoading,
+    Error: AssignmentError,
+  } = useWorkstudyAssigment();
+
   const { Settings } = useSettingsContext();
 
-  const loading = AuthLoading || DepartmentsLoading;
+  const loading =
+    AuthLoading || DepartmentsLoading || SemestersLoading || AssignmentLoading;
 
-  const error = AuthError || UsersError || DepartmentsError;
+  const error =
+    AuthError ||
+    UsersError ||
+    DepartmentsError ||
+    SemestersError ||
+    AssignmentError;
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -143,7 +166,7 @@ export default function WorkStudy() {
       UserInput.email,
       UserInput.password,
       UserInput.displayname,
-      UserInput.isSupervisor ? "admin" : "workstudy",
+      "workstudy",
       UserInput.department_id,
     );
 
@@ -159,25 +182,36 @@ export default function WorkStudy() {
       id: UserId,
       email: UserInput.email,
       display_name: UserInput.displayname,
-      role: UserInput.isSupervisor ? "admin" : "workstudy",
+      role: "workstudy",
       department_id: UserInput.department_id,
       time_slots: UserInput.time_slots,
     };
 
     await AddUser(newUser, {
+      onSuccess: async (newUser) => {
+        const NewAssignment: NewWorkstudyAssignment = {
+          semester_id: UserInput.Semester_id,
+          user_id: newUser.id,
+        };
+
+        await AddWorkstudyAssignment(NewAssignment, {
+          onSuccess: () => {
+            setUserInput(InitialValue);
+          },
+          onSettled: (_data, error) => {
+            if (error)
+              setLocalError(
+                "Failed to create workstudy assignment. Please try again.",
+              );
+            setIsSubmitting(false);
+          },
+        });
+      },
       onError: () => {
         setIsSubmitting(false);
         setLocalError("Failed to create account. Please try again.");
       },
-      onSuccess: () => {
-        setIsSubmitting(false);
-        setUserInput(InitialValue);
-      },
     });
-  }
-
-  function updateFields(fields: Partial<UserInput>) {
-    setUserInput((prev) => ({ ...prev, ...fields }));
   }
 
   if (error) {
@@ -196,7 +230,7 @@ export default function WorkStudy() {
     return <NavigateToLogin />;
   }
 
-  if (Session.user.app_metadata.role !== "admin" || Session.user.is_anonymous)
+  if (!IsAdmin(Session) || Session.user.is_anonymous)
     return (
       <ErrorCard
         message="You do not have permission to view this page."
@@ -205,7 +239,7 @@ export default function WorkStudy() {
       />
     );
 
-  const data = Users && Departments;
+  const data = Users && Departments && Semesters && WorkstudyAssignments;
 
   if (!data) return <ErrorCard message="Failed to load required data." />;
 
@@ -264,7 +298,7 @@ export default function WorkStudy() {
     exportData(
       exportData_formatted,
       Settings.exportFormat,
-      "Support Center Staff",
+      "Workstudy_Accounts_Export",
     );
   }
 
@@ -279,21 +313,13 @@ export default function WorkStudy() {
       menu_item === "context" ? ContextMenuItem : DropdownMenuItem;
 
     return (
-      <>
-        {user.role === "admin" ? (
-          <MenuItemElement>
-            No actions available for admin accounts
-          </MenuItemElement>
-        ) : (
-          <MenuItemElement
-            variant="destructive"
-            className="cursor-pointer text-[16px] text-primary"
-            onClick={() => setDeletedUser(user)}
-          >
-            Remove
-          </MenuItemElement>
-        )}
-      </>
+      <MenuItemElement
+        variant="destructive"
+        className="cursor-pointer text-[16px] text-primary"
+        onClick={() => setDeletedUser(user)}
+      >
+        Remove
+      </MenuItemElement>
     );
   }
 
@@ -323,18 +349,14 @@ export default function WorkStudy() {
           <CardContent className="space-y-6">
             {IsSubmitting ? (
               <LoadingCard
-                message={
-                  UserInput.isSupervisor
-                    ? "Adding supervisor"
-                    : "Adding workstudy"
-                }
+                message={"Adding workstudy"}
                 className="min-h-auto!"
               />
             ) : (
               <>
                 <FormSection
                   icon={<UserRoundIcon />}
-                  title={`${UserInput.isSupervisor ? "Supervisor" : "Workstudy"} Account Details`}
+                  title="Workstudy Account Details"
                 >
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-2">
                     <Field>
@@ -344,7 +366,10 @@ export default function WorkStudy() {
                           type="text"
                           value={UserInput.displayname}
                           onChange={(event) =>
-                            updateFields({ displayname: event.target.value })
+                            updateFields(
+                              { displayname: event.target.value },
+                              setUserInput,
+                            )
                           }
                           placeholder="e.g. John Doe"
                           required
@@ -352,11 +377,7 @@ export default function WorkStudy() {
                           disabled={IsSubmitting}
                         />
                         <FieldDescription>
-                          Enter the{" "}
-                          {UserInput.isSupervisor
-                            ? "supervisor's"
-                            : "workstudy's"}{" "}
-                          display name <br />
+                          Enter the workstudy's display name <br />
                         </FieldDescription>
                         {LocalError.includes("Display name") && (
                           <FieldError> {LocalError}</FieldError>
@@ -370,7 +391,10 @@ export default function WorkStudy() {
                           type="email"
                           value={UserInput.email}
                           onChange={(event) =>
-                            updateFields({ email: event.target.value })
+                            updateFields(
+                              { email: event.target.value },
+                              setUserInput,
+                            )
                           }
                           placeholder="e.g. john.doe@example.com"
                           required
@@ -378,11 +402,7 @@ export default function WorkStudy() {
                           disabled={IsSubmitting}
                         />
                         <FieldDescription>
-                          Enter the{" "}
-                          {UserInput.isSupervisor
-                            ? "supervisor's"
-                            : "workstudy's"}{" "}
-                          email address
+                          Enter the workstudy's email address
                         </FieldDescription>
                       </FieldContent>
                     </Field>
@@ -392,7 +412,10 @@ export default function WorkStudy() {
                         <PasswordInput
                           value={UserInput.password}
                           onChange={(event) =>
-                            updateFields({ password: event.target.value })
+                            updateFields(
+                              { password: event.target.value },
+                              setUserInput,
+                            )
                           }
                           placeholder="Enter a strong password"
                           required
@@ -400,11 +423,7 @@ export default function WorkStudy() {
                           disabled={IsSubmitting}
                         />
                         <FieldDescription>
-                          Enter a strong password for the{" "}
-                          {UserInput.isSupervisor
-                            ? "supervisor's"
-                            : "workstudy's"}{" "}
-                          account
+                          Enter a strong password for the workstudy account
                         </FieldDescription>
                       </FieldContent>
                     </Field>
@@ -418,7 +437,10 @@ export default function WorkStudy() {
                               : undefined
                           }
                           onValueChange={(value) =>
-                            updateFields({ department_id: Number(value) })
+                            updateFields(
+                              { department_id: Number(value) },
+                              setUserInput,
+                            )
                           }
                         >
                           <SelectTrigger
@@ -445,11 +467,7 @@ export default function WorkStudy() {
                           </SelectContent>
                         </Select>
                         <FieldDescription>
-                          Enter the{" "}
-                          {UserInput.isSupervisor
-                            ? "supervisor's"
-                            : "workstudy's"}{" "}
-                          department
+                          Enter the workstudy's department.
                         </FieldDescription>
                         {LocalError.toLowerCase().includes("department") && (
                           <FieldError>{LocalError}</FieldError>
@@ -461,55 +479,66 @@ export default function WorkStudy() {
                 <FormSection icon={<InfoIcon />} title="Additional Information">
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 grid-rows-1">
                     <Field>
-                      <FieldLabel>Role</FieldLabel>
-                      <FieldContent className="flex flex-row! gap-2 items-center">
-                        <Button
-                          type="button"
-                          className={`${UserInput.isSupervisor ? "btn-primary" : ""} w-1/2 cursor-pointer`}
-                          variant={
-                            UserInput.isSupervisor ? "default" : "outline"
+                      <FieldLabel>Semester Assignment</FieldLabel>
+                      <FieldContent>
+                        <Select
+                          value={
+                            UserInput.Semester_id
+                              ? String(UserInput.Semester_id)
+                              : ""
                           }
-                          onClick={() => {
-                            if (UserInput.isSupervisor) return; // Stops re-rendering if the user is already a supervisor
-                            updateFields({ isSupervisor: true });
-                          }}
                           disabled={IsSubmitting}
-                        >
-                          Supervisor
-                        </Button>
-                        <Button
-                          type="button"
-                          className={`${!UserInput.isSupervisor ? "btn-primary" : ""} w-1/2 cursor-pointer`}
-                          variant={
-                            UserInput.isSupervisor ? "outline" : "default"
+                          onValueChange={(value) =>
+                            updateFields(
+                              { Semester_id: Number(value) },
+                              setUserInput,
+                            )
                           }
-                          onClick={() => {
-                            if (!UserInput.isSupervisor) return; // Stops re-rendering if the user is already a workstudy
-                            updateFields({ isSupervisor: false });
-                          }}
-                          disabled={IsSubmitting}
                         >
-                          WorkStudy
-                        </Button>
+                          <SelectTrigger
+                            className="w-full"
+                            aria-invalid={LocalError.toLowerCase().includes(
+                              "semester",
+                            )}
+                            disabled={IsSubmitting}
+                          >
+                            <SelectValue placeholder="Select a semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Semesters</SelectLabel>
+                              {Semesters.map((semster, index) => (
+                                <Fragment key={semster.id}>
+                                  <SelectItem value={String(semster.id)}>
+                                    {semster.term} {semster.year}
+                                  </SelectItem>
+                                  {index < Semesters.length - 1 && (
+                                    <SelectSeparator />
+                                  )}
+                                </Fragment>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FieldDescription>
+                          Select the semester to which the workstudy will be
+                          assigned.
+                        </FieldDescription>
                       </FieldContent>
-                      <FieldDescription>
-                        Select the role for the new account.
-                        <br /> Supervisors have elevated permissions and can
-                        manage workstudy accounts.
-                      </FieldDescription>
                     </Field>
                     <Field>
                       <FieldLabel>Time Slots</FieldLabel>
                       <FieldContent>
                         <TimeSlots
                           input={UserInput}
-                          updateFields={updateFields}
+                          updateFields={(fields) =>
+                            updateFields(fields, setUserInput)
+                          }
                           disabled={IsSubmitting}
                         />
                         <FieldDescription>
-                          Select the time slots for the{" "}
-                          {UserInput.isSupervisor ? "supervisor" : "workstudy"}{" "}
-                          to be available. <br />
+                          Select the time slots for the workstudy to be
+                          available. <br />
                           At least one time slot must be selected.
                         </FieldDescription>
                       </FieldContent>
@@ -535,11 +564,8 @@ export default function WorkStudy() {
             >
               {IsSubmitting ? (
                 <>
-                  <Spinner /> Adding{" "}
-                  {UserInput.isSupervisor ? "Supervisor" : "WorkStudy"}
+                  <Spinner /> Adding WorkStudy
                 </>
-              ) : UserInput.isSupervisor ? (
-                "Add Supervisor"
               ) : (
                 "Add WorkStudy"
               )}
@@ -570,6 +596,7 @@ export default function WorkStudy() {
               <TableHead className="text-center">Role</TableHead>
               <TableHead className="text-center">Department</TableHead>
               <TableHead className="text-center">Time Slots</TableHead>
+              <TableHead className="text-center">Semester Assignment</TableHead>
               <TableHead className="text-center">Added At</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -577,65 +604,78 @@ export default function WorkStudy() {
 
           <TableBody>
             {filteredUsers.length > 0 ? (
-              filteredUsers.map((user, index) => {
-                return (
-                  <ContextMenu key={user.id}>
-                    <ContextMenuTrigger asChild>
-                      <TableRow>
-                        <TableHead className="text-center">
-                          {index + 1}
-                        </TableHead>
-                        <TableCell className="text-center">
-                          {user.display_name}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {user.email}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {titleCase(
-                            user.role === "admin" ? "Supervisor" : user.role,
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {Departments.find(
-                            (department) =>
-                              department.id === user.department_id,
-                          )?.name || "—"}
-                        </TableCell>
-                        <TableCell className="flex justify-center items-center">
-                          <TimeSlotsMenu timeslots={user.time_slots} />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {formatDate(user.created_at)}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger
-                              asChild
-                              className="cursor-pointer"
-                            >
-                              <Button variant="secondary">
-                                <MoreHorizontalIcon />
-                                <span className="sr-only">Open Menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="center"
-                              className="focus:bg-none w-full"
-                            >
-                              <RowActions user={user} menu_item="dropdown" />
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    </ContextMenuTrigger>
+              filteredUsers
+                .filter((user) => user.role === "workstudy")
+                .map((user, index) => {
+                  const SmesterId = WorkstudyAssignments.find(
+                    (assignment) => assignment.user_id === user.id,
+                  )?.semester_id;
 
-                    <ContextMenuContent>
-                      <RowActions user={user} menu_item="context" />
-                    </ContextMenuContent>
-                  </ContextMenu>
-                );
-              })
+                  const Semster = Semesters.find(
+                    (semester) => semester.id === SmesterId,
+                  );
+
+                  return (
+                    <ContextMenu key={user.id}>
+                      <ContextMenuTrigger asChild>
+                        <TableRow>
+                          <TableHead className="text-center">
+                            {index + 1}
+                          </TableHead>
+                          <TableCell className="text-center">
+                            {user.display_name}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {user.email}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {titleCase(
+                              user.role === "admin" ? "Supervisor" : user.role,
+                            )}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {Departments.find(
+                              (department) =>
+                                department.id === user.department_id,
+                            )?.name || "—"}
+                          </TableCell>
+                          <TableCell className="flex justify-center items-center">
+                            <TimeSlotsMenu timeslots={user.time_slots} />
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {Semster ? `${Semster.term} ${Semster.year}` : "—"}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {formatDate(user.created_at)}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                asChild
+                                className="cursor-pointer"
+                              >
+                                <Button variant="secondary">
+                                  <MoreHorizontalIcon />
+                                  <span className="sr-only">Open Menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="center"
+                                className="focus:bg-none w-full"
+                              >
+                                <RowActions user={user} menu_item="dropdown" />
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      </ContextMenuTrigger>
+
+                      <ContextMenuContent>
+                        <RowActions user={user} menu_item="context" />
+                      </ContextMenuContent>
+                    </ContextMenu>
+                  );
+                })
             ) : (
               <TableRow>
                 <TableCell colSpan={10} className="text-center text-[17px]">

@@ -1,3 +1,6 @@
+import type { UpdaterFunction } from "@/types/types";
+import type { Session } from "@supabase/supabase-js";
+
 // Formatting the Date to this format: Day, Month, Year at HH:MM AM/PM
 export function formatDate(_date?: string) {
   const date = _date ? new Date(_date) : new Date();
@@ -23,4 +26,18 @@ export function GetInitials(name: string) {
       .toUpperCase()
       .slice(0, 2) || ""
   );
+}
+
+export function IsAdmin(Session: Session | null) {
+  return (
+    Session?.user.app_metadata.role === "admin" ||
+    Session?.user.app_metadata.role === "student_affairs"
+  );
+}
+
+export function updateFields<RType>(
+  feilds: Partial<RType>,
+  setState: UpdaterFunction<RType>,
+) {
+  setState((prev) => ({ ...prev, ...feilds }));
 }
