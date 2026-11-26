@@ -49,6 +49,7 @@ import {
 } from "./ui/context-menu";
 import { validateStudentInput } from "@/helper/validation";
 import { useSettingsContext } from "@/context/SettingsContext";
+import type { Semester } from "@/types/Student Affiars/semesters";
 
 export type TableProps = {
   Students: Student[];
@@ -73,6 +74,7 @@ export type TableProps = {
   isUpdating: Student["studentId"] | null;
   isDeleting: Student["studentId"] | null;
   AskedAbout: AskedAbout[];
+  Semesters: Semester[];
   syncStudentCourses: (
     studentId: AskedAbout["student_Id"],
     courseCodes: AskedAbout["course_code"][],
@@ -89,9 +91,9 @@ export default function StudentTable({
   Users,
   Departments,
   AskedAbout,
+  Semesters,
   syncStudentCourses,
 }: TableProps) {
-
   const { Settings } = useSettingsContext();
 
   const InitialValue: StudentInput = {
@@ -101,6 +103,7 @@ export default function StudentTable({
     department_id: NaN,
     askedCourses: [],
     visitDateTime: new Date().toISOString(),
+    semester_id: NaN,
   };
 
   const EmptyError: ErrorNotice = {
@@ -145,6 +148,7 @@ export default function StudentTable({
       studentName: student.studentName,
       email: student.email,
       department_id: student.department_id,
+      semester_id: student.semester_id,
       askedCourses: askedCoursesByStudent[student.id] || [],
       visitDateTime: student.added_at,
     });
@@ -312,6 +316,7 @@ export default function StudentTable({
             <TableHead className="text-center">Department</TableHead>
             <TableHead className="text-center">Added By</TableHead>
             <TableHead className="text-center">Added At</TableHead>
+            <TableHead className="text-center">Semester</TableHead>
             <TableHead className="text-center">Courses Asked About</TableHead>
             <TableHead className="text-center">Visits</TableHead>
             <TableHead className="text-center">Actions</TableHead>
@@ -321,6 +326,9 @@ export default function StudentTable({
           {paginatedStudents.length > 0 ? (
             paginatedStudents.map((student, index) => {
               const isEditing = EditId === student.studentId;
+              const Semester = Semesters.find(
+                (sem) => sem.id === student.semester_id,
+              );
 
               if (ErrorNotice.id === student.studentId)
                 return (
@@ -449,6 +457,9 @@ export default function StudentTable({
                       </TableCell>
                       <TableCell className="text-center">
                         {student.added_at}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {Semester ? `${Semester.term} - ${Semester.year}` : "—"}
                       </TableCell>
                       <TableCell className="text-center">
                         {isEditing ? (

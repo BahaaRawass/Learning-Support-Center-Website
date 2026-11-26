@@ -590,6 +590,7 @@ export default function StudentRecords() {
           isUpdating={IsUpdating}
           isDeleting={IsDeleting}
           AskedAbout={AskedAbout}
+          Semesters={Semesters}
           syncStudentCourses={syncStudentCourses}
         />
       </div>

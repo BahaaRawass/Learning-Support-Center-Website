@@ -21,3 +21,15 @@ export async function addSemester(semester: NewSemester) {
   if (error) throw error;
   return data;
 }
+
+export async function fetchLatestSemesterId() {
+  const { data, error } = await supabaseClient
+    .from("Semesters")
+    .select("id")
+    .order("year", { ascending: false })
+    .single();
+
+  if (error) throw error;
+
+  return data.id;
+}
