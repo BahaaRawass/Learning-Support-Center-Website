@@ -26,8 +26,6 @@ export default function Settings() {
     UpdateProfilePicture,
     DeleteProfilePicture,
     DeleteUser,
-    RegisterPasskey,
-    DeletePasskeys,
   } = useAuth();
 
   const { UpdateUser } = useUsers(Session?.user, false);
@@ -78,7 +76,6 @@ export default function Settings() {
 
         <SecuritySection
           UpdatePassword={UpdatePassword}
-          RegisterPasskey={RegisterPasskey}
         />
 
         {/* Appearance Section */}
@@ -90,7 +87,6 @@ export default function Settings() {
         <DangerZone
           LogOut={async () => await SignOut()}
           DeleteAccount={handleDeleteAccount}
-          DeletePasskeys={DeletePasskeys}
         />
       </div>
     </>

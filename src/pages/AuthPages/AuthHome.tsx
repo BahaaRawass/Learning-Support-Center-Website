@@ -7,12 +7,12 @@ import { Link, Navigate } from "react-router-dom";
 export default function AuthHome() {
   useDocumentTitle("Authentication");
 
-  const { Session, SignInWithPasskey, SignIn } = useAuth();
+  const { Session, SignIn } = useAuth();
 
   if (Session) return <Navigate to="/" />;
 
   return (
-    <div className="flex flex-col justify-evenly items-center lg:gap-0 gap-4 w-full h-1/2">
+    <div className="flex flex-col justify-center items-center gap-4 w-full">
       <Button className="btn-primary w-full text-[16px]">
         <Link
           to="/auth/login"
@@ -23,17 +23,10 @@ export default function AuthHome() {
       </Button>
       <Button
         className="btn-primary w-full text-[16px]"
-        onClick={SignInWithPasskey}
-      >
-        <KeyRoundIcon size={16} /> Continue With Passkey
-      </Button>
-      <Button
-        className="btn-primary w-full text-[16px]"
         onClick={() => SignIn({ anon: true })}
       >
-        <User2Icon size={16} /> Continue as guest
+        <User2Icon size={16} /> Continue as Student
       </Button>
     </div>
-    // </div>
   );
 }

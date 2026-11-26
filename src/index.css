@@ -476,10 +476,10 @@ body {
 .login-panel {
   padding: 48px;
   width: min(500px, 90vw);
-  height: 80vh;
+  /* height: 80vh; */
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   /* grid-template-columns: 1.1fr 0.9fr; */
   /* border: 1px solid var(--border); */
