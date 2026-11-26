@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { KeyRoundIcon, MailIcon, User2Icon } from "lucide-react";
+import { MailIcon, User2Icon } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 export default function AuthHome() {
