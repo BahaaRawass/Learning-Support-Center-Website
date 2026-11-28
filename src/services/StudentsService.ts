@@ -3,18 +3,15 @@ import { supabaseClient } from "@/supabase-client";
 import type { NewStudent, Student, UpdatedStudent } from "@/types/students";
 import type { Data } from "@/types/types";
 import type { User as AuthUser } from "@supabase/supabase-js";
-import { fetchLatestSemesterId } from "./student_affairs/SemestersService";
 
 export async function fetchStudentsByDepartment(user: AuthUser | undefined) {
   if (!user)
     throw BuildCustomPostgrestError("User is not authenticated", "401");
 
-  const LatestSemesterId = await fetchLatestSemesterId();
 
   let query = supabaseClient
     .from("Students")
     .select("*")
-    .eq("semester_id", LatestSemesterId);
   // .eq("department_id", user.user_metadata.department_id);
 
   if (user.app_metadata.role !== "admin") query = query.eq("added_by", user.id);

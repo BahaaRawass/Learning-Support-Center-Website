@@ -13,6 +13,7 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useCourses } from "@/hooks/useCourses";
 import CalendarDialog from "@/components/CalendarDialog";
 import type { CalendarDialogInfo } from "@/types/booking";
+import { useSemesters } from "@/hooks/student_affairs/useSemesters";
 
 export default function Home() {
   useDocumentTitle("Home");
@@ -20,7 +21,12 @@ export default function Home() {
   const [CalendarDialogInfo, setCalendarDialogInfo] =
     useState<CalendarDialogInfo>({ Isopen: false });
 
-  const { Session, Loading: AuthLoading, Error: AuthError, SendEmail } = useAuth();
+  const {
+    Session,
+    Loading: AuthLoading,
+    Error: AuthError,
+    SendEmail,
+  } = useAuth();
 
   const {
     Users,
@@ -40,10 +46,25 @@ export default function Home() {
     Loading: CoursesLoading,
   } = useCourses();
 
+  const {
+    Semesters,
+    Loading: SemestersLoading,
+    Error: SemestersError,
+  } = useSemesters();
+
   const loading =
-    AuthLoading || UsersLoading || DepartmentsLoading || CoursesLoading;
-  const error = AuthError || UsersError || DepartemtsError || CoursesError;
-  const data = Users && Departments && Courses;
+    AuthLoading ||
+    UsersLoading ||
+    DepartmentsLoading ||
+    CoursesLoading ||
+    SemestersLoading;
+  const error =
+    AuthError ||
+    UsersError ||
+    DepartemtsError ||
+    CoursesError ||
+    SemestersError;
+  const data = Users && Departments && Courses && Semesters;
 
   if (loading) {
     return (
@@ -65,7 +86,19 @@ export default function Home() {
     return <ErrorCard message="Failed to load required data." />;
   }
 
-  const events = CreateCalendarEvents(Users, "2026-09-01", "2026-12-10");
+  const Semster_Start_Date = new Date(Semesters[0].start_date)
+    .toISOString()
+    .split("T")[0];
+
+  const Semster_End_Date = new Date(Semesters[0].end_date)
+    .toISOString()
+    .split("T")[0];
+
+  const events = CreateCalendarEvents(
+    Users,
+    Semster_Start_Date,
+    Semster_End_Date,
+  );
 
   function handleEventCLick(info: EventClickInfo) {
     const event = info.event;

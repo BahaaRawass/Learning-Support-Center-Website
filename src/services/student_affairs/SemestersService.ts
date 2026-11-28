@@ -5,7 +5,9 @@ import type { Data } from "@/types/types";
 export async function fetchSemseters() {
   const { data, error } = (await supabaseClient
     .from("Semesters")
-    .select("*")) as Data<Semester[]>;
+    .select("*")
+    .order("year", { ascending: false })
+    .order("start_date", { ascending: false })) as Data<Semester[]>;
 
   if (error) throw error;
   return data;
@@ -20,16 +22,4 @@ export async function addSemester(semester: NewSemester) {
 
   if (error) throw error;
   return data;
-}
-
-export async function fetchLatestSemesterId() {
-  const { data, error } = await supabaseClient
-    .from("Semesters")
-    .select("id")
-    .order("year", { ascending: false })
-    .single();
-
-  if (error) throw error;
-
-  return data.id;
 }
