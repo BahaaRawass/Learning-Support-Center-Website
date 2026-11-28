@@ -133,17 +133,23 @@ export type Database = {
       }
       Semesters: {
         Row: {
+          end_date: string
           id: number
+          start_date: string
           term: Database["public"]["Enums"]["term_type"]
           year: number
         }
         Insert: {
+          end_date: string
           id?: number
+          start_date: string
           term: Database["public"]["Enums"]["term_type"]
           year: number
         }
         Update: {
+          end_date?: string
           id?: number
+          start_date?: string
           term?: Database["public"]["Enums"]["term_type"]
           year?: number
         }

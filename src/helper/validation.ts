@@ -127,7 +127,7 @@ export function ValidateStaffInput(input: StaffInput) {
 }
 
 export function ValidateSemesterInput(input: SemesterInput) {
-  const { term, year } = input;
+  const { term, year, start_date, end_date } = input;
 
   const CurrentYear = new Date().getFullYear();
 
@@ -138,6 +138,10 @@ export function ValidateSemesterInput(input: SemesterInput) {
   if (isNaN(year) || year < 1) return "Invalid semester year";
 
   if (year < CurrentYear) return "Semester year cannot be in the past";
+
+  if (!start_date) return "Semester start date is required";
+
+  if (!end_date) return "Semester end date is required";
 
   return null; // No validation errors
 }
